@@ -1,4 +1,6 @@
-﻿using Modalmais.Business.Models.ObjectValues;
+﻿using FluentValidation.Results;
+using Modalmais.Business.Models.ObjectValues;
+using Modalmais.Business.Models.Validation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,5 +16,12 @@ namespace Modalmais.Business.Models
         public string CPF { get; set; }
         public Contato Contato { get; set; }
         public ContaCorrente ContaCorrente { get; set; }
+        private List<ValidationFailure> _validationResultErrors { get; set; }
+        
+        public bool ValidarUsuario()
+        {
+            _validationResultErrors = new ClienteValidator().Validate(this).Errors;
+            return _validationResultErrors.Any();
+        }
     }
 }
