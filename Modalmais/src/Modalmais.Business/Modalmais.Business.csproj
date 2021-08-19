@@ -5,14 +5,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Model\**" />
-    <EmbeddedResource Remove="Model\**" />
-    <None Remove="Model\**" />
+    <PackageReference Include="FluentValidation" Version="10.3.1" />
+    <PackageReference Include="MongoDB.Driver" Version="2.13.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="FluentValidation" Version="10.3.1" />
-    <PackageReference Include="MongoDB.Driver" Version="2.13.1" />
+    <Folder Include="Services\Response\" />
+    <Folder Include="Services\Request\" />
   </ItemGroup>
 
 </Project>
