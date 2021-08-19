@@ -1,6 +1,7 @@
 ﻿using FluentValidation.Results;
 using Modalmais.Business.Models.ObjectValues;
 using Modalmais.Business.Models.Validation;
+using MongoDB.Bson.Serialization.Attributes;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -25,12 +26,14 @@ namespace Modalmais.Business.Models
         public string CPF { get; private set; }
         public Contato Contato { get; private set; }
         public ContaCorrente ContaCorrente { get; private set; }
-        private List<ValidationFailure> _validationResultErrors { get; set; }
+        [BsonIgnore]
+        public List<ValidationFailure> ListaDeErros { get; private set; }
 
+        // Retorna True se tiverem erros
         public bool ValidarUsuario()
         {
-            _validationResultErrors = new ClienteValidator().Validate(this).Errors;
-            return _validationResultErrors.Any();
+            ListaDeErros = new ClienteValidator().Validate(this).Errors;
+            return ListaDeErros.Any();
         }
     }
 }
