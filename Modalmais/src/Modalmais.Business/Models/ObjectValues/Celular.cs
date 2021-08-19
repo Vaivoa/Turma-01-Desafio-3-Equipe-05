@@ -10,7 +10,7 @@ namespace Modalmais.Business.Models.ObjectValues
             Numero = numero;
         }
 
-        public DDDBrasil DDD { get; set; }
-        public string Numero { get; set; }
+        public DDDBrasil DDD { get; private set; }
+        public string Numero { get; private set; }
     }
 }
