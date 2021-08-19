@@ -8,7 +8,12 @@ namespace Modalmais.Business.Models.ObjectValues
 {
     public class Celular
     {
-        public string DDD { get; set; }
-        public string Numero { get; set; }
+        public Celular(string ddd, string numero)
+        {
+            DDD = ddd;
+            Numero = numero;
+        }
+        public string DDD { get; }
+        public string Numero { get; }
     }
 }

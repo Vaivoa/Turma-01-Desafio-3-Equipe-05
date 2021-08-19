@@ -8,7 +8,12 @@ namespace Modalmais.Business.Models.ObjectValues
 {
     public class Contato
     {
-        public Celular Celular { get; set; }
-        public string Email { get; set; }
+        public Contato(Celular celular, string email)
+        {
+            Celular = celular;
+            Email = email;
+        }
+        public Celular Celular { get; }
+        public string Email { get; }
     }
 }

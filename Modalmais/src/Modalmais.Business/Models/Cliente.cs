@@ -13,5 +13,6 @@ namespace Modalmais.Business.Models
         public string Sobrenome { get; set; }
         public string CPF { get; set; }
         public Contato Contato { get; set; }
+        public ContaCorrente ContaCorrente { get; set; }
     }
 }
