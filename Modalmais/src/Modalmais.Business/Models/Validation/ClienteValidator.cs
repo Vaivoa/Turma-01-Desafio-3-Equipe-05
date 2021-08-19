@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using mercadolivre.Business.Model.Validation.External;
+using mercadolivre.Business.Utils;
 
 namespace Modalmais.Business.Models.Validation
 {

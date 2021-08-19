@@ -1,4 +1,4 @@
-﻿namespace mercadolivre.Business.Model.Validation.External
+﻿namespace mercadolivre.Business.Utils
 {
     public class UtilsDigitosNumericos
     {
