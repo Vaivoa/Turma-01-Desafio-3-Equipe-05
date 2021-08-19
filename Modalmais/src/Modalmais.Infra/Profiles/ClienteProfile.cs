@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Modalmais.API.DTOs;
 using Modalmais.Business.Models;
 
 namespace Modalmais.Infra.Profiles
@@ -7,8 +8,8 @@ namespace Modalmais.Infra.Profiles
     {
         public ClienteProfile()
         {
-            //CreateMap<Cliente, ClienteRequest>().ReverseMap();
-            //CreateMap<Cliente, ClienteResponse>().ReverseMap();
+            CreateMap<Cliente, ClienteRequest>().ReverseMap();
+            CreateMap<Cliente, ClienteResponse>().ReverseMap();
         }
     }
 }

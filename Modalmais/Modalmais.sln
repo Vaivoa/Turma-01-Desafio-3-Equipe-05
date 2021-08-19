@@ -3,15 +3,18 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31515.178
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Modalmais.Infra", "src\Modalmais.Infra\Modalmais.Infra.csproj", "{CFFDD845-390C-4D71-BE3A-F03182680481}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Modalmais.Infra", "src\Modalmais.Infra\Modalmais.Infra.csproj", "{CFFDD845-390C-4D71-BE3A-F03182680481}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{A82C6B13-4646-426E-992E-8EBF897140A0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Modalmais.Test", "test\Modalmais.Test\Modalmais.Test.csproj", "{E4FDE104-0B8E-4655-A4E6-AB1EC4576E97}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Modalmais.Test", "test\Modalmais.Test\Modalmais.Test.csproj", "{E4FDE104-0B8E-4655-A4E6-AB1EC4576E97}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Modalmais.Business", "src\Modalmais.Business\Modalmais.Business.csproj", "{08583E31-0DB8-4568-B476-90E989B13CC3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Modalmais.Business", "src\Modalmais.Business\Modalmais.Business.csproj", "{08583E31-0DB8-4568-B476-90E989B13CC3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Modalmais.API", "src\Modalmais.API\Modalmais.API.csproj", "{70E5CCBA-F651-4313-8B07-F0A11449DA0E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Modalmais.API", "src\Modalmais.API\Modalmais.API.csproj", "{70E5CCBA-F651-4313-8B07-F0A11449DA0E}"
+	ProjectSection(ProjectDependencies) = postProject
+		{08583E31-0DB8-4568-B476-90E989B13CC3} = {08583E31-0DB8-4568-B476-90E989B13CC3}
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Src", "Src", "{71226B9A-3532-47BF-AC87-963ABAD5376B}"
 EndProject
