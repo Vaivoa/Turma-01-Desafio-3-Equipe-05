@@ -1,27 +1,28 @@
 ﻿using Modalmais.Business.Models;
 using MongoDB.Driver;
+using System;
 
 namespace Modalmais.Infra.Data
 {
-    public class DbContext
+    public class DbContext : IDisposable
     {
         const string StringConnection = "mongodb://localhost:27017";
         const string Db = "Modalmais";
 
         private static readonly IMongoClient _client;
-        private static readonly IMongoDatabase _dataBase;
+        public static IMongoDatabase _dataBase;
+
+        public IMongoDatabase Database => _client.GetDatabase(Db);
 
 
         //exemplo de uso
-        //var ass = new DbContext(); _context.
-        //ass.Clientes.FindAsync(); ou _context.Clientes.FindAsync();
-
+        //var foo = new DbContext(); _context.
+        //foo.Clientes.FindAsync(); ou _context.Clientes.FindAsync();
 
         static DbContext()
         {
             _client = new MongoClient(StringConnection);
             _dataBase = _client.GetDatabase(Db);
-
         }
 
         public IMongoClient Client
@@ -40,5 +41,9 @@ namespace Modalmais.Infra.Data
             }
         }
 
+        public void Dispose()
+        {
+            GC.SuppressFinalize(this);
+        }
     }
 }

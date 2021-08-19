@@ -8,4 +8,8 @@
     <PackageReference Include="MongoDB.Driver" Version="2.13.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Modalmais.Business\Modalmais.Business.csproj" />
+  </ItemGroup>
+
 </Project>

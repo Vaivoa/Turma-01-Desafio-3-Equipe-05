@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Modalmais.Infra.Data;
 
 namespace Modalmais.API.Configurations
 {
@@ -7,6 +8,8 @@ namespace Modalmais.API.Configurations
 
         public static IServiceCollection InjecaoDependencias(this IServiceCollection services)
         {
+
+            services.AddScoped<DbContext>();
 
             return services;
         }
