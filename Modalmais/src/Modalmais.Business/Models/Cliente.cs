@@ -1,24 +1,34 @@
 ﻿using FluentValidation.Results;
 using Modalmais.Business.Models.ObjectValues;
 using Modalmais.Business.Models.Validation;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Modalmais.Business.Models
 {
     public class Cliente : Entidade
     {
-        public string Nome { get; set; }
-        public string Sobrenome { get; set; }
-        public string CPF { get; set; }
-        public Contato Contato { get; set; }
-        public ContaCorrente ContaCorrente { get; set; }
+
+        public Cliente(string nome, string sobrenome, string CPF, Contato contato)
+        {
+
+            Nome = nome;
+            Sobrenome = sobrenome;
+            this.CPF = CPF;
+            Contato = contato;
+
+        }
+
+
+        public string Nome { get; private set; }
+        public string Sobrenome { get; private set; }
+        public string CPF { get; private set; }
+        public Contato Contato { get; private set; }
+        public ContaCorrente ContaCorrente { get; private set; }
         private List<ValidationFailure> _validationResultErrors { get; set; }
         
         //Deve retornar true para usuario valido
+
         public bool ValidarUsuario()
         {
             _validationResultErrors = new ClienteValidator().Validate(this).Errors;
