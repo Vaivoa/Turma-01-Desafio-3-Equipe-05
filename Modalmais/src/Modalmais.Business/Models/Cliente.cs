@@ -18,10 +18,11 @@ namespace Modalmais.Business.Models
         public ContaCorrente ContaCorrente { get; set; }
         private List<ValidationFailure> _validationResultErrors { get; set; }
         
+        //Deve retornar true para usuario valido
         public bool ValidarUsuario()
         {
             _validationResultErrors = new ClienteValidator().Validate(this).Errors;
-            return _validationResultErrors.Any();
+            return !_validationResultErrors.Any();
         }
     }
 }
