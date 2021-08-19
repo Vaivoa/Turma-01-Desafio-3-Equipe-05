@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using FluentValidation.Validators;
 using mercadolivre.Business.Utils;
 
 namespace Modalmais.Business.Models.Validation
@@ -37,7 +38,7 @@ namespace Modalmais.Business.Models.Validation
                 .Must(UtilsDigitosNumericos.SoNumeros).WithMessage(ClientePropriedadeSoNumeros);
 
             RuleFor(cliente => cliente.Contato.Email)
-                .Must(EmailValidacao.EmailValido).WithMessage(ClientePropriedadeValida)
+                .EmailAddress(EmailValidationMode.Net4xRegex).WithMessage(ClientePropriedadeValida)
                 .NotEmpty().WithMessage(ClientePropriedadeVazia)
                 .Length(ClienteEmailMinimoChar, ClienteNomeSobrenomeEmailMaximoChar)
                 .WithMessage(ClientePropriedadeCharLimite);

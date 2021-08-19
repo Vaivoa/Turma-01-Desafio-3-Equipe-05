@@ -33,5 +33,28 @@ namespace Modalmais.Test.Unitarios
             Assert.Equal(resultadoEsperado, resultado);
         }
 
+        [Trait("Categoria", "Testes Cliente")]
+        [Theory(DisplayName = "Validar E-mail")]
+        [InlineData("", true)]
+        [InlineData("  ", true)]
+        [InlineData("@email.com", true)]
+        [InlineData("teste@teste", true)]
+        [InlineData("teste@email@email.com", true)]
+        [InlineData("joao@gmail.com", false)]
+        public void NovoCliente_ValidarEmail_DeveCorresponderAoResultadoEsperado(string email, bool resultadoEsperado)
+        {
+            // Arrange
+            var cliente = new Cliente("Beatriz", "Pires", "78080103089",
+                new Contato(
+                    new Celular(DDDBrasil.AC_RioBranco, "940041211"),
+                    email)
+            );
+
+            // Act
+            var resultado = cliente.ValidarUsuario();
+
+            // Assert
+            Assert.Equal(resultadoEsperado, resultado);
+        }
     }
 }
