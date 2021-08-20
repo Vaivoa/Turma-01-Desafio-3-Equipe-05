@@ -11,6 +11,8 @@ namespace Modalmais.Business.Models.Validation
         public static int ClienteEmailMinimoChar => 5;
         public static int ClienteCpfMinimoMaxChar => 11;
         public static int ClienteCelularMinimoMaxChar => 9;
+        public static string ClienteContaCorrenteAgencia => "0001";
+        public static string ClienteContaCorrenteBanco => "746";
         public static string ClientePropriedadeCharLimite => "A quantidade de letras da propriedade {PropertyName} permitidas {MinLength} a {MaxLength}.";
         public static string ClientePropriedadeVazia => "A {PropertyName} não pode ser vazio.";
         public static string ClientePropriedadeValida => "O {PropertyName} deve ser valido segundo as normativas.";
@@ -53,6 +55,14 @@ namespace Modalmais.Business.Models.Validation
                 .WithMessage(ClientePropriedadeCharLimite)
                 .NotEmpty().WithMessage(ClientePropriedadeVazia)
                 .Must(UtilsDigitosNumericos.SoNumeros).WithMessage(ClientePropriedadeSoNumeros);
+
+            RuleFor(cliente => cliente.ContaCorrente.Agencia)
+                .Must(UtilsDigitosNumericos.SoNumeros).WithMessage(ClientePropriedadeSoNumeros)
+                .Must(ag => ag == ClienteContaCorrenteAgencia).WithMessage(ClientePropriedadeValida);
+            RuleFor(cliente => cliente.ContaCorrente.Banco)
+                .Must(UtilsDigitosNumericos.SoNumeros).WithMessage(ClientePropriedadeSoNumeros)
+                .Must(banco => banco == ClienteContaCorrenteBanco).WithMessage(ClientePropriedadeValida);
+
         }
 
     }

@@ -9,8 +9,11 @@ namespace Modalmais.Infra.Data
         const string StringConnection = "mongodb://localhost:27017";
         const string Db = "Modalmais";
 
+        static DbContext instance;
         private static readonly IMongoClient _client;
+        private readonly IMongoClient _clientTeste;
         public static IMongoDatabase _dataBase;
+        public readonly IMongoDatabase _dataBaseTeste;
 
         public IMongoDatabase Database => _client.GetDatabase(Db);
 
@@ -24,7 +27,13 @@ namespace Modalmais.Infra.Data
             _client = new MongoClient(StringConnection);
             _dataBase = _client.GetDatabase(Db);
         }
+        public DbContext(string connectionString = null, string db = null)
+        {
+            if (connectionString == null || db == null) return;
+            _clientTeste = new MongoClient(connectionString);
+            _dataBase = _clientTeste.GetDatabase(db);
 
+        }
         public IMongoClient Client
         {
             get
