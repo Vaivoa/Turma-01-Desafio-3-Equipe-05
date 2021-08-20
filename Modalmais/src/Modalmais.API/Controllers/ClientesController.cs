@@ -3,13 +3,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Modalmais.API.DTOs;
 using Modalmais.Business.Interfaces.Notificador;
-using Modalmais.Business.Interfaces.Repository;
 using Modalmais.Business.Interfaces.Services.Request;
 using Modalmais.Business.Interfaces.Services.Response;
 using Modalmais.Business.Models;
 using Modalmais.Business.Utils;
-using Modalmais.Infra.Data;
-using MongoDB.Bson;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,19 +18,16 @@ namespace Modalmais.API.Controllers
     public class ClientesCorrenteController : MainController
     {
 
-        protected readonly IClienteRepository _clienteRepository;
+        
         protected readonly IClienteServiceRequest _clienteServiceRequest;
         protected readonly IClienteServiceResponse _clienteServiceResponse;
 
-        public ClientesCorrenteController(IMapper mapper,
-                                       DbContext context,
-                                       INotificador notificador,
-                                       IClienteRepository clienteRepository,
+        public ClientesCorrenteController(IMapper mapper,                                       
+                                       INotificador notificador,                                       
                                        IClienteServiceRequest clienteServiceRequest,
                                        IClienteServiceResponse clienteServiceResponse
                                        ) : base(mapper, notificador)
-        {
-            _clienteRepository = clienteRepository;
+        {            
             _clienteServiceRequest = clienteServiceRequest;
             _clienteServiceResponse = clienteServiceResponse;
         }
@@ -83,14 +77,21 @@ namespace Modalmais.API.Controllers
         }
 
 
-        [HttpGet("{id:length(24)}")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> ObterClientePeloId(string id)
-        {           
-            var Cliente = await _clienteRepository.ObterPorId(id);
+        {
+
+            if (!ObjectIdValidacao.Validar(id))
+            {
+                AdicionarNotificacaoErro("Formato invalido");
+                return NotificarErrorsEmLista();
+            };
+
+            var Cliente = await _clienteServiceResponse.BuscarClientePorId(id);
+            
             if (Cliente == null)
             {
-                AdicionarNotificacaoErro("Cliente não encontrado");
-                return NotificarErrorsEmLista();
+                return NotFound("Cliente não encontrado");
             }
 
             var ClienteResponse = _mapper.Map<ClienteAdicionarResponse>(Cliente);
