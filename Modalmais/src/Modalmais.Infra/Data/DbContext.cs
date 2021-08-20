@@ -43,7 +43,7 @@ namespace Modalmais.Infra.Data
 
         public void Dispose()
         {
-            GC.SuppressFinalize(this);
+            //GC.SuppressFinalize(this);
         }
     }
 }

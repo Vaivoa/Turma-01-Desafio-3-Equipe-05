@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using MongoDB.Driver;
+using Modalmais.Infra.Data;
 
 namespace Modalmais.API.Controllers
 {
@@ -8,13 +8,16 @@ namespace Modalmais.API.Controllers
     public class MainController : ControllerBase
     {
         protected readonly IMapper _mapper;
+        protected readonly DbContext _context;
 
-        public MainController(IMapper mapper)
+
+        public MainController(IMapper mapper,
+                              DbContext context)
         {
             _mapper = mapper;
+            _context = context;
+
         }
 
-        private static IMongoClient client = new MongoClient("mongodb://localhost:27017");
-        protected IMongoDatabase context = client.GetDatabase("DesafioModal");
     }
 }

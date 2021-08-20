@@ -1,13 +1,13 @@
-﻿using Modalmais.Business.Models;
+﻿using Modalmais.Business.Interfaces.Repository;
+using Modalmais.Business.Models;
 using Modalmais.Infra.Data;
 using MongoDB.Driver;
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Modalmais.Infra.Repository
 {
-    public abstract class Repository<TEntity> : IDisposable where TEntity : Entidade
+    public abstract class Repository<TEntity> : IRepository<TEntity> where TEntity : Entidade
     {
         protected readonly DbContext _context;
         protected readonly IMongoCollection<TEntity> DbSet;
@@ -19,9 +19,9 @@ namespace Modalmais.Infra.Repository
         }
 
 
-        public virtual Task Adicionar(TEntity obj)
+        public virtual async Task Adicionar(TEntity obj)
         {
-            return DbSet.InsertOneAsync(obj);
+            await DbSet.InsertOneAsync(obj);
         }
 
         public virtual async Task<TEntity> ObterPorId(string id)
