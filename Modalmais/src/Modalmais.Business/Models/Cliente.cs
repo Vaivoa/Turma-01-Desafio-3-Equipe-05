@@ -17,7 +17,6 @@ namespace Modalmais.Business.Models
             Sobrenome = sobrenome;
             this.CPF = CPF;
             Contato = contato;
-            ValidarUsuario();
         }
 
 
