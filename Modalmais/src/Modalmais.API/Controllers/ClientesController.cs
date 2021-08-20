@@ -87,9 +87,9 @@ namespace Modalmais.API.Controllers
 
             var Cliente = await _clienteRepository.ObterPorId(id);
 
-            if (Cliente != null) return new BadRequestObjectResult("Id não encontrado");
 
             var ClienteResponse = _mapper.Map<ClienteAdicionarResponse>(Cliente);
+
 
             return new OkObjectResult(ClienteResponse);
         }
