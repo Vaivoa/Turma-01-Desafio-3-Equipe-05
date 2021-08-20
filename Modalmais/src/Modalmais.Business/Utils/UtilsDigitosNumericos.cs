@@ -1,4 +1,4 @@
-﻿namespace mercadolivre.Business.Utils
+﻿namespace Modalmais.Business.Utils
 {
     public class UtilsDigitosNumericos
     {
