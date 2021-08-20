@@ -17,16 +17,18 @@ namespace Modalmais.Test.Unitarios
     {
         public Cliente GerarClienteValido()
         {
-            var genero = new Faker().PickRandom<Name.Gender>();
-            var ddd = new Faker().PickRandom<DDDBrasil>();
-            var numero = new Faker().Random.Number(900000000, 999999999).ToString();
-
+            var faker = new Faker("pt_BR");
+            var genero =  faker.PickRandom<Name.Gender>();
+            var ddd =  faker.PickRandom<DDDBrasil>();
+            var numero = faker.Random.Number(900000000, 999999999).ToString();
+            var nome = faker.Name.FirstName(genero);
+            var sobrenome = faker.Name.LastName(genero);
             var clienteValido = new Faker<Cliente>("pt_BR")
                 .CustomInstantiator(f => new Cliente(
-                    f.Name.FirstName(genero),
-                    f.Name.LastName(genero),
+                    nome,
+                    sobrenome,
                     f.Person.Cpf(false),
-                    new Contato(new Celular(ddd, numero), f.Internet.ExampleEmail())
+                    new Contato(new Celular(ddd, numero), f.Internet.ExampleEmail(nome,sobrenome))
                 ));
 
             return clienteValido;

@@ -6,6 +6,10 @@ using Modalmais.Business.Service;
 using Modalmais.Business.Utils;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Modalmais.Business.Service;
+using Modalmais.Business.Interfaces.Notificador;
+using FluentValidation.Validators;
+using System.ComponentModel.DataAnnotations;
 
 namespace Modalmais.Business.Services.Response
 {
@@ -36,6 +40,12 @@ namespace Modalmais.Business.Services.Response
             if (!CpfValidacao.Validar(cpf))
             { AdicionarNotificacao("CPF deve ser valido."); return false; }
             return await _clienteRepository.ChecarEntidadeExistente(nameof(Cliente.CPF), cpf);
+        }
+        public async Task<bool> ChecarPorEmailSeClienteExiste(string email)
+        {
+            if (EmailValidacao.EmailValido(email) || new EmailAddressAttribute().IsValid(email)) 
+            { AdicionarNotificacao("Email deve ser valido."); return false; }
+            return await _clienteRepository.ChecarEntidadeExistente(nameof(Cliente.Contato.Email), email);
         }
 
         public void Dispose()

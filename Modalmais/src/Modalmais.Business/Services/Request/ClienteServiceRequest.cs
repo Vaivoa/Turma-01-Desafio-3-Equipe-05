@@ -17,6 +17,8 @@ namespace Modalmais.Business.Services.Request
         {
             if (ChecarPorCpfSeClienteExiste(clienteAdicionar.CPF).Result)
             { AdicionarNotificacao("CPF Existente em nosso banco de dados"); return; }
+            if (ChecarPorEmailSeClienteExiste(clienteAdicionar.Contato.Email).Result) 
+            { AdicionarNotificacao("Email Existente em nosso banco de dados"); return; }
             await _clienteRepository.Adicionar(clienteAdicionar);
         }
     }

@@ -8,6 +8,7 @@ namespace Modalmais.Business.Interfaces.Services.Request
     public interface IClienteServiceResponse : IDisposable
     {
         Task<bool> ChecarPorCpfSeClienteExiste(string cpf);
+        Task<bool> ChecarPorEmailSeClienteExiste(string cpf);
         Task<Cliente> BuscarClientePorId(string id);
         Task<IEnumerable<Cliente>> BuscarTodos();
     }
