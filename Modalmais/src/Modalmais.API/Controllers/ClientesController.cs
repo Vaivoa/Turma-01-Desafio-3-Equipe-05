@@ -4,9 +4,13 @@ using Microsoft.AspNetCore.Mvc;
 using Modalmais.API.DTOs;
 using Modalmais.Business.Interfaces.Notificador;
 using Modalmais.Business.Interfaces.Repository;
+using Modalmais.Business.Interfaces.Services.Request;
+using Modalmais.Business.Interfaces.Services.Response;
 using Modalmais.Business.Models;
 using Modalmais.Infra.Data;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Modalmais.API.Controllers
@@ -16,48 +20,78 @@ namespace Modalmais.API.Controllers
     {
 
         protected readonly IClienteRepository _clienteRepository;
+        protected readonly IClienteServiceRequest _clienteServiceRequest;
+        protected readonly IClienteServiceResponse _clienteServiceResponse;
 
         public ClientesCorrenteController(IMapper mapper,
                                        DbContext context,
                                        INotificador notificador,
-                                       IClienteRepository clienteRepository
-                                       ) : base(mapper, context, notificador)
+                                       IClienteRepository clienteRepository,
+                                       IClienteServiceRequest clienteServiceRequest,
+                                       IClienteServiceResponse clienteServiceResponse
+                                       ) : base(mapper, notificador)
         {
             _clienteRepository = clienteRepository;
+            _clienteServiceRequest = clienteServiceRequest;
+            _clienteServiceResponse = clienteServiceResponse;
         }
 
 
         [HttpPost]
-        public async Task<IActionResult> AdicionarCliente(ClienteRequest clienteRequest)
+        public async Task<IActionResult> AdicionarCliente(ClienteAdicionarRequest clienteRequest)
         {
+            if (!ModelState.IsValid) return NotificarErrorsEmLista(ModelState);
+
             var cliente = _mapper.Map<Cliente>(clienteRequest);
 
-            if (!cliente.ValidarUsuario()) return new BadRequestObjectResult(cliente.ListaDeErros);
+            if (cliente.ListaDeErros.Any())
+            {
+                AdicionarListaValidacaoNotificacaoErro(cliente.ListaDeErros);
+                return NotificarErrorsEmLista();
+            }
 
-            await _context.Clientes.InsertOneAsync(cliente);
+            await _clienteServiceRequest.AdicionarCliente(cliente);
 
-            return new CreatedResult(nameof(AdicionarCliente), "");
+            if (ValidarEntidadeListaContemErros()) return NotificarErrorsEmLista();
+
+            var clienteAdicionarResponse = _mapper.Map<ClienteAdicionarResponse>(cliente);
+
+
+            return CreatedAtAction(nameof(ObterClientePeloId), new { clienteAdicionarResponse.Id },
+                    new
+                    {
+                        sucess = true,
+                        response = clienteAdicionarResponse
+                    });
 
         }
 
         [HttpGet]
         public async Task<IActionResult> ListaClientes()
         {
+            var ListaClientes = await _clienteServiceResponse.BuscarTodos();
+            var ListaClientesResponse = new List<ClienteAdicionarResponse>();
 
-            var ListaClientes = await _clienteRepository.ObterTodos();
+            foreach (var cliente in ListaClientes)
+            {
+                ListaClientesResponse.Add(_mapper.Map<ClienteAdicionarResponse>(cliente));
+            }
 
-            return new OkObjectResult(ListaClientes);
+            return Ok(ListaClientesResponse);
         }
 
+
         [HttpGet("{id}")]
-        public async Task<IActionResult> ClienteById(string id)
+        public async Task<IActionResult> ObterClientePeloId(string id)
         {
 
             var Cliente = await _clienteRepository.ObterPorId(id);
 
             if (Cliente != null) return new BadRequestObjectResult("Id não encontrado");
 
-            return new OkObjectResult(Cliente);
+            var ClienteResponse = _mapper.Map<ClienteAdicionarResponse>(Cliente);
+
+            return new OkObjectResult(ClienteResponse);
         }
 
 
