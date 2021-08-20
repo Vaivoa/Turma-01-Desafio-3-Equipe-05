@@ -4,8 +4,6 @@ using Modalmais.API.DTOs;
 using Modalmais.Business.Interfaces.Repository;
 using Modalmais.Business.Models;
 using Modalmais.Infra.Data;
-using MongoDB.Bson;
-using MongoDB.Driver;
 using System.Threading.Tasks;
 
 namespace Modalmais.API.Controllers
@@ -42,20 +40,16 @@ namespace Modalmais.API.Controllers
         public async Task<IActionResult> ListaClientes()
         {
 
-            var ListaClientes = await _context.Clientes.Find(new BsonDocument()).ToListAsync();
+            var ListaClientes = await _clienteRepository.ObterTodos();
 
             return new OkObjectResult(ListaClientes);
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> ClienteById(ObjectId id)
+        public async Task<IActionResult> ClienteById(string id)
         {
-            var filtro = new BsonDocument
-            {
-                { "_id", $"{id}"}
-            };
 
-            var Cliente = await _context.Clientes.Find(filtro).FirstOrDefaultAsync();
+            var Cliente = await _clienteRepository.ObterPorId(id);
 
             if (Cliente != null) return new BadRequestObjectResult("Id não encontrado");
 
