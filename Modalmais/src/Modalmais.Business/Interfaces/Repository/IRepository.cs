@@ -15,6 +15,7 @@ namespace Modalmais.Business.Interfaces.Repository
 
         Task<TEntity> Buscar(string campo, string comparar);
 
+        Task<bool> ChecarEntidadeExistente(string campo, string comparar);
 
         Task<IEnumerable<TEntity>> ObterTodos();
 

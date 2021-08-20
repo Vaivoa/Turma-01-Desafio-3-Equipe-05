@@ -1,12 +1,14 @@
 ﻿using Modalmais.Business.Models;
+using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Modalmais.Business.Interfaces.Services.Request
 {
-    public interface IClienteServiceResponse
+    public interface IClienteServiceResponse : IDisposable
     {
-        Task<Cliente> BuscarClientePorId(int id);
-
-        Task<Cliente> BuscarTodos();
+        Task<bool> ChecarPorCpfSeClienteExiste(string cpf);
+        Task<Cliente> BuscarClientePorId(string id);
+        Task<IEnumerable<Cliente>> BuscarTodos();
     }
 }

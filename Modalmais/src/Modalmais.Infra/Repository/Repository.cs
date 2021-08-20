@@ -32,8 +32,13 @@ namespace Modalmais.Infra.Repository
 
         public virtual async Task<TEntity> Buscar(string campo, string comparar)
         {
-            var data = await DbSet.FindAsync(Builders<TEntity>.Filter.Eq("Id", comparar));
+            var data = await DbSet.FindAsync(Builders<TEntity>.Filter.Eq(campo, comparar));
             return data.FirstOrDefault();
+        }
+        public virtual async Task<bool> ChecarEntidadeExistente(string campo, string comparar)
+        {
+            var data = await DbSet.FindAsync(Builders<TEntity>.Filter.Eq(campo, comparar));
+            return data.Any();
         }
 
         public virtual async Task<IEnumerable<TEntity>> ObterTodos()
