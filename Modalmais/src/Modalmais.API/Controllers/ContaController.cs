@@ -1,29 +1,50 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Modalmais.API.DTOs;
+using Modalmais.Business.Interfaces.Repository;
 using Modalmais.Business.Models;
-using MongoDB.Driver;
+using Modalmais.Infra.Data;
 using System.Threading.Tasks;
 
 namespace Modalmais.API.Controllers
 {
-    [Route("Cliente")]
+    [Route("api/v1/clientes")]
     public class ContaCorrenteController : MainController
     {
-        public ContaCorrenteController(IMapper mapper) : base(mapper) { }
+
+        protected readonly IClienteRepository _clienteRepository;
+
+        public ContaCorrenteController(IMapper mapper,
+                                       DbContext context,
+                                       IClienteRepository clienteRepository
+                                       ) : base(mapper, context)
+        {
+            _clienteRepository = clienteRepository;
+        }
+
 
         [HttpPost]
         public async Task<IActionResult> Cliente(ClienteRequest clienteRequest)
         {
-            IMongoCollection<Cliente> clientes = context.GetCollection<Cliente>("Clientes");
-
             var cliente = _mapper.Map<Cliente>(clienteRequest);
 
             if (!cliente.ValidarUsuario()) return new BadRequestObjectResult(cliente);
 
-            await clientes.InsertOneAsync(cliente);
+            await _context.Clientes.InsertOneAsync(cliente);
 
             return new OkObjectResult("");
+
+        }
+
+        [HttpGet("")]
+        public async Task<IActionResult> ObterTodosClientes()
+        {
+
+            var clientes = await _clienteRepository.ObterTodos();
+
+            //var clientes = await _context.Clientes.FindAsync<Cliente>(new BsonDocument());
+
+            return new OkObjectResult(clientes);
 
         }
     }

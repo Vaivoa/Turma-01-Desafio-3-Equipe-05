@@ -1,4 +1,5 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
+﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 using System;
 
 namespace Modalmais.Business.Models
@@ -6,8 +7,9 @@ namespace Modalmais.Business.Models
     public class Entidade
     {
 
-        //[BsonRepresentation(BsonType.ObjectId)]
-        [BsonId]
+
+        //[BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; private set; }
         public DateTime DataCriacao { get; private set; }
 
