@@ -77,5 +77,16 @@ namespace Modalmais.Test.Unitarios
             // Act & Assert
             Assert.False(cliente.ValidarUsuario());
         }
+
+        [Trait("Categoria", "Testes Cliente")]
+        [Fact(DisplayName = "Validar criação de um cliente inválido")]
+        public void NovoCliente_ClienteValido_ValidadorDeveRetornarVerdadeiro()
+        {
+            // Arrange
+            var cliente = _clienteFixtureTestes.GerarClienteIncorreto();
+
+            // Act & Assert
+            Assert.True(cliente.ValidarUsuario());
+        }
     }
 }

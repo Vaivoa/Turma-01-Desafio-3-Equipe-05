@@ -27,6 +27,18 @@ namespace Modalmais.Test.Unitarios
             return clienteValido;
         }
 
+        public Cliente GerarClienteIncorreto()
+        {
+            var clienteIncorreto = new Cliente(
+                "",
+                "",
+                "",
+                new Contato(new Celular(DDDBrasil.SP_Bauru, ""), "")
+            );
+
+            return clienteIncorreto;
+        }
+
         public void Dispose()
         {
         }
