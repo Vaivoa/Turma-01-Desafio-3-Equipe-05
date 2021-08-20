@@ -18,7 +18,7 @@ namespace Modalmais.Business.Models
             this.CPF = CPF;
             Contato = contato;
             ContaCorrente = new ContaCorrente();
-            ValidarUsuario();
+
         }
 
 

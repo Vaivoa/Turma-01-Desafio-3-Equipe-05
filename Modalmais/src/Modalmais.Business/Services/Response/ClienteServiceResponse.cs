@@ -2,6 +2,7 @@
 using Modalmais.Business.Interfaces.Repository;
 using Modalmais.Business.Interfaces.Services.Request;
 using Modalmais.Business.Models;
+using Modalmais.Business.Models.ObjectValues;
 using Modalmais.Business.Service;
 using Modalmais.Business.Utils;
 using System.Collections.Generic;
@@ -36,6 +37,10 @@ namespace Modalmais.Business.Services.Response
             if (!CpfValidacao.Validar(cpf))
             { AdicionarNotificacao("CPF deve ser valido."); return false; }
             return await _clienteRepository.ChecarEntidadeExistente(nameof(Cliente.CPF), cpf);
+        }
+        public async Task<bool> ChecarPorEmailSeClienteExiste(string email)
+        {
+            return await _clienteRepository.ChecarEntidadeExistente(nameof(Contato)+"."+nameof(Contato.Email), email);
         }
 
         public void Dispose()
