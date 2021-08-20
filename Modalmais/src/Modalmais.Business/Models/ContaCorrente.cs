@@ -1,20 +1,37 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Modalmais.Business.Models
 {
-    public class ContaCorrente : Entidade
+    public class ContaCorrente
     {
-        public string Codigo { get; }
-        public string Agencia { get; }
+        public string Banco { get; private set; }
+        public string Agencia { get; private set; }
+        public string Numero { get; private set; }
+        public DateTime DataCriacao { get; private set; }
+
 
         public ContaCorrente()
         {
-            Codigo = "746";
+            Banco = "746";
             Agencia = "0001";
+            Numero = GerarNumeroConta();
+            DataCriacao = DateTime.Now;
         }
+
+        public string GerarNumeroConta()
+        {
+
+            var numeroConta = "";
+            var random = new Random();
+
+            for (int i = 0; i < 16; i++)
+            {
+                numeroConta += random.Next(0, 10).ToString();
+            }
+
+            return numeroConta;
+        }
+
+
     }
 }

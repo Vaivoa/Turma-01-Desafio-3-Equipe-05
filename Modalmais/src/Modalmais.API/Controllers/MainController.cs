@@ -1,9 +1,10 @@
 ﻿using AutoMapper;
+using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Modalmais.Business.Interfaces.Notificador;
 using Modalmais.Business.Notificador;
-using Modalmais.Infra.Data;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Modalmais.API.Controllers
@@ -12,15 +13,13 @@ namespace Modalmais.API.Controllers
     public class MainController : ControllerBase
     {
         protected readonly IMapper _mapper;
-        protected readonly DbContext _context;
         protected readonly INotificador _notificador;
 
 
         public MainController(IMapper mapper,
-                              DbContext context, INotificador notificador)
+                              INotificador notificador)
         {
             _mapper = mapper;
-            _context = context;
             _notificador = notificador;
         }
         protected bool ValidarEntidadeListaContemErros()
@@ -62,5 +61,16 @@ namespace Modalmais.API.Controllers
             //Metodo para adicionar mensagem personalizadas de erro
             _notificador.AdicionarNotificacao(new Notificacao(mensagem));
         }
+
+
+        protected void AdicionarListaValidacaoNotificacaoErro(List<ValidationFailure> lista)
+        {
+            //Metodo para adicionar uma lista de mensagens personalizadas de erro
+            foreach (var erro in lista)
+            {
+                AdicionarNotificacaoErro(erro.ErrorMessage);
+            }
+        }
+
     }
 }

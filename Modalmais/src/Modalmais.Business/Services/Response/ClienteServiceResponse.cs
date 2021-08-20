@@ -1,14 +1,11 @@
-﻿using Modalmais.Business.Utils;
+﻿using Modalmais.Business.Interfaces.Notificador;
 using Modalmais.Business.Interfaces.Repository;
 using Modalmais.Business.Interfaces.Services.Request;
 using Modalmais.Business.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Modalmais.Business.Service;
-using Modalmais.Business.Interfaces.Notificador;
+using Modalmais.Business.Utils;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Modalmais.Business.Services.Response
 {
@@ -34,9 +31,9 @@ namespace Modalmais.Business.Services.Response
 
         public async Task<bool> ChecarPorCpfSeClienteExiste(string cpf)
         {
-            if (UtilsDigitosNumericos.SoNumeros(cpf)) 
+            if (!UtilsDigitosNumericos.SoNumeros(cpf))
             { AdicionarNotificacao("CPF deve ser somente digitos numericos."); return false; }
-            if (CpfValidacao.Validar(cpf)) 
+            if (!CpfValidacao.Validar(cpf))
             { AdicionarNotificacao("CPF deve ser valido."); return false; }
             return await _clienteRepository.ChecarEntidadeExistente(nameof(Cliente.CPF), cpf);
         }
