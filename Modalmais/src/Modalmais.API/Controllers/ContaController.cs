@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Modalmais.API.DTOs;
+using Modalmais.Business.Interfaces.Notificador;
 using Modalmais.Business.Interfaces.Repository;
 using Modalmais.Business.Models;
 using Modalmais.Infra.Data;
@@ -16,8 +17,9 @@ namespace Modalmais.API.Controllers
 
         public ContaCorrenteController(IMapper mapper,
                                        DbContext context,
+                                       INotificador notificador,
                                        IClienteRepository clienteRepository
-                                       ) : base(mapper, context)
+                                       ) : base(mapper, context, notificador)
         {
             _clienteRepository = clienteRepository;
         }

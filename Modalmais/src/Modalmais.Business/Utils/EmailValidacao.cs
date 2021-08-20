@@ -1,6 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 
-namespace mercadolivre.Business.Utils
+namespace Modalmais.Business.Utils
 {
     public static class EmailValidacao
     {
