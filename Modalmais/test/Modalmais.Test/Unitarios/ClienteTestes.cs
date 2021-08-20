@@ -1,4 +1,5 @@
-﻿using Modalmais.Business.Models;
+﻿using Microsoft.VisualStudio.TestPlatform.ObjectModel;
+using Modalmais.Business.Models;
 using Modalmais.Business.Models.Enums;
 using Modalmais.Business.Models.ObjectValues;
 using Modalmais.Business.Models.Validation;
@@ -6,8 +7,17 @@ using Xunit;
 
 namespace Modalmais.Test.Unitarios
 {
+
+    [Collection(nameof(ClienteCollection))]
     public class ClienteTestes
     {
+        private readonly ClienteFixtureTestes _clienteFixtureTestes;
+
+        public ClienteTestes(ClienteFixtureTestes clienteFixtureTestes)
+        {
+            _clienteFixtureTestes = clienteFixtureTestes;
+        }
+
         [Trait("Categoria", "Testes Cliente")]
         [Theory(DisplayName = "Validar CPF")]
         [InlineData("", true)]
@@ -55,6 +65,17 @@ namespace Modalmais.Test.Unitarios
 
             // Assert
             Assert.Equal(resultadoEsperado, resultado);
+        }
+
+        [Trait("Categoria", "Testes Cliente")]
+        [Fact(DisplayName = "Validar criação de um cliente válido")]
+        public void NovoCliente_ClienteValido_ValidadorDeveRetornarFalso()
+        {
+            // Arrange
+            var cliente = _clienteFixtureTestes.GerarClienteValido();
+
+            // Act & Assert
+            Assert.False(cliente.ValidarUsuario());
         }
     }
 }
