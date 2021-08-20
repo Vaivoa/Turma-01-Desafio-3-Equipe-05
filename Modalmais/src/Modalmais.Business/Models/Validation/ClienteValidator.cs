@@ -38,6 +38,7 @@ namespace Modalmais.Business.Models.Validation
                 .Must(UtilsDigitosNumericos.SoNumeros).WithMessage(ClientePropriedadeSoNumeros);
 
             RuleFor(cliente => cliente.Contato.Email)
+                .Must(EmailValidacao.EmailValido).WithMessage(ClientePropriedadeValida)
                 .EmailAddress(EmailValidationMode.Net4xRegex).WithMessage(ClientePropriedadeValida)
                 .NotEmpty().WithMessage(ClientePropriedadeVazia)
                 .Length(ClienteEmailMinimoChar, ClienteNomeSobrenomeEmailMaximoChar)
