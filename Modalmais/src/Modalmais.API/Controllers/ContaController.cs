@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Modalmais.API.DTOs;
 using Modalmais.Business.Interfaces.Repository;
 using Modalmais.Business.Models;
+using MongoDB.Bson;
+using MongoDB.Driver;
 using Modalmais.Infra.Data;
 using System.Threading.Tasks;
 
@@ -24,30 +26,44 @@ namespace Modalmais.API.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> Cliente(ClienteRequest clienteRequest)
+        public async Task<IActionResult> AdicionarCliente(ClienteRequest clienteRequest)
         {
             var cliente = _mapper.Map<Cliente>(clienteRequest);
 
-            if (!cliente.ValidarUsuario()) return new BadRequestObjectResult(cliente);
+            if (!cliente.ValidarUsuario()) return new BadRequestObjectResult(cliente.ListaDeErros);
 
             await _context.Clientes.InsertOneAsync(cliente);
 
-            return new OkObjectResult("");
+            return new CreatedResult(nameof(AdicionarCliente), "");
 
         }
 
-        [HttpGet("")]
-        public async Task<IActionResult> ObterTodosClientes()
+        [HttpGet]
+        public async Task<IActionResult> ListaClientes()
         {
+            IMongoCollection<Cliente> clientes = context.GetCollection<Cliente>("Clientes");
 
-            var clientes = await _clienteRepository.ObterTodos();
+            var ListaClientes = await clientes.Find(new BsonDocument()).ToListAsync();
 
-            //var clientes = await _context.Clientes.FindAsync<Cliente>(new BsonDocument());
+            return new OkObjectResult(ListaClientes);
+        }
 
-            return new OkObjectResult(clientes);
+        [HttpGet("{id}")]
+        public async Task<IActionResult> ClienteById(ObjectId id)
+        {
+            IMongoCollection<Cliente> clientes = context.GetCollection<Cliente>("Clientes");
 
+            var filtro = new BsonDocument
+            {
+                { "_id", $"{id}"}
+            };
+
+            var Cliente = await clientes.Find(filtro).FirstOrDefaultAsync();
+
+            if (Cliente != null) return new BadRequestObjectResult("Id não encontrado");
+
+            return new OkObjectResult(Cliente);
         }
     }
-
 
 }
