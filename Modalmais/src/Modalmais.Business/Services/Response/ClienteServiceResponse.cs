@@ -2,14 +2,11 @@
 using Modalmais.Business.Interfaces.Repository;
 using Modalmais.Business.Interfaces.Services.Request;
 using Modalmais.Business.Models;
+using Modalmais.Business.Models.ObjectValues;
 using Modalmais.Business.Service;
 using Modalmais.Business.Utils;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Modalmais.Business.Service;
-using Modalmais.Business.Interfaces.Notificador;
-using FluentValidation.Validators;
-using System.ComponentModel.DataAnnotations;
 
 namespace Modalmais.Business.Services.Response
 {
@@ -43,9 +40,7 @@ namespace Modalmais.Business.Services.Response
         }
         public async Task<bool> ChecarPorEmailSeClienteExiste(string email)
         {
-            if (EmailValidacao.EmailValido(email) || new EmailAddressAttribute().IsValid(email)) 
-            { AdicionarNotificacao("Email deve ser valido."); return false; }
-            return await _clienteRepository.ChecarEntidadeExistente(nameof(Cliente.Contato.Email), email);
+            return await _clienteRepository.ChecarEntidadeExistente(nameof(Contato)+"."+nameof(Contato.Email), email);
         }
 
         public void Dispose()

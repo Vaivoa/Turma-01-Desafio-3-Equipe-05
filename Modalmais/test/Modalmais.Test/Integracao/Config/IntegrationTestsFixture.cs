@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Modalmais.API.MVC;
 using Xunit;
 
-namespace NerdStore.WebApp.Tests.Config
+namespace Modalmais.Test.Tests.Config
 {
     [CollectionDefinition(nameof(IntegrationApiTestsFixtureCollection))]
     public class IntegrationApiTestsFixtureCollection : ICollectionFixture<IntegrationTestsFixture<StartupApiTests>> { }
@@ -15,7 +15,7 @@ namespace NerdStore.WebApp.Tests.Config
 
         public string UsuarioEmail;
 
-        public readonly LojaAppFactory<TStartup> Factory;
+        public readonly StartUpFactory<TStartup> Factory;
         public HttpClient Client;
 
         public IntegrationTestsFixture()
@@ -28,7 +28,7 @@ namespace NerdStore.WebApp.Tests.Config
                 MaxAutomaticRedirections = 7
             };
 
-            Factory = new LojaAppFactory<TStartup>();
+            Factory = new StartUpFactory<TStartup>();
             Client = Factory.CreateClient(clientOptions);
         }
 
@@ -37,8 +37,6 @@ namespace NerdStore.WebApp.Tests.Config
             var faker = new Faker("pt_BR");
             UsuarioEmail = faker.Internet.Email(faker.Name.FirstName(),faker.Name.LastName()).ToLower();
         }
-
-
 
         public void Dispose()
         {
