@@ -7,7 +7,9 @@ using Modalmais.Business.Interfaces.Repository;
 using Modalmais.Business.Interfaces.Services.Request;
 using Modalmais.Business.Interfaces.Services.Response;
 using Modalmais.Business.Models;
+using Modalmais.Business.Utils;
 using Modalmais.Infra.Data;
+using MongoDB.Bson;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -81,12 +83,15 @@ namespace Modalmais.API.Controllers
         }
 
 
-        [HttpGet("{id}")]
+        [HttpGet("{id:length(24)}")]
         public async Task<IActionResult> ObterClientePeloId(string id)
-        {
-
+        {           
             var Cliente = await _clienteRepository.ObterPorId(id);
-
+            if (Cliente == null)
+            {
+                AdicionarNotificacaoErro("Cliente não encontrado");
+                return NotificarErrorsEmLista();
+            }
 
             var ClienteResponse = _mapper.Map<ClienteAdicionarResponse>(Cliente);
 
