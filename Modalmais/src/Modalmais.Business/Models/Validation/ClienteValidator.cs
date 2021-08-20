@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 using FluentValidation.Validators;
-using mercadolivre.Business.Utils;
+using Modalmais.Business.Utils;
 
 namespace Modalmais.Business.Models.Validation
 {
