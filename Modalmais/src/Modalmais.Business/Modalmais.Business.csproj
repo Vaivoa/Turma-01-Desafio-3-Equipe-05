@@ -5,13 +5,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="FluentValidation" Version="10.3.1" />
-    <PackageReference Include="MongoDB.Driver" Version="2.13.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Services\Response\" />
-    <Folder Include="Services\Request\" />
+    <PackageReference Include="FluentValidation" Version="10.3.1" />
+    <PackageReference Include="MongoDB.Driver" Version="2.13.1" />
   </ItemGroup>
 
 </Project>
