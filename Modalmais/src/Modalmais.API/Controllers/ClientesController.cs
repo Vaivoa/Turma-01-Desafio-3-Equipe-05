@@ -9,6 +9,7 @@ using Modalmais.Business.Interfaces.Services.Response;
 using Modalmais.Business.Models;
 using Modalmais.Infra.Data;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -69,8 +70,14 @@ namespace Modalmais.API.Controllers
         public async Task<IActionResult> ListaClientes()
         {
             var ListaClientes = await _clienteServiceResponse.BuscarTodos();
+            var ListaClientesResponse = new List<ClienteAdicionarResponse>();
 
-            return Ok(ListaClientes);
+            foreach (var cliente in ListaClientes)
+            {
+                ListaClientesResponse.Add(_mapper.Map<ClienteAdicionarResponse>(cliente));
+            }
+
+            return Ok(ListaClientesResponse);
         }
 
 
@@ -82,7 +89,9 @@ namespace Modalmais.API.Controllers
 
             if (Cliente != null) return new BadRequestObjectResult("Id não encontrado");
 
-            return new OkObjectResult(Cliente);
+            var ClienteResponse = _mapper.Map<ClienteAdicionarResponse>(Cliente);
+
+            return new OkObjectResult(ClienteResponse);
         }
 
 
