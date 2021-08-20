@@ -12,12 +12,12 @@ using System.Threading.Tasks;
 namespace Modalmais.API.Controllers
 {
     [Route("api/v1/clientes")]
-    public class ClienteCorrenteController : MainController
+    public class ClientesCorrenteController : MainController
     {
 
         protected readonly IClienteRepository _clienteRepository;
 
-        public ClienteCorrenteController(IMapper mapper,
+        public ClientesCorrenteController(IMapper mapper,
                                        DbContext context,
                                        INotificador notificador,
                                        IClienteRepository clienteRepository
