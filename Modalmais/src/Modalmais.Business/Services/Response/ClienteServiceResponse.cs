@@ -36,11 +36,11 @@ namespace Modalmais.Business.Services.Response
             { AdicionarNotificacao("CPF deve ser somente digitos numericos."); return false; }
             if (!CpfValidacao.Validar(cpf))
             { AdicionarNotificacao("CPF deve ser valido."); return false; }
-            return await _clienteRepository.ChecarEntidadeExistente(nameof(Cliente.CPF), cpf);
+            return await _clienteRepository.ChecarEntidadeExistente(nameof(Cliente.Documento.CPF), cpf);
         }
         public async Task<bool> ChecarPorEmailSeClienteExiste(string email)
         {
-            return await _clienteRepository.ChecarEntidadeExistente(nameof(Contato)+"."+nameof(Contato.Email), email);
+            return await _clienteRepository.ChecarEntidadeExistente(nameof(Contato) + "." + nameof(Contato.Email), email);
         }
 
         public void Dispose()

@@ -6,7 +6,7 @@ namespace Modalmais.API.DTOs
     {
         public string Nome { get; set; }
         public string Sobrenome { get; set; }
-        public string CPF { get; set; }
+        public DocumentoAddRequest Documento { get; set; }
         public ContatoAddRequest Contato { get; set; }
 
     }
@@ -22,6 +22,12 @@ namespace Modalmais.API.DTOs
     {
         public DDDBrasil DDD { get; set; }
         public string Numero { get; set; }
+
+    }
+
+    public class DocumentoAddRequest
+    {
+        public string CPF { get; set; }
 
     }
 }
