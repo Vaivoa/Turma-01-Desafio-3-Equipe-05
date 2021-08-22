@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Modalmais.API.DTOs;
+using Modalmais.API.Extensions;
 using Modalmais.Business.Interfaces.Notificador;
 using Modalmais.Business.Interfaces.Services.Request;
 using Modalmais.Business.Interfaces.Services.Response;
@@ -9,7 +10,6 @@ using Modalmais.Business.Models;
 using Modalmais.Business.Utils;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Modalmais.API.Controllers
@@ -18,52 +18,46 @@ namespace Modalmais.API.Controllers
     public class ClientesCorrenteController : MainController
     {
 
-        
+
         protected readonly IClienteServiceRequest _clienteServiceRequest;
         protected readonly IClienteServiceResponse _clienteServiceResponse;
 
-        public ClientesCorrenteController(IMapper mapper,                                       
-                                       INotificador notificador,                                       
+        public ClientesCorrenteController(IMapper mapper,
+                                       INotificador notificador,
                                        IClienteServiceRequest clienteServiceRequest,
                                        IClienteServiceResponse clienteServiceResponse
                                        ) : base(mapper, notificador)
-        {            
+        {
             _clienteServiceRequest = clienteServiceRequest;
             _clienteServiceResponse = clienteServiceResponse;
         }
 
 
+        [CustomResponse(StatusCodes.Status201Created)]
+        [CustomResponse(StatusCodes.Status400BadRequest)]
         [HttpPost]
         public async Task<IActionResult> AdicionarCliente(ClienteAdicionarRequest clienteRequest)
         {
-            if (!ModelState.IsValid) return NotificarErrorsEmLista(ModelState);
+            if (!ModelState.IsValid) return ResponseModelErro(ModelState);
 
             var cliente = _mapper.Map<Cliente>(clienteRequest);
 
-            if (cliente.ListaDeErros.Any())
-            {
-                AdicionarListaValidacaoNotificacaoErro(cliente.ListaDeErros);
-                return NotificarErrorsEmLista();
-            }
+            if (!cliente.IsValid()) ResponseEntidadeErro(cliente.ListaDeErros);
 
             await _clienteServiceRequest.AdicionarCliente(cliente);
 
-            if (ValidarEntidadeListaContemErros()) return NotificarErrorsEmLista();
+            if (NotificadorContemErros()) return ResponseBadRequest();
 
             var clienteAdicionarResponse = _mapper.Map<ClienteAdicionarResponse>(cliente);
 
-
-            return CreatedAtAction(nameof(ObterClientePeloId), new { clienteAdicionarResponse.Id },
-                    new
-                    {
-                        sucess = true,
-                        response = clienteAdicionarResponse
-                    });
+            return ResponseCreated(clienteAdicionarResponse);
 
         }
 
+
+        [CustomResponse(StatusCodes.Status200OK)]
         [HttpGet]
-        public async Task<IActionResult> ListaClientes()
+        public async Task<IActionResult> ObterTodosClientes()
         {
             var ListaClientes = await _clienteServiceResponse.BuscarTodos();
             var ListaClientesResponse = new List<ClienteAdicionarResponse>();
@@ -73,34 +67,26 @@ namespace Modalmais.API.Controllers
                 ListaClientesResponse.Add(_mapper.Map<ClienteAdicionarResponse>(cliente));
             }
 
-            return Ok(ListaClientesResponse);
+            return ResponseOk(ListaClientesResponse);
         }
 
-
+        [CustomResponse(StatusCodes.Status200OK)]
+        [CustomResponse(StatusCodes.Status400BadRequest)]
+        [CustomResponse(StatusCodes.Status404NotFound)]
         [HttpGet("{id}")]
         public async Task<IActionResult> ObterClientePeloId(string id)
         {
 
-            if (!ObjectIdValidacao.Validar(id))
-            {
-                AdicionarNotificacaoErro("Formato invalido");
-                return NotificarErrorsEmLista();
-            };
+            if (!ObjectIdValidacao.Validar(id)) return ResponseBadRequest("Formato de dado inválido.");
 
             var Cliente = await _clienteServiceResponse.BuscarClientePorId(id);
-            
-            if (Cliente == null)
-            {
-                return NotFound("Cliente não encontrado");
-            }
+
+            if (Cliente == null) return ResponseNotFound("O cliente não foi encontrado.");
 
             var ClienteResponse = _mapper.Map<ClienteAdicionarResponse>(Cliente);
 
-
-            return new OkObjectResult(ClienteResponse);
+            return ResponseOk(ClienteResponse);
         }
-
-
 
         [ApiExplorerSettings(IgnoreApi = true)]
         [NonAction]
