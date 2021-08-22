@@ -69,7 +69,8 @@ namespace Modalmais.API.Controllers
             var cliente = await _clienteServiceResponse.BuscarClientePorId(id);
             if (cliente == null) return ResponseNotFound("O cliente não foi encontrado.");
 
-            if (cliente.ContaCorrente.Numero != imagemDocumentoRequest.Numero) return ResponseForbidden();
+            if (cliente.ContaCorrente.Numero != imagemDocumentoRequest.Numero ||
+                cliente.Documento.CPF != imagemDocumentoRequest.CPF) return ResponseForbidden();
 
             if (!cliente.Documento.ImagemDocumentoValidar(imagemDocumentoRequest.ImagemDocumento)) return ResponseBadRequest("A imagem do documento não é válida.");
 
