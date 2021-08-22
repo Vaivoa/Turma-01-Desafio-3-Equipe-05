@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
-using Modalmais.Business.Models;
 
-namespace Modalmais.Infra.Profiles
+namespace Modalmais.API.Profiles
 {
     public class ContaCorrenteProfile : Profile
     {

@@ -12,11 +12,12 @@ namespace Modalmais.Business.Models
 
         public Cliente(string nome, string sobrenome, string CPF, Contato contato)
         {
-
+            ListaDeErros = new List<ValidationFailure>();
             Nome = nome;
             Sobrenome = sobrenome;
             this.CPF = CPF;
             Contato = contato;
+            ContaCorrente = new ContaCorrente();
 
         }
 
@@ -26,14 +27,23 @@ namespace Modalmais.Business.Models
         public string CPF { get; private set; }
         public Contato Contato { get; private set; }
         public ContaCorrente ContaCorrente { get; private set; }
+
+
+
         [BsonIgnore]
         public List<ValidationFailure> ListaDeErros { get; private set; }
 
+
+
         // Retorna True se tiverem erros
-        public bool ValidarUsuario()
+        public bool IsValid()
         {
+            ListaDeErros.Clear();
+
             ListaDeErros = new ClienteValidator().Validate(this).Errors;
+
             return ListaDeErros.Any();
         }
+
     }
 }

@@ -1,18 +1,17 @@
 ﻿using FluentValidation;
 using FluentValidation.Validators;
+using Modalmais.API.DTOs;
 using Modalmais.Business.Utils;
 
 namespace Modalmais.Business.Models.Validation
 {
-    public class ClienteValidator : AbstractValidator<Cliente>
+    public class ClienteRequestValidator : AbstractValidator<ClienteAdicionarRequest>
     {
         public static int ClienteNomeSobrenomeEmailMaximoChar => 50;
         public static int ClienteNomeSobrenomeMinimoChar => 3;
         public static int ClienteEmailMinimoChar => 5;
         public static int ClienteCpfMinimoMaxChar => 11;
         public static int ClienteCelularMinimoMaxChar => 9;
-        public static string ClienteContaCorrenteAgencia => "0001";
-        public static string ClienteContaCorrenteBanco => "746";
         public static string ClientePropriedadeCharLimite => "A quantidade de letras da propriedade {PropertyName} permitidas {MinLength} a {MaxLength}.";
         public static string ClientePropriedadeVazia => "A {PropertyName} não pode ser vazio.";
         public static string ClientePropriedadeValida => "O {PropertyName} deve ser valido segundo as normativas.";
@@ -20,14 +19,16 @@ namespace Modalmais.Business.Models.Validation
         public static string ClienteDDDEnumValido => "O DDD deve ser formado por 11 digitos numericos.";
 
 
-        public ClienteValidator()
+        public ClienteRequestValidator()
         {
             RuleFor(cliente => cliente.Nome)
+                .NotNull().WithMessage(ClientePropriedadeVazia)
                 .Length(ClienteNomeSobrenomeMinimoChar, ClienteNomeSobrenomeEmailMaximoChar)
                 .WithMessage(ClientePropriedadeCharLimite)
                 .NotEmpty().WithMessage(ClientePropriedadeVazia);
 
             RuleFor(cliente => cliente.Sobrenome)
+                .NotNull().WithMessage(ClientePropriedadeVazia)
                 .Length(ClienteNomeSobrenomeMinimoChar, ClienteNomeSobrenomeEmailMaximoChar)
                 .WithMessage(ClientePropriedadeCharLimite)
                 .NotEmpty().WithMessage(ClientePropriedadeVazia);
@@ -35,12 +36,14 @@ namespace Modalmais.Business.Models.Validation
             RuleFor(cliente => cliente.CPF)
                 .Length(ClienteCpfMinimoMaxChar, ClienteCpfMinimoMaxChar)
                 .WithMessage(ClientePropriedadeCharLimite)
+                .NotNull().WithMessage(ClientePropriedadeVazia)
                 .NotEmpty().WithMessage(ClientePropriedadeVazia)
                 .Must(CpfValidacao.Validar).WithMessage(ClientePropriedadeValida)
                 .Must(UtilsDigitosNumericos.SoNumeros).WithMessage(ClientePropriedadeSoNumeros);
 
             RuleFor(cliente => cliente.Contato.Email)
                 .Must(EmailValidacao.EmailValido).WithMessage(ClientePropriedadeValida)
+                .NotNull().WithMessage(ClientePropriedadeVazia)
                 .EmailAddress(EmailValidationMode.Net4xRegex).WithMessage(ClientePropriedadeValida)
                 .NotEmpty().WithMessage(ClientePropriedadeVazia)
                 .Length(ClienteEmailMinimoChar, ClienteNomeSobrenomeEmailMaximoChar)
@@ -48,21 +51,15 @@ namespace Modalmais.Business.Models.Validation
 
             RuleFor(cliente => cliente.Contato.Celular.DDD)
                 .IsInEnum().WithMessage(ClientePropriedadeValida)
+                .NotNull().WithMessage(ClientePropriedadeVazia)
                 .NotEmpty().WithMessage(ClientePropriedadeVazia);
 
             RuleFor(cliente => cliente.Contato.Celular.Numero)
+                .NotNull().WithMessage(ClientePropriedadeVazia)
                 .Length(ClienteCelularMinimoMaxChar, ClienteCelularMinimoMaxChar)
                 .WithMessage(ClientePropriedadeCharLimite)
                 .NotEmpty().WithMessage(ClientePropriedadeVazia)
                 .Must(UtilsDigitosNumericos.SoNumeros).WithMessage(ClientePropriedadeSoNumeros);
-
-            RuleFor(cliente => cliente.ContaCorrente.Agencia)
-                .Must(UtilsDigitosNumericos.SoNumeros).WithMessage(ClientePropriedadeSoNumeros)
-                .Must(ag => ag == ClienteContaCorrenteAgencia).WithMessage(ClientePropriedadeValida);
-            RuleFor(cliente => cliente.ContaCorrente.Banco)
-                .Must(UtilsDigitosNumericos.SoNumeros).WithMessage(ClientePropriedadeSoNumeros)
-                .Must(banco => banco == ClienteContaCorrenteBanco).WithMessage(ClientePropriedadeValida);
-
         }
 
     }

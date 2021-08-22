@@ -4,9 +4,9 @@ namespace Modalmais.Business.Models.ObjectValues
 {
     public class Celular
     {
-        public Celular(DDDBrasil ddd, string numero)
+        public Celular(DDDBrasil DDD, string numero)
         {
-            DDD = ddd;
+            this.DDD = DDD;
             Numero = numero;
         }
 

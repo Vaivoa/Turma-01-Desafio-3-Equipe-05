@@ -6,10 +6,13 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="10.1.1" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
+    <PackageReference Include="FluentValidation.AspNetCore" Version="10.3.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.1.5" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Modalmais.Business\Modalmais.Business.csproj" />
     <ProjectReference Include="..\Modalmais.Infra\Modalmais.Infra.csproj" />
   </ItemGroup>
 

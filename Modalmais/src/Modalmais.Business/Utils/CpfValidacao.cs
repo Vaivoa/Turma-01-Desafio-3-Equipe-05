@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Linq;
 
-namespace mercadolivre.Business.Utils
+namespace Modalmais.Business.Utils
 {
-    class CpfValidacao
+    public class CpfValidacao
     {
         public const int TamanhoCpf = 11;
 
         public static bool Validar(string cpf)
         {
+            if (cpf == null) return false;
             if (!TamanhoValido(cpf)) return false;
             return !TemDigitosRepetidos(cpf) && TemDigitosValidos(cpf);
         }

@@ -1,9 +1,11 @@
-﻿namespace mercadolivre.Business.Utils
+﻿namespace Modalmais.Business.Utils
 {
     public class UtilsDigitosNumericos
     {
         public static bool SoNumeros(string valor)
         {
+            if (valor == null) return false;
+
             foreach (var c in valor)
             {
                 if (!char.IsDigit(c))
