@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 
 namespace Modalmais.API.Controllers
 {
+
     [Route("api/v1/clientes")]
     public class ClientesCorrenteController : MainController
     {
@@ -110,7 +111,6 @@ namespace Modalmais.API.Controllers
 
             return urlFake;
         }
-
 
     }
 
