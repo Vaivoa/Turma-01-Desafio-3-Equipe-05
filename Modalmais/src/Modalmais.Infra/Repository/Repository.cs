@@ -50,7 +50,7 @@ namespace Modalmais.Infra.Repository
         public virtual async Task Update(TEntity obj)
         {
 
-            await DbSet.ReplaceOneAsync(Builders<TEntity>.Filter.Eq("_id", obj.Id), obj);
+            await DbSet.ReplaceOneAsync(Builders<TEntity>.Filter.Eq(o => o.Id, obj.Id), obj);
 
         }
 

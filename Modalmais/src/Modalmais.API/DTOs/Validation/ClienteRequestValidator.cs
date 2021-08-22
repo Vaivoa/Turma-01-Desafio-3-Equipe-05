@@ -33,7 +33,7 @@ namespace Modalmais.Business.Models.Validation
                 .WithMessage(ClientePropriedadeCharLimite)
                 .NotEmpty().WithMessage(ClientePropriedadeVazia);
 
-            RuleFor(cliente => cliente.CPF)
+            RuleFor(cliente => cliente.Documento.CPF)
                 .Length(ClienteCpfMinimoMaxChar, ClienteCpfMinimoMaxChar)
                 .WithMessage(ClientePropriedadeCharLimite)
                 .NotNull().WithMessage(ClientePropriedadeVazia)

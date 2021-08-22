@@ -138,6 +138,12 @@ namespace Modalmais.API.Controllers
         protected IActionResult ResponseUnauthorized() =>
             Response(HttpStatusCode.Unauthorized, errorMessage: "Permissão negada");
 
+        protected IActionResult ResponseForbidden(string errorMessage) =>
+            Response(HttpStatusCode.Forbidden, errorMessage: errorMessage);
+
+        protected IActionResult ResponseForbidden() =>
+            Response(HttpStatusCode.Forbidden, errorMessage: "Permissão negada");
+
         protected IActionResult ResponseInternalServerError() =>
             Response(HttpStatusCode.InternalServerError);
 

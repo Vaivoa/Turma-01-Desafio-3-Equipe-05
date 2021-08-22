@@ -36,7 +36,7 @@ namespace Modalmais.API.Controllers
 
         [CustomResponse(StatusCodes.Status201Created)]
         [CustomResponse(StatusCodes.Status400BadRequest)]
-        [HttpPost]
+        [HttpPost("")]
         public async Task<IActionResult> AdicionarCliente(ClienteAdicionarRequest clienteRequest)
         {
             if (!ModelState.IsValid) return ResponseModelErro(ModelState);
@@ -52,6 +52,36 @@ namespace Modalmais.API.Controllers
             var clienteAdicionarResponse = _mapper.Map<ClienteAdicionarResponse>(cliente);
 
             return ResponseCreated(clienteAdicionarResponse);
+
+        }
+
+
+        [CustomResponse(StatusCodes.Status201Created)]
+        [CustomResponse(StatusCodes.Status400BadRequest)]
+        [CustomResponse(StatusCodes.Status404NotFound)]
+        [CustomResponse(StatusCodes.Status403Forbidden)]
+        [HttpPost("{id}/documentos")]
+        public async Task<IActionResult> AdicionarImagemDocumento([FromForm] ImagemDocumentoRequest imagemDocumentoRequest, [FromRoute] string id)
+        {
+            if (!ModelState.IsValid) return ResponseModelErro(ModelState);
+            if (!ObjectIdValidacao.Validar(id)) return ResponseBadRequest("Formato de dado inválido.");
+
+            var cliente = await _clienteServiceResponse.BuscarClientePorId(id);
+            if (cliente == null) return ResponseNotFound("O cliente não foi encontrado.");
+
+            if (cliente.ContaCorrente.Numero != imagemDocumentoRequest.Numero) return ResponseForbidden();
+
+            if (!cliente.Documento.ImagemDocumentoValidar(imagemDocumentoRequest.ImagemDocumento)) return ResponseBadRequest("A imagem do documento não é válida.");
+
+            AtribuirDocumentoAoCliente(cliente, imagemDocumentoRequest.ImagemDocumento);
+
+            await _clienteServiceRequest.AdicionarImagemDocumentoCliente(cliente);
+
+            if (NotificadorContemErros()) return ResponseBadRequest();
+
+            var clienteAdicionarDocumentoResponse = _mapper.Map<ClienteAdicionarDocumentoResponse>(cliente);
+
+            return ResponseCreated(clienteAdicionarDocumentoResponse);
 
         }
 
@@ -84,32 +114,44 @@ namespace Modalmais.API.Controllers
 
             if (Cliente == null) return ResponseNotFound("O cliente não foi encontrado.");
 
-            var ClienteResponse = _mapper.Map<ClienteAdicionarResponse>(Cliente);
+            var ClienteResponse = _mapper.Map<ClienteResponse>(Cliente);
 
             return ResponseOk(ClienteResponse);
         }
 
+
+
+
+
+
+
+
+
+
+
         [ApiExplorerSettings(IgnoreApi = true)]
         [NonAction]
-        public bool ValidarDocumento(IFormFile documentorecebido)
-        {
-
-            var numero = new Random().Next(1, 3);
-
-            return numero % 2 == 0 ? true : false;
-        }
-
-        [ApiExplorerSettings(IgnoreApi = true)]
-        [NonAction]
-        public string SalvarDocumento(IFormFile documentorecebido)
+        public string ArmazenarImagemDocumentoCloud(IFormFile documentorecebido)
         {
 
             ////armazena fake
 
             var nomenclaturaPadrao = "_" + Guid.NewGuid().ToString();
-            var urlFake = $"https://i.ibb.co/{documentorecebido.FileName}{nomenclaturaPadrao}";
+            var urlFake = $"https://i.ibb.co/{documentorecebido.FileName}{nomenclaturaPadrao}.png";
 
             return urlFake;
+        }
+
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [NonAction]
+        public void AtribuirDocumentoAoCliente(Cliente cliente, IFormFile documentoRecebido)
+        {
+
+            var urlImagemDocumento = ArmazenarImagemDocumentoCloud(documentoRecebido);
+
+            cliente.Documento.AtribuirImagemDocumento(urlImagemDocumento, documentoRecebido.FileName);
+
+            cliente.ContaCorrente.AtivarConta();
         }
 
     }
