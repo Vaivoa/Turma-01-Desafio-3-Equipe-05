@@ -36,7 +36,7 @@ namespace Modalmais.Business.Models
 
 
         // Retorna True se tiverem erros
-        public bool ValidarUsuario()
+        public bool IsValid()
         {
             ListaDeErros.Clear();
 
@@ -44,21 +44,6 @@ namespace Modalmais.Business.Models
 
             return ListaDeErros.Any();
         }
-
-
-        //public string GerarNumeroConta()
-        //{
-
-        //    var numeroConta = "";
-        //    var random = new Random();
-
-        //    for (int i = 0; i < 16; i++)
-        //    {
-        //        numeroConta += random.Next(0, 10).ToString();
-        //    }
-
-        //    return numeroConta;
-        //}
 
     }
 }

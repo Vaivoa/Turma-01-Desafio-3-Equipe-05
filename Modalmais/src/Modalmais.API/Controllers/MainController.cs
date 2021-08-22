@@ -2,10 +2,14 @@
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Modalmais.API.Controllers.Shared;
+using Modalmais.API.Extensions;
 using Modalmais.Business.Interfaces.Notificador;
 using Modalmais.Business.Notificador;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 
 namespace Modalmais.API.Controllers
 {
@@ -22,32 +26,30 @@ namespace Modalmais.API.Controllers
             _mapper = mapper;
             _notificador = notificador;
         }
-        protected bool ValidarEntidadeListaContemErros()
+        protected bool NotificadorContemErros()
         {
-            //Retorna True se tiver erros lançados na camada de bussines ou data
             return _notificador.TemNotificacao();
         }
 
-        protected ActionResult NotificarErrorsEmLista(object result = null)
+        protected IEnumerable<string> ObterErrosNotificador()
         {
-            //Retorna lista de _notificacoes da classe Notificador
-            return BadRequest(new
-            {
-                success = false,
-                errors = _notificador.ListaNoticacoes().Select(n => n.Mensagem)
-            });
+            return _notificador.ListaNoticacoes().Select(n => n.Mensagem);
         }
 
-        protected ActionResult NotificarErrorsEmLista(ModelStateDictionary modelState)
+        protected IActionResult ResponseModelErro(ModelStateDictionary modelState)
         {
-            //Metodo para validar e notificar errors da modelState
-            if (!modelState.IsValid) NotificarErroModelInvalida(modelState);
-            return NotificarErrorsEmLista();
+            AdicionarNotificacaoErro(modelState);
+            return ResponseBadRequest();
         }
 
-        protected void NotificarErroModelInvalida(ModelStateDictionary modelState)
+        protected IActionResult ResponseEntidadeErro(List<ValidationFailure> erro)
         {
-            //metodo para adicionar errors da modelState na lista _notificacoes 
+            AdicionarNotificacaoErro(erro);
+            return ResponseBadRequest();
+        }
+
+        protected void AdicionarNotificacaoErro(ModelStateDictionary modelState)
+        {
             var erros = modelState.Values.SelectMany(e => e.Errors);
             foreach (var erro in erros)
             {
@@ -56,21 +58,104 @@ namespace Modalmais.API.Controllers
             }
         }
 
+        protected new JsonResult Response(HttpStatusCode statusCode, object data, string errorMessage)
+        {
+            CustomResult result = null;
+
+            if (string.IsNullOrWhiteSpace(errorMessage) && !NotificadorContemErros())
+            {
+                var success = statusCode.IsSuccess();
+
+                if (data != null)
+                    result = new CustomResult(statusCode, success, data);
+                else
+                    result = new CustomResult(statusCode, success);
+            }
+            else
+            {
+                var errors = new List<string>();
+
+                if (!string.IsNullOrWhiteSpace(errorMessage))
+                    errors.Add(errorMessage);
+
+                if (NotificadorContemErros())
+                    errors.AddRange(ObterErrosNotificador());
+
+                result = new CustomResult(statusCode, false, errors);
+            }
+            return new JsonResult(result) { StatusCode = (int)result.StatusCode };
+        }
+
         protected void AdicionarNotificacaoErro(string mensagem)
         {
-            //Metodo para adicionar mensagem personalizadas de erro
             _notificador.AdicionarNotificacao(new Notificacao(mensagem));
         }
 
-
-        protected void AdicionarListaValidacaoNotificacaoErro(List<ValidationFailure> lista)
+        protected void AdicionarNotificacaoErro(ValidationFailure erro)
         {
-            //Metodo para adicionar uma lista de mensagens personalizadas de erro
-            foreach (var erro in lista)
-            {
-                AdicionarNotificacaoErro(erro.ErrorMessage);
-            }
+            AdicionarNotificacaoErro(erro.ErrorMessage);
         }
+
+        protected void AdicionarNotificacaoErro(List<ValidationFailure> lista)
+        {
+            foreach (var erro in lista) AdicionarNotificacaoErro(erro.ErrorMessage);
+        }
+
+
+        protected IActionResult ResponseOk(object result) =>
+            Response(HttpStatusCode.OK, result);
+
+        protected IActionResult ResponseOk() =>
+            Response(HttpStatusCode.OK);
+
+        protected IActionResult ResponseCreated() =>
+            Response(HttpStatusCode.Created);
+
+        protected IActionResult ResponseCreated(object data) =>
+            Response(HttpStatusCode.Created, data);
+
+        protected IActionResult ResponseNoContent() =>
+            Response(HttpStatusCode.NoContent);
+
+        protected IActionResult ResponseNotModified() =>
+            Response(HttpStatusCode.NotModified);
+
+        protected IActionResult ResponseBadRequest(string errorMessage) =>
+            Response(HttpStatusCode.BadRequest, errorMessage: errorMessage);
+
+        protected IActionResult ResponseBadRequest() =>
+            Response(HttpStatusCode.BadRequest, errorMessage: "A requisição é inválida");
+
+        protected IActionResult ResponseNotFound(string errorMessage) =>
+            Response(HttpStatusCode.NotFound, errorMessage: errorMessage);
+
+        protected IActionResult ResponseNotFound() =>
+            Response(HttpStatusCode.NotFound, errorMessage: "O recurso não foi encontrado");
+
+        protected IActionResult ResponseUnauthorized(string errorMessage) =>
+            Response(HttpStatusCode.Unauthorized, errorMessage: errorMessage);
+
+        protected IActionResult ResponseUnauthorized() =>
+            Response(HttpStatusCode.Unauthorized, errorMessage: "Permissão negada");
+
+        protected IActionResult ResponseInternalServerError() =>
+            Response(HttpStatusCode.InternalServerError);
+
+        protected IActionResult ResponseInternalServerError(string errorMessage) =>
+            Response(HttpStatusCode.InternalServerError, errorMessage: errorMessage);
+
+        protected IActionResult ResponseInternalServerError(Exception exception) =>
+            Response(HttpStatusCode.InternalServerError, errorMessage: exception.Message);
+
+        protected new JsonResult Response(HttpStatusCode statusCode, object result) =>
+            Response(statusCode, result, null);
+
+        protected new JsonResult Response(HttpStatusCode statusCode, string errorMessage) =>
+            Response(statusCode, null, errorMessage);
+
+        protected new JsonResult Response(HttpStatusCode statusCode) =>
+            Response(statusCode, null, null);
+
 
     }
 }
