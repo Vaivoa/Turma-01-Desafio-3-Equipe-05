@@ -82,9 +82,39 @@ namespace Modalmais.API.Controllers
 
             if (NotificadorContemErros()) return ResponseBadRequest();
 
-            var clienteAdicionarDocumentoResponse = _mapper.Map<ClienteResponse>(cliente);
+            var clienteResponse = _mapper.Map<ClienteResponse>(cliente);
 
-            return ResponseCreated(clienteAdicionarDocumentoResponse);
+            return ResponseCreated(clienteResponse);
+
+        }
+
+
+
+        [CustomResponse(StatusCodes.Status201Created)]
+        [CustomResponse(StatusCodes.Status400BadRequest)]
+        [CustomResponse(StatusCodes.Status404NotFound)]
+        [CustomResponse(StatusCodes.Status403Forbidden)]
+        [HttpPost("{id}/chavepix")]
+        public async Task<IActionResult> AdicionaChavePix([FromBody] ChavePixRequest chavePixRequest, [FromRoute] string id)
+        {
+            if (!ModelState.IsValid) return ResponseModelErro(ModelState);
+            if (!ObjectIdValidacao.Validar(id)) return ResponseBadRequest("Formato de dado inválido.");
+
+            var cliente = await _clienteServiceResponse.BuscarClientePorId(id);
+            if (cliente == null) return ResponseNotFound("O cliente não foi encontrado.");
+
+            if (chavePixRequest.Tipo == TipoChavePix.CPF && chavePixRequest.Chave != cliente.Documento.CPF)
+                return ResponseBadRequest("A chave Pix só pode ser o CPF, caso for igual ao do Titular.");
+
+            var chavePix = _mapper.Map<ChavePix>(chavePixRequest);
+
+            await _clienteServiceRequest.AdicionarPixContaCliente(cliente, chavePix);
+
+            if (NotificadorContemErros()) return ResponseBadRequest();
+
+            var clienteResponse = _mapper.Map<ClienteResponse>(cliente);
+
+            return ResponseCreated(clienteResponse);
 
         }
 

@@ -22,18 +22,17 @@ namespace Modalmais.Business.Services.Request
             await _clienteRepository.Adicionar(clienteAdicionar);
         }
 
-        public async Task AdicionarImagemDocumentoCliente(Cliente clienteAdicionar)
+        public async Task AdicionarImagemDocumentoCliente(Cliente clienteAdicionarImagem)
         {
-            //if (String.IsNullOrEmpty(clienteAdicionar.Documento.UrlImagem)) 
-            //{
-            //    await _clienteRepository.Update(clienteAdicionar);
-            //    return;
-            //}
+            await _clienteRepository.Update(clienteAdicionarImagem);
+        }
 
-            //var campos = Builders<Cliente>.Update.Set(o => o.Documento.UrlImagem, clienteAdicionar.Documento.UrlImagem);
-            //campos.AddToSet(o => o.Documento.Status, clienteAdicionar.Documento.UrlImagem);
+        public async Task AdicionarPixContaCliente(Cliente clienteAdicionarPix, ChavePix chavePix)
+        {
+            clienteAdicionarPix.ContaCorrente.AdicionarChavePix(chavePix);
+            clienteAdicionarPix.ContaCorrente.ChavePix.AtivarChavePix();
 
-            await _clienteRepository.Update(clienteAdicionar);
+            await _clienteRepository.Update(clienteAdicionarPix);
         }
     }
 }

@@ -43,6 +43,11 @@ namespace Modalmais.Business.Models
             DataMudancaStatus = DateTime.Now;
         }
 
+        public void AdicionarChavePix(ChavePix chavePix)
+        {
+            ChavePix = chavePix;
+        }
+
         public void DesativarConta()
         {
             Status = Status.Desativado;

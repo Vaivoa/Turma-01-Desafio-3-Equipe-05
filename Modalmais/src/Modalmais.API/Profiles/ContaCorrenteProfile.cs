@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using Modalmais.API.DTOs;
+using Modalmais.Business.Models;
 
 namespace Modalmais.API.Profiles
 {
@@ -6,7 +8,7 @@ namespace Modalmais.API.Profiles
     {
         public ContaCorrenteProfile()
         {
-            //CreateMap<ContaCorrente, ContaCorrenteRequest>().ReverseMap();
+            CreateMap<ChavePixRequest, ChavePix>().ReverseMap();
             //CreateMap<ContaCorrente, ContaCorrenteResponse>().ReverseMap();
         }
     }
