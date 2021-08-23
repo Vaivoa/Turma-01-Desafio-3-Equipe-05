@@ -5,10 +5,12 @@ namespace Modalmais.Business.Models
 {
     public class ChavePix
     {
+
         public Status Ativo { get; set; }
         public string Chave { get; set; }
         public TipoChavePix Tipo { get; set; }
         public DateTime DataCriacao { get; set; }
+
 
         public ChavePix(string chave, TipoChavePix tipo = TipoChavePix.Aleatoria)
         {
