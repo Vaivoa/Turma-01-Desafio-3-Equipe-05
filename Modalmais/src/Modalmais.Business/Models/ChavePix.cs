@@ -1,19 +1,22 @@
 ﻿using Modalmais.Business.Models.Enums;
+using System;
 
 namespace Modalmais.Business.Models
 {
     public class ChavePix
     {
-        public Status Ativo { get; private set; }
-        public string Valor { get; private set; }
-        public TipoChavePix Tipo { get; private set; }
+        public Status Ativo { get; set; }
+        public string Chave { get; set; }
+        public TipoChavePix Tipo { get; set; }
+        public DateTime DataCriacao { get; set; }
 
-        public ChavePix(string valor, TipoChavePix tipo = TipoChavePix.Aleatoria)
+        public ChavePix(string chave, TipoChavePix tipo = TipoChavePix.Aleatoria)
         {
 
             Ativo = Status.Inativo;
-            Valor = valor;
+            Chave = chave;
             Tipo = tipo;
+            DataCriacao = DateTime.Now;
 
         }
 

@@ -1,6 +1,7 @@
 ﻿using Modalmais.Business.Models.Enums;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
+using System.Collections.Generic;
 
 namespace Modalmais.API.DTOs
 {
@@ -19,9 +20,16 @@ namespace Modalmais.API.DTOs
     public class DocumentoAddImagemResponse
     {
         public string CPF { get; set; }
+        public List<DocumentoImagensAddImagemResponse> Imagens { get; set; }
         public Status Status { get; set; }
+
+    }
+
+    public class DocumentoImagensAddImagemResponse
+    {
         public string UrlImagem { get; set; }
         public string NomeImagem { get; set; }
+        public Status Status { get; set; }
 
     }
 

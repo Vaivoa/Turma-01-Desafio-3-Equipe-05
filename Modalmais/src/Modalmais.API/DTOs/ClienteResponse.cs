@@ -2,6 +2,7 @@
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using System;
+using System.Collections.Generic;
 
 namespace Modalmais.API.DTOs
 {
@@ -36,19 +37,34 @@ namespace Modalmais.API.DTOs
         public string Banco { get; set; }
         public string Agencia { get; set; }
         public string Numero { get; set; }
+        public ChavePixResponse ChavePix { get; set; }
         public Status Status { get; set; }
         public DateTime DataCriacao { get; set; }
 
     }
 
+    public class ChavePixResponse
+    {
+        public Status Ativo { get; set; }
+        public string Chave { get; set; }
+        public TipoChavePix Tipo { get; set; }
+        public DateTime DataCriacao { get; set; }
+    }
+
+
     public class DocumentoResponse
     {
         public string CPF { get; set; }
         public Status Status { get; set; }
+        public List<ImagemDocumentoResponse>? Imagens { get; set; }
+    }
+
+    public class ImagemDocumentoResponse
+    {
         public string UrlImagem { get; set; }
         public string NomeImagem { get; set; }
         public DateTime DataEnvio { get; set; }
-
+        public Status Status { get; set; }
     }
 
 }

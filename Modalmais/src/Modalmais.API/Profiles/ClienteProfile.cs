@@ -23,12 +23,15 @@ namespace Modalmais.API.Profiles
 
             CreateMap<Cliente, ClienteAdicionarDocumentoResponse>();
             CreateMap<Documento, DocumentoAddImagemResponse>();
+            CreateMap<ImagemDocumento, DocumentoImagensAddImagemResponse>();
 
             CreateMap<Cliente, ClienteResponse>();
             CreateMap<Documento, DocumentoResponse>();
+            CreateMap<ImagemDocumento, ImagemDocumentoResponse>();
             CreateMap<Contato, ContatoResponse>();
             CreateMap<Celular, CelularResponse>();
             CreateMap<ContaCorrente, ContaCorrenteResponse>();
+            CreateMap<ChavePix, ChavePixResponse>();
 
 
 
