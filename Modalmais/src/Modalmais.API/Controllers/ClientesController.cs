@@ -105,6 +105,8 @@ namespace Modalmais.API.Controllers
 
             if (chavePixRequest.Tipo == TipoChavePix.CPF && chavePixRequest.Chave != cliente.Documento.CPF)
                 return ResponseBadRequest("A chave Pix só pode ser o CPF, caso for igual ao do Titular.");
+            if (chavePixRequest.Tipo != TipoChavePix.Aleatoria && String.IsNullOrEmpty(chavePixRequest.Chave))
+                return ResponseBadRequest($"O tipo de chave {chavePixRequest.Tipo} requer uma chave.");
 
             var chavePix = _mapper.Map<ChavePix>(chavePixRequest);
 

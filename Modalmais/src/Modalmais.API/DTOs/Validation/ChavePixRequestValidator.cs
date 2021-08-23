@@ -32,7 +32,7 @@ namespace Modalmais.API.DTOs.Validation
 
 
 
-            When(chavePixRequest => chavePixRequest.Tipo == TipoChavePix.CPF, () =>
+            When(chavePixRequest => chavePixRequest.Tipo == TipoChavePix.CPF && chavePixRequest.Chave != null, () =>
             {
                 RuleFor(chavePixRequest => chavePixRequest.Chave)
                 .Length(ClienteCpfMinimoMaxChar, ClienteCpfMinimoMaxChar)
@@ -43,7 +43,7 @@ namespace Modalmais.API.DTOs.Validation
                 .Must(UtilsDigitosNumericos.SoNumeros).WithMessage("O Cpf precisa ser um válido.");
             });
 
-            When(chavePixRequest => chavePixRequest.Tipo == TipoChavePix.Email, () =>
+            When(chavePixRequest => chavePixRequest.Tipo == TipoChavePix.Email && chavePixRequest.Chave != null, () =>
             {
                 RuleFor(chavePixRequest => chavePixRequest.Chave)
                 .Must(EmailValidacao.EmailValido).WithMessage("O Email informado é invalido.")
@@ -54,7 +54,7 @@ namespace Modalmais.API.DTOs.Validation
                 .WithMessage(ClientePropriedadeCharLimite);
             });
 
-            When(chavePixRequest => chavePixRequest.Tipo == TipoChavePix.Telefone, () =>
+            When(chavePixRequest => chavePixRequest.Tipo == TipoChavePix.Telefone && chavePixRequest.Chave != null, () =>
             {
 
                 RuleFor(chavePixRequest => chavePixRequest.Chave.Substring(0, 2))
