@@ -17,7 +17,7 @@ namespace Modalmais.API.Configurations
         {
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-            services.InjecaoDependencias(Configuration, Startup._hostEnvironment);
+            services.InjecaoDependencias();
 
             services.Configure<ApiBehaviorOptions>(options =>
             {
