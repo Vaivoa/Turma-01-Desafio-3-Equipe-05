@@ -23,7 +23,7 @@ namespace Modalmais.Test.Tests.Config
             var clientOptions = new WebApplicationFactoryClientOptions
             {
                 AllowAutoRedirect = true,
-                BaseAddress = new Uri("https://localhost:5001"),
+                BaseAddress = new Uri("http://localhost"),
                 HandleCookies = true,
                 MaxAutomaticRedirections = 7
             };

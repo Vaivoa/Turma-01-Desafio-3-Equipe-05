@@ -18,7 +18,6 @@ namespace Modalmais.API.MVC
     public class StartupApiTests
     {
         public IConfiguration Configuration { get; }
-        
 
         public StartupApiTests(IWebHostEnvironment hostEnvironment)
         {
@@ -27,6 +26,7 @@ namespace Modalmais.API.MVC
                 .AddJsonFile("appsettings.json", true, true)
                 .AddJsonFile($"appsettings.{hostEnvironment.EnvironmentName}.json", true, true)
                 .AddEnvironmentVariables();
+
             Configuration = builder.Build();
         }
 

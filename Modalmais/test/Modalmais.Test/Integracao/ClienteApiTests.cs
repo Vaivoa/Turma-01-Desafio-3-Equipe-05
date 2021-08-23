@@ -1,13 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
 using Features.Tests;
 using Modalmais.API.MVC;
-using Modalmais.Business.Models;
 using Modalmais.Test.Tests.Config;
-using Newtonsoft.Json;
 using Xunit;
 
 namespace Modalmais.Test.Tests
@@ -27,20 +22,12 @@ namespace Modalmais.Test.Tests
         [Trait("Categoria", "Integração API - Clientes")]
         public async Task ObterTodos_DeveRetornarComSucesso()
         {
-            //Act && Arrange
-            var postResponse = await _testsFixture.Client.GetAsync("/api/v1/clientes");
-            var response = JsonConvert.DeserializeObject
-                    <IEnumerable<Cliente>>(postResponse.Content.ReadAsStringAsync().Result);
+            // Arrange
+             // Act
+             var postResponse = await _testsFixture.Client.GetAsync("/api/v1/clientes");
+
              // Assert
-            postResponse.EnsureSuccessStatusCode();
-            Assert.Equal(2, response.Count());
+             postResponse.EnsureSuccessStatusCode();
         }
-    }
-    public class ResponseBase<T>
-    {
-        public HttpStatusCode StatusCode { get; private set; }
-        public bool Success { get; private set; }
-        public T Data { get; private set; }
-        public IEnumerable<string> Errors { get; private set; }
     }
 }

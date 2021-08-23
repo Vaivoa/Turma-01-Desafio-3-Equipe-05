@@ -8,26 +8,17 @@ namespace Modalmais.API
 {
     public class Startup
     {
-        public IConfiguration Configuration { get; }
-        internal static string _hostEnvironment { get; private set; }
-        public Startup(IConfiguration configuration, IWebHostEnvironment hostEnvironment)
+        public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
-
-            var builder = new ConfigurationBuilder()
-                .SetBasePath(hostEnvironment.ContentRootPath)
-                .AddJsonFile("appsettings.json", true, true)
-                .AddJsonFile($"appsettings.{hostEnvironment.EnvironmentName}.json", true, true)
-                .AddEnvironmentVariables();
-            _hostEnvironment = hostEnvironment.EnvironmentName;
-
-            Configuration = builder.Build();
         }
-        
+
+        public IConfiguration Configuration { get; }
+
         public void ConfigureServices(IServiceCollection services)
         {
 
-            services.AddConfiguracaoApp(Configuration);
+            services.AddConfiguracaoApp();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

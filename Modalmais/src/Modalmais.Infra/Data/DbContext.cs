@@ -9,11 +9,13 @@ namespace Modalmais.Infra.Data
         const string StringConnection = "mongodb://localhost:27017";
         const string Db = "Modalmais";
 
+        static DbContext instance;
         private static readonly IMongoClient _client;
         private readonly IMongoClient _clientTeste;
-        private static IMongoDatabase _dataBase;
+        public static IMongoDatabase _dataBase;
+        public readonly IMongoDatabase _dataBaseTeste;
 
-        public IMongoDatabase Database => _dataBase;
+        public IMongoDatabase Database => _client.GetDatabase(Db);
 
 
         //exemplo de uso
