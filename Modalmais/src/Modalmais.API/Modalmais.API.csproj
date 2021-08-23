@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Modalmais.Business\Modalmais.Business.csproj" />
+    <ProjectReference Include="..\Modalmais.Infra\Modalmais.Infra.csproj" />
   </ItemGroup>
 
 </Project>

@@ -30,14 +30,15 @@ namespace Modalmais.Test.Unitarios
         public void NovoCliente_ValidarCpf_DeveCorresponderAoResultadoEsperado(string cpf, bool resultadoEsperado)
         {
             // Arrange
-            var cliente = new Cliente("Beatriz", "Pires", cpf,
+            var cliente = new Cliente("Beatriz", "Pires", 
                                 new Contato(
                                     new Celular(DDDBrasil.AC_RioBranco, "940041211"),
-                                    "email@email.com")
+                                    "email@email.com"),
+                                new Documento(cpf)
                                 );
 
             // Act
-            var resultado = cliente.ValidarUsuario();
+            var resultado = cliente.IsValid();
 
             // Assert
             Assert.Equal(resultadoEsperado, resultado);
@@ -54,14 +55,15 @@ namespace Modalmais.Test.Unitarios
         public void NovoCliente_ValidarEmail_DeveCorresponderAoResultadoEsperado(string email, bool resultadoEsperado)
         {
             // Arrange
-            var cliente = new Cliente("Beatriz", "Pires", "78080103089",
+            var cliente = new Cliente("Beatriz", "Pires", 
                 new Contato(
                     new Celular(DDDBrasil.AC_RioBranco, "940041211"),
-                    email)
+                    email),
+               new Documento( "78080103089")
             );
 
             // Act
-            var resultado = cliente.ValidarUsuario();
+            var resultado = cliente.IsValid();
 
             // Assert
             Assert.Equal(resultadoEsperado, resultado);
@@ -75,7 +77,7 @@ namespace Modalmais.Test.Unitarios
             var cliente = _clienteFixtureTestes.GerarClienteValido();
 
             // Act & Assert
-            Assert.False(cliente.ValidarUsuario());
+            Assert.False(cliente.IsValid());
         }
 
         [Trait("Categoria", "Testes Cliente")]
@@ -86,7 +88,7 @@ namespace Modalmais.Test.Unitarios
             var cliente = _clienteFixtureTestes.GerarClienteIncorreto();
 
             // Act & Assert
-            Assert.True(cliente.ValidarUsuario());
+            Assert.True(cliente.IsValid());
         }
     }
 }
