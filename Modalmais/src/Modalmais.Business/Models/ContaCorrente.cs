@@ -8,7 +8,7 @@ namespace Modalmais.Business.Models
         public string Banco { get; private set; }
         public string Agencia { get; private set; }
         public string Numero { get; private set; }
-        public ChavePix ChavePix { get; private set; }
+        public ChavePix? ChavePix { get; private set; }
         public DateTime DataCriacao { get; private set; }
         public DateTime DataMudancaStatus { get; private set; }
         public Status Status { get; private set; }
