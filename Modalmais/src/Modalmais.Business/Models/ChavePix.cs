@@ -17,18 +17,8 @@ namespace Modalmais.Business.Models
         {
 
             Ativo = Status.Inativo;
-            Chave = chave;
+            Chave = chave == null ? GerarChavePix() : chave;
             Tipo = tipo;
-            DataCriacao = DateTime.Now;
-
-        }
-
-        public ChavePix()
-        {
-
-            Ativo = Status.Inativo;
-            Chave = GerarChavePix();
-            Tipo = TipoChavePix.Aleatoria;
             DataCriacao = DateTime.Now;
 
         }
@@ -49,7 +39,7 @@ namespace Modalmais.Business.Models
         {
             var chavePix = "";
             var random = new Random();
-            var chars = "abcdefghijklmnopqrstuvwxyz-";
+            var chars = "abcdefghijklmnopqrstuvwxyz--------";
 
             for (int i = 0; i < 32; i++)
             {
@@ -59,7 +49,7 @@ namespace Modalmais.Business.Models
                 }
                 else
                 {
-                    chavePix += chars.Select(c => chars[random.Next(chars.Length)]);
+                    chavePix += chars.Select(c => chars[random.Next(chars.Length)]).First();
                 }
             }
 
