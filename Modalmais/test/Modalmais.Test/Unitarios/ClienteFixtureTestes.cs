@@ -27,8 +27,8 @@ namespace Modalmais.Test.Unitarios
                 .CustomInstantiator(f => new Cliente(
                     nome,
                     sobrenome,
-                    f.Person.Cpf(false),
-                    new Contato(new Celular(ddd, numero), f.Internet.ExampleEmail(nome,sobrenome))
+                    new Contato(new Celular(ddd, numero), f.Internet.ExampleEmail(nome,sobrenome)),
+                    new Documento(f.Person.Cpf(false))
                 ));
 
             return clienteValido;
@@ -39,8 +39,8 @@ namespace Modalmais.Test.Unitarios
             var clienteIncorreto = new Cliente(
                 "",
                 "",
-                "",
-                new Contato(new Celular(DDDBrasil.SP_Bauru, ""), "")
+                new Contato(new Celular(DDDBrasil.SP_Bauru, ""), ""),
+                new Documento("")
             );
 
             return clienteIncorreto;
