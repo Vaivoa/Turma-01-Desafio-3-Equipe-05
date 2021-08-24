@@ -3,6 +3,10 @@ using Modalmais.Business.Models;
 using Modalmais.Business.Models.Enums;
 using Modalmais.Business.Models.ObjectValues;
 using Modalmais.Business.Models.Validation;
+using Newtonsoft.Json;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
 using Xunit;
 
 namespace Modalmais.Test.Unitarios
@@ -80,15 +84,7 @@ namespace Modalmais.Test.Unitarios
             Assert.False(cliente.IsValid());
         }
 
-        [Trait("Categoria", "Testes Cliente")]
-        [Fact(DisplayName = "Validar criação de um cliente inválido")]
-        public void NovoCliente_ClienteValido_ValidadorDeveRetornarVerdadeiro()
-        {
-            // Arrange
-            var cliente = _clienteFixtureTestes.GerarClienteIncorreto();
-
-            // Act & Assert
-            Assert.True(cliente.IsValid());
-        }
+        
+        
     }
 }

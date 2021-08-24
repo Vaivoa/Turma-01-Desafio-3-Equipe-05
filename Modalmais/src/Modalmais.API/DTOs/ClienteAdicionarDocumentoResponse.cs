@@ -6,6 +6,20 @@ namespace Modalmais.API.DTOs
 {
     public class ClienteAdicionarDocumentoResponse
     {
+        public ClienteAdicionarDocumentoResponse()
+        {
+        }
+
+        public ClienteAdicionarDocumentoResponse(string id, string nome, string sobrenome, DocumentoAddImagemResponse documento, ContatoAddResponse contato, ContaCorrenteAddResponse contaCorrente)
+        {
+            Id = id;
+            Nome = nome;
+            Sobrenome = sobrenome;
+            Documento = documento;
+            Contato = contato;
+            ContaCorrente = contaCorrente;
+        }
+
         [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; }
         public string Nome { get; set; }
