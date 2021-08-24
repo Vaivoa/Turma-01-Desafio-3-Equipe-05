@@ -7,9 +7,12 @@ using Modalmais.Business.Interfaces.Notificador;
 using Modalmais.Business.Interfaces.Services.Request;
 using Modalmais.Business.Interfaces.Services.Response;
 using Modalmais.Business.Models;
+using Modalmais.Business.Models.Enums;
+using Modalmais.Business.Models.ObjectValues;
 using Modalmais.Business.Utils;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Modalmais.API.Controllers
@@ -49,7 +52,7 @@ namespace Modalmais.API.Controllers
 
             if (NotificadorContemErros()) return ResponseBadRequest();
 
-            var clienteAdicionarResponse = _mapper.Map<ClienteAdicionarResponse>(cliente);
+            var clienteAdicionarResponse = _mapper.Map<ClienteResponse>(cliente);
 
             return ResponseCreated(clienteAdicionarResponse);
 
@@ -72,17 +75,48 @@ namespace Modalmais.API.Controllers
             if (cliente.ContaCorrente.Numero != imagemDocumentoRequest.Numero ||
                 cliente.Documento.CPF != imagemDocumentoRequest.CPF) return ResponseForbidden();
 
-            if (!cliente.Documento.ImagemDocumentoValidar(imagemDocumentoRequest.ImagemDocumento)) return ResponseBadRequest("A imagem do documento não é válida.");
-
-            AtribuirDocumentoAoCliente(cliente, imagemDocumentoRequest.ImagemDocumento);
+            if (!AtribuirDocumentoAoCliente(cliente, imagemDocumentoRequest.ImagemDocumento))
+                return ResponseBadRequest("A imagem do documento não é válida.");
 
             await _clienteServiceRequest.AdicionarImagemDocumentoCliente(cliente);
 
             if (NotificadorContemErros()) return ResponseBadRequest();
 
-            var clienteAdicionarDocumentoResponse = _mapper.Map<ClienteAdicionarDocumentoResponse>(cliente);
+            var clienteResponse = _mapper.Map<ClienteResponse>(cliente);
 
-            return ResponseCreated(clienteAdicionarDocumentoResponse);
+            return ResponseCreated(clienteResponse);
+
+        }
+
+
+
+        [CustomResponse(StatusCodes.Status201Created)]
+        [CustomResponse(StatusCodes.Status400BadRequest)]
+        [CustomResponse(StatusCodes.Status404NotFound)]
+        [CustomResponse(StatusCodes.Status403Forbidden)]
+        [HttpPost("{id}/chavepix")]
+        public async Task<IActionResult> AdicionaChavePix([FromBody] ChavePixRequest chavePixRequest, [FromRoute] string id)
+        {
+            if (!ModelState.IsValid) return ResponseModelErro(ModelState);
+            if (!ObjectIdValidacao.Validar(id)) return ResponseBadRequest("Formato de dado inválido.");
+
+            var cliente = await _clienteServiceResponse.BuscarClientePorId(id);
+            if (cliente == null) return ResponseNotFound("O cliente não foi encontrado.");
+
+            if (chavePixRequest.Tipo == TipoChavePix.CPF && chavePixRequest.Chave != cliente.Documento.CPF)
+                return ResponseBadRequest("A chave Pix só pode ser o CPF, caso for igual ao do Titular.");
+            if (chavePixRequest.Tipo != TipoChavePix.Aleatoria && String.IsNullOrEmpty(chavePixRequest.Chave))
+                return ResponseBadRequest($"O tipo de chave {chavePixRequest.Tipo} requer uma chave.");
+
+            var chavePix = _mapper.Map<ChavePix>(chavePixRequest);
+
+            await _clienteServiceRequest.AdicionarPixContaCliente(cliente, chavePix);
+
+            if (NotificadorContemErros()) return ResponseBadRequest();
+
+            var clienteResponse = _mapper.Map<ClienteResponse>(cliente);
+
+            return ResponseCreated(clienteResponse);
 
         }
 
@@ -92,11 +126,11 @@ namespace Modalmais.API.Controllers
         public async Task<IActionResult> ObterTodosClientes()
         {
             var ListaClientes = await _clienteServiceResponse.BuscarTodos();
-            var ListaClientesResponse = new List<ClienteAdicionarResponse>();
+            var ListaClientesResponse = new List<ClienteResponse>();
 
             foreach (var cliente in ListaClientes)
             {
-                ListaClientesResponse.Add(_mapper.Map<ClienteAdicionarResponse>(cliente));
+                ListaClientesResponse.Add(_mapper.Map<ClienteResponse>(cliente));
             }
 
             return ResponseOk(ListaClientesResponse);
@@ -121,15 +155,6 @@ namespace Modalmais.API.Controllers
         }
 
 
-
-
-
-
-
-
-
-
-
         [ApiExplorerSettings(IgnoreApi = true)]
         [NonAction]
         public string ArmazenarImagemDocumentoCloud(IFormFile documentorecebido)
@@ -138,21 +163,41 @@ namespace Modalmais.API.Controllers
             ////armazena fake
 
             var nomenclaturaPadrao = "_" + Guid.NewGuid().ToString();
-            var urlFake = $"https://i.ibb.co/{documentorecebido.FileName}{nomenclaturaPadrao}.png";
+            var urlFake = $"https://i.ibb.co/{documentorecebido.FileName + nomenclaturaPadrao}.png";
 
             return urlFake;
         }
 
+
         [ApiExplorerSettings(IgnoreApi = true)]
         [NonAction]
-        public void AtribuirDocumentoAoCliente(Cliente cliente, IFormFile documentoRecebido)
+        public bool AtribuirDocumentoAoCliente(Cliente cliente, IFormFile documentoRecebido)
         {
 
-            var urlImagemDocumento = ArmazenarImagemDocumentoCloud(documentoRecebido);
+            var imagemDocumento = new ImagemDocumento(documentoRecebido);
+            if (imagemDocumento.Status == Status.Inativo) return false;
 
-            cliente.Documento.AtribuirImagemDocumento(urlImagemDocumento, documentoRecebido.FileName);
+            var urlImagemDocumento = ArmazenarImagemDocumentoCloud(documentoRecebido);
+            if (String.IsNullOrEmpty(urlImagemDocumento)) return false;
+
+            imagemDocumento.AtribuirUrl(urlImagemDocumento);
+
+            if (cliente.Documento.Imagens.Any())
+            {
+                foreach (var documento in cliente.Documento.Imagens)
+                {
+                    documento.DesativarImagemDocumento();
+                }
+
+                cliente.Documento.Imagens.Add(imagemDocumento);
+                return true;
+            }
 
             cliente.ContaCorrente.AtivarConta();
+            cliente.Documento.AtivarDocumento();
+            cliente.Documento.Imagens.Add(imagemDocumento);
+
+            return true;
         }
 
     }

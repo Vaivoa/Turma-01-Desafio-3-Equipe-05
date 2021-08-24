@@ -84,7 +84,53 @@ namespace Modalmais.Test.Unitarios
             Assert.False(cliente.IsValid());
         }
 
-        
-        
+        [Trait("Categoria", "Testes Cliente")]
+        [Fact(DisplayName = "Validar criação de um cliente inválido")]
+        public void NovoCliente_ClienteValido_ValidadorDeveRetornarVerdadeiro()
+        {
+            // Arrange
+            var cliente = _clienteFixtureTestes.GerarClienteIncorreto();
+
+            // Act & Assert
+            Assert.True(cliente.IsValid());
+        }
+
+        //PIX
+        [Trait("Categoria", "Testes Cliente")]
+        [Theory(DisplayName = "Validar criação de uma chave pix válida")]
+        [InlineData(null, TipoChavePix.Aleatoria)]
+        [InlineData("usuario@valido.com", TipoChavePix.Email)]
+        [InlineData("99999999999", TipoChavePix.Telefone)]
+        [InlineData("", TipoChavePix.CPF)]
+
+        public void NovaChavePix_ChavePixValida_ValidadorDeveRetornarFalso(string chave ,TipoChavePix tipo)
+        {
+            // Arrange
+            var cliente = _clienteFixtureTestes.GerarClienteValido();
+            if (tipo == TipoChavePix.CPF) chave = cliente.Documento.CPF;
+            var chavePix = new ChavePix(chave, tipo);
+            cliente.ContaCorrente.AdicionarChavePix(chavePix);
+
+            // Act & Assert
+            Assert.False(cliente.ContaCorrente.ChavePix.IsValid());
+        }
+
+        [Trait("Categoria", "Testes Cliente")]
+        [Theory(DisplayName = "Validar criação de uma chave pix inválida")]
+        [InlineData("usuariovalido.com", TipoChavePix.Email)]
+        [InlineData("999999999910", TipoChavePix.Telefone)]
+        [InlineData("675661360034", TipoChavePix.CPF)]
+
+        public void NovaChavePix_ChavePixInvalida_ValidadorDeveRetornarVerdadeiro(string chave, TipoChavePix tipo)
+        {
+            // Arrange
+            var cliente = _clienteFixtureTestes.GerarClienteValido();
+            var chavePix = new ChavePix(chave, tipo);
+            cliente.ContaCorrente.AdicionarChavePix(chavePix);
+
+            // Act & Assert
+            Assert.True(cliente.ContaCorrente.ChavePix.IsValid());
+        }
+
     }
 }

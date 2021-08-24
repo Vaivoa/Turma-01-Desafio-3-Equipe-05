@@ -16,10 +16,10 @@ namespace Modalmais.Business.Models.Validation
         public static string ClienteContaCorrenteAgencia => "0001";
         public static string ClienteContaCorrenteBanco => "746";
         public static string ClientePropriedadeCharTamanho => "O numero da conta precisa ter 16 digitos.";
-        public static string ClientePropriedadeCharLimite => "A quantidade de letras da propriedade {PropertyName} permitidas {MinLength} a {MaxLength}.";
-        public static string ClientePropriedadeVazia => "A {PropertyName} não pode ser vazio.";
-        public static string ClientePropriedadeValida => "O {PropertyName} deve ser valido segundo as normativas.";
-        public static string ClientePropriedadeSoNumeros => "O {PropertyName} deve ser formado somente por digitos numericos.";
+        public static string ClientePropriedadeCharLimite => "A quantidade de letras permitidas da propriedade {PropertyName} é de {MinLength} a {MaxLength}.";
+        public static string ClientePropriedadeVazia => "O campo {PropertyName} não pode ser vazio.";
+        public static string ClientePropriedadeValida => "O campo {PropertyName} deve ser valido segundo as normativas.";
+        public static string ClientePropriedadeSoNumeros => "O campo {PropertyName} deve ser formado somente por digitos numéricos.";
         public static string ClienteDDDEnumValido => "O DDD deve ser formado por 11 digitos numericos.";
 
 
