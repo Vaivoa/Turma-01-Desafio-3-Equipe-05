@@ -19,7 +19,7 @@ namespace Modalmais.Business.Models
 
         public ChavePix(string chave, TipoChavePix tipo)
         {
-
+            ListaDeErros = new List<ValidationFailure>();
             Ativo = Status.Inativo;
             Chave = chave == null ? GerarChavePix() : chave;
             Tipo = tipo;
