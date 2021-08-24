@@ -27,7 +27,7 @@ namespace Modalmais.Test.Tests
         }
 
         [Trait("Categoria", "Testes Integracao Cliente")]
-        [Fact(DisplayName = "Validar criação de um cliente válido")]
+        [Fact(DisplayName = "Validar Obter todos clientes")]
         public async void ObterCliente_ListaClientes_DeveRetornaStatus200()
         {
             // Arrange
