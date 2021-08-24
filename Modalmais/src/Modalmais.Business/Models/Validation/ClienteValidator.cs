@@ -21,6 +21,9 @@ namespace Modalmais.Business.Models.Validation
         public static string ClientePropriedadeValida => "O {PropertyName} deve ser valido segundo as normativas.";
         public static string ClientePropriedadeSoNumeros => "O {PropertyName} deve ser formado somente por digitos numericos.";
         public static string ClienteDDDEnumValido => "O DDD deve ser formado por 11 digitos numericos.";
+        public static string ClienteDataValida => "A data precisa ser válida.";
+        public static string ClienteDataPresente => "A data deve ser a presente.";
+        public static string ClienteDataFutura => "A data deve ser futura";
 
 
         public ClienteValidator()
@@ -60,6 +63,7 @@ namespace Modalmais.Business.Models.Validation
                 .Must(UtilsDigitosNumericos.SoNumeros).WithMessage(ClientePropriedadeSoNumeros);
 
             RuleFor(cliente => cliente.ContaCorrente.Agencia)
+                .NotEmpty().WithMessage(ClientePropriedadeVazia)
                 .Must(UtilsDigitosNumericos.SoNumeros).WithMessage(ClientePropriedadeSoNumeros)
                 .Must(ag => ag == ClienteContaCorrenteAgencia).WithMessage(ClientePropriedadeValida);
 
@@ -68,26 +72,22 @@ namespace Modalmais.Business.Models.Validation
                 .Must(banco => banco == ClienteContaCorrenteBanco).WithMessage(ClientePropriedadeValida);
 
             RuleFor(cliente => cliente.ContaCorrente.Numero)
-                .NotNull().WithMessage(ClientePropriedadeVazia)
                 .NotEmpty().WithMessage(ClientePropriedadeVazia)
                 .Length(ClienteContaNumeroMaximoChar).WithMessage(ClientePropriedadeCharLimite);
 
             RuleFor(cliente => cliente.ContaCorrente.Status)
-                .NotNull().WithMessage(ClientePropriedadeVazia)
                 .IsInEnum().WithMessage(ClientePropriedadeValida)
                 .NotEmpty().WithMessage(ClientePropriedadeVazia);
 
             RuleFor(cliente => cliente.ContaCorrente.DataCriacao)
-                .NotEmpty().WithMessage("O campo data de criação não pode estar em branco.")
-                .NotNull().WithMessage("O campo data de criação não pode ser nulo.")
-                .Must(date => date != default(DateTime)).WithMessage("A data de criação precisa ser válida.")
-                .LessThanOrEqualTo(p => DateTime.Now).WithMessage("A data de criação deve ser a presente.");
+                .NotEmpty().WithMessage(ClientePropriedadeVazia)
+                .Must(date => date != default(DateTime)).WithMessage(ClienteDataValida)
+                .LessThanOrEqualTo(p => DateTime.Now).WithMessage(ClienteDataPresente);
 
             RuleFor(cliente => cliente.ContaCorrente.DataMudancaStatus)
-                .NotEmpty().WithMessage("O campo data de mudança de status da conta não pode estar em branco.")
-                .NotNull().WithMessage("O campo data de mudança de status da conta não pode ser nulo.")
-                .Must(date => date != default(DateTime)).WithMessage("A data de mudança de status da conta precisa ser válida.")
-                .GreaterThanOrEqualTo(p => p.DataCriacao).WithMessage("A data de mudança de status da conta deve ser uma data futura.");
+                .NotEmpty().WithMessage(ClientePropriedadeVazia)
+                .Must(date => date != default(DateTime)).WithMessage(ClienteDataValida)
+                .GreaterThanOrEqualTo(p => p.DataCriacao).WithMessage(ClienteDataFutura);
 
         }
 
