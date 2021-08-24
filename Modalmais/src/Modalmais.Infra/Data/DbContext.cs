@@ -6,8 +6,6 @@ namespace Modalmais.Infra.Data
 {
     public class DbContext : IDisposable
     {
-        /*const string StringConnection = "mongodb://localhost:27017";
-        const string Db = "Modalmais";*/
 
         static DbContext instance;
         private static readonly IMongoClient _client;
@@ -16,16 +14,6 @@ namespace Modalmais.Infra.Data
 
         public IMongoDatabase Database => _dataBase;
 
-
-        //exemplo de uso
-        //var foo = new DbContext(); _context.
-        //foo.Clientes.FindAsync(); ou _context.Clientes.FindAsync();
-
-    /*    static DbContext()
-        {
-            _client = new MongoClient(StringConnection);
-            _dataBase = _client.GetDatabase(Db);
-        }*/
         public DbContext(string connectionString = null, string db = null)
         {
             if (connectionString == null || db == null) return;

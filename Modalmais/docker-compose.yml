@@ -1,0 +1,13 @@
+version: '3.4'
+
+services:
+  modalmaisdb:
+    image: mongo
+
+  modalmais.api:
+    image: ${DOCKER_REGISTRY-}modalmaisapi
+    build:
+      context: .
+      dockerfile: src/Modalmais.API/Dockerfile
+volumes:
+  mongo_data:
