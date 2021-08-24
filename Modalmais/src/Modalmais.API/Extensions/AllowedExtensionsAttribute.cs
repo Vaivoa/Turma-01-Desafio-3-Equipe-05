@@ -9,7 +9,10 @@ namespace Modalmais.API.Extensions
     public class AllowedExtensionsAttribute : ValidationAttribute
     {
         private readonly string[] _extensions;
+        public static string MsgErro => "A imagem deve estar no formato PNG.";
+
         public static string[] formato => new string[] { ".png" };
+
         public AllowedExtensionsAttribute(string[] extensions)
         {
             _extensions = extensions;

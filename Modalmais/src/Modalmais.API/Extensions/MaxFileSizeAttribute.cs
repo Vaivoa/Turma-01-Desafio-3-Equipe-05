@@ -6,6 +6,9 @@ namespace Modalmais.API.Extensions
     public class MaxFileSizeAttribute : ValidationAttribute
     {
         private readonly int _maxFileSize;
+
+        public static string MsgErro => "A imagem deve ter menos de 4 MB.";
+
         private static int tamanhoMaximo => 4 * 1024 * 1024;
         public MaxFileSizeAttribute(int maxFileSize)
         {
@@ -43,7 +46,7 @@ namespace Modalmais.API.Extensions
 
         public string GetErrorMessageNull()
         {
-            return $"A imagem é obrigatoria, e deve ter menos de 4 MB e em PNG.";
+            return $"A imagem é obrigatoria, e deve ter menos de 4 MB e ser PNG.";
         }
     }
 }
