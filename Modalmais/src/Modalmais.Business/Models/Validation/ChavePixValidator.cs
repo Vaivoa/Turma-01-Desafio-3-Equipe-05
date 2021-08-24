@@ -69,7 +69,6 @@ namespace Modalmais.Business.Models.Validation
             {
 
                 RuleFor(chavePixRequest => chavePixRequest.Chave.Substring(0, 2))
->
                 .NotNull().WithMessage(ClientePropriedadeVazia)
                 .NotEmpty().WithMessage(ClientePropriedadeVazia)
                 .Must(o =>
