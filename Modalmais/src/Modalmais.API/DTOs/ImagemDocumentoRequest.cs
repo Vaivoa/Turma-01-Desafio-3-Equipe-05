@@ -1,15 +1,14 @@
 ﻿using Microsoft.AspNetCore.Http;
-using Modalmais.API.Extensions;
 using System.ComponentModel.DataAnnotations;
 
 namespace Modalmais.API.DTOs
 {
     public class ImagemDocumentoRequest
     {
-        [Required(ErrorMessage = "Please select a file.")]
+        [Required(ErrorMessage = "A imagem do documento é obrigatoria.")]
         [DataType(DataType.Upload)]
-        [MaxFileSize(4 * 1024 * 1024)]
-        [AllowedExtensions(new string[] { ".png" })]
+        //[MaxFileSize(4 * 1024 * 1024)]
+        //[AllowedExtensions(new string[] { ".png" })]
         public IFormFile ImagemDocumento { get; set; }
 
         [Required]

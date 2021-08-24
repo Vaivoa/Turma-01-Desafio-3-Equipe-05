@@ -28,8 +28,8 @@ namespace Modalmais.Business.Models.Validation
             RuleFor(ImagemDocumento => ImagemDocumento.ImagemDocumento)
                .NotNull().WithMessage(ClientePropriedadeVazia)
                .NotEmpty().WithMessage(ClientePropriedadeVazia)
-               .Must(MaxFileSizeAttribute.TamanhoValido)
-               .Must(AllowedExtensionsAttribute.FormatoValido);
+               .Must(MaxFileSizeAttribute.TamanhoValido).WithMessage(MaxFileSizeAttribute.MsgErro)
+               .Must(AllowedExtensionsAttribute.FormatoValido).WithMessage(AllowedExtensionsAttribute.MsgErro);
 
             RuleFor(ImagemDocumento => ImagemDocumento.Agencia)
                .NotNull().WithMessage(ClientePropriedadeVazia)
