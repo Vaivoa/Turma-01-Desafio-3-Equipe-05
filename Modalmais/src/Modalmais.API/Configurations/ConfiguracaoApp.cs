@@ -11,8 +11,6 @@ namespace Modalmais.API.Configurations
 {
     public static class ConfiguracaoApp
     {
-
-
         public static IServiceCollection AddConfiguracaoApp(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
@@ -38,9 +36,10 @@ namespace Modalmais.API.Configurations
 
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
-                app.UseConfiguracaoSwagger();
+                app.UseDeveloperExceptionPage();                
             }
+
+            app.UseConfiguracaoSwagger();
 
             app.UseHttpsRedirection();
 
