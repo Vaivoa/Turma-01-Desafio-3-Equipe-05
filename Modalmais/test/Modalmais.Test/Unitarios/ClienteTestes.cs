@@ -3,6 +3,10 @@ using Modalmais.Business.Models;
 using Modalmais.Business.Models.Enums;
 using Modalmais.Business.Models.ObjectValues;
 using Modalmais.Business.Models.Validation;
+using Newtonsoft.Json;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
 using Xunit;
 
 namespace Modalmais.Test.Unitarios
@@ -127,5 +131,6 @@ namespace Modalmais.Test.Unitarios
             // Act & Assert
             Assert.True(cliente.ContaCorrente.ChavePix.IsValid());
         }
+
     }
 }

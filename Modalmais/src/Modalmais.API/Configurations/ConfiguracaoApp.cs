@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
@@ -12,11 +13,11 @@ namespace Modalmais.API.Configurations
     {
 
 
-        public static IServiceCollection AddConfiguracaoApp(this IServiceCollection services)
+        public static IServiceCollection AddConfiguracaoApp(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-            services.InjecaoDependencias();
+            services.InjecaoDependencias(configuration);
 
             services.Configure<ApiBehaviorOptions>(options =>
             {

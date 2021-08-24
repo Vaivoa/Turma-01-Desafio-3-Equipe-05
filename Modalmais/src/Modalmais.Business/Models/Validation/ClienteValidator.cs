@@ -20,10 +20,11 @@ namespace Modalmais.Business.Models.Validation
         public static string ClientePropriedadeVazia => "A {PropertyName} não pode ser vazio.";
         public static string ClientePropriedadeValida => "O {PropertyName} deve ser valido segundo as normativas.";
         public static string ClientePropriedadeSoNumeros => "O {PropertyName} deve ser formado somente por digitos numericos.";
-        public static string ClienteDDDEnumValido => "O DDD deve ser formado por 11 digitos numericos.";
+        public static string ClienteDDDEnumValido => "O DDD deve ser formado por 2 digitos numericos.";
         public static string ClienteDataValida => "A data precisa ser válida.";
         public static string ClienteDataPresente => "A data deve ser a presente.";
         public static string ClienteDataFutura => "A data deve ser futura";
+
 
 
         public ClienteValidator()
