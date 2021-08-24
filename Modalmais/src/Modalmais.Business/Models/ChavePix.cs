@@ -1,5 +1,9 @@
-﻿using Modalmais.Business.Models.Enums;
+﻿using FluentValidation.Results;
+using Modalmais.Business.Models.Enums;
+using Modalmais.Business.Models.Validation;
+using MongoDB.Bson.Serialization.Attributes;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Modalmais.Business.Models
@@ -15,7 +19,7 @@ namespace Modalmais.Business.Models
 
         public ChavePix(string chave, TipoChavePix tipo)
         {
-
+            ListaDeErros = new List<ValidationFailure>();
             Ativo = Status.Inativo;
             Chave = chave == null ? GerarChavePix() : chave;
             Tipo = tipo;
@@ -54,6 +58,19 @@ namespace Modalmais.Business.Models
             }
 
             return chavePix;
+        }
+
+        [BsonIgnore]
+        public List<ValidationFailure> ListaDeErros { get; private set; }
+
+        // Retorna True se tiverem erros
+        public bool IsValid()
+        {
+            ListaDeErros.Clear();
+
+            ListaDeErros = new ChavePixValidator().Validate(this).Errors;
+
+            return ListaDeErros.Any();
         }
     }
 }
