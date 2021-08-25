@@ -9,6 +9,7 @@ namespace Modalmais.API.Profiles
         public ContaCorrenteProfile()
         {
             CreateMap<ChavePixRequest, ChavePix>().ReverseMap();
+
             //CreateMap<ContaCorrente, ContaCorrenteResponse>().ReverseMap();
         }
     }

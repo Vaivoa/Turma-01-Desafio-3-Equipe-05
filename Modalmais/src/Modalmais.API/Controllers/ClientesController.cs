@@ -105,6 +105,9 @@ namespace Modalmais.API.Controllers
                 return ResponseBadRequest("A chave Pix só pode ser o CPF, caso for igual ao do Titular.");
             if (chavePixRequest.Tipo != TipoChavePix.Aleatoria && String.IsNullOrEmpty(chavePixRequest.Chave))
                 return ResponseBadRequest($"O tipo de chave {chavePixRequest.Tipo} requer uma chave.");
+
+            if (chavePixRequest.Tipo == TipoChavePix.Aleatoria) chavePixRequest.Chave = null;
+
             var chavePix = _mapper.Map<ChavePix>(chavePixRequest);
             if (chavePix.EstaInvalido()) return ResponseEntidadeErro(chavePix.ListaDeErros);
             await _clienteServiceRequest.AdicionarPixContaCliente(cliente, chavePix);
@@ -118,15 +121,15 @@ namespace Modalmais.API.Controllers
         [HttpGet]
         public async Task<IActionResult> ObterTodosClientes()
         {
-            var ListaClientes = await _clienteServiceResponse.BuscarTodos();
-            var ListaClientesResponse = new List<ClienteResponse>();
+            var listaClientes = await _clienteServiceResponse.BuscarTodos();
+            var listaClientesResponse = new List<ClienteResponse>();
 
-            foreach (var cliente in ListaClientes)
+            foreach (var cliente in listaClientes)
             {
-                ListaClientesResponse.Add(_mapper.Map<ClienteResponse>(cliente));
+                listaClientesResponse.Add(_mapper.Map<ClienteResponse>(cliente));
             }
 
-            return ResponseOk(ListaClientesResponse);
+            return ResponseOk(listaClientesResponse);
         }
 
         [CustomResponse(StatusCodes.Status200OK)]
@@ -138,13 +141,34 @@ namespace Modalmais.API.Controllers
 
             if (!ObjectIdValidacao.Validar(id)) return ResponseBadRequest("Formato de dado inválido.");
 
-            var Cliente = await _clienteServiceResponse.BuscarClientePorId(id);
+            var cliente = await _clienteServiceResponse.BuscarClientePorId(id);
 
-            if (Cliente == null) return ResponseNotFound("O cliente não foi encontrado.");
+            if (cliente == null) return ResponseNotFound("O cliente não foi encontrado.");
 
-            var ClienteResponse = _mapper.Map<ClienteResponse>(Cliente);
+            var clienteResponse = _mapper.Map<ClienteResponse>(cliente);
 
-            return ResponseOk(ClienteResponse);
+            return ResponseOk(clienteResponse);
+        }
+
+
+
+        [CustomResponse(StatusCodes.Status200OK)]
+        [CustomResponse(StatusCodes.Status400BadRequest)]
+        [CustomResponse(StatusCodes.Status404NotFound)]
+        [HttpGet("contas/chavepix")]
+        public async Task<IActionResult> ObterContaPelaChavePix(ChavePixRequest chavePixRequest)
+        {
+            if (!ModelState.IsValid) return ResponseModelErro(ModelState);
+
+
+            var cliente = await _clienteServiceResponse.BuscarClientePelaChavePix(chavePixRequest.Chave);
+            if (cliente == null) return ResponseNotFound("Não foi encontrada uma conta relacionada com essa chave pix.");
+
+            var contaPixResponse = _mapper.Map<ContaPixResponse>(cliente);
+
+            return ResponseOk(contaPixResponse);
+
+
         }
 
 
