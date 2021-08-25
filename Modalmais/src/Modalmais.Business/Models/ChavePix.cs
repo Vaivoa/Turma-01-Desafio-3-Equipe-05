@@ -21,11 +21,13 @@ namespace Modalmais.Business.Models
         {
             ListaDeErros = new List<ValidationFailure>();
             Ativo = Status.Inativo;
-            Chave = tipo == TipoChavePix.Aleatoria ? GerarChavePix() : chave;
+            Chave = tipo == TipoChavePix.Aleatoria && chave == null ? GerarChavePix() : chave;
             Tipo = tipo;
             DataCriacao = DateTime.Now;
 
         }
+
+        protected ChavePix() { }
 
         public void AtivarChavePix()
         {
