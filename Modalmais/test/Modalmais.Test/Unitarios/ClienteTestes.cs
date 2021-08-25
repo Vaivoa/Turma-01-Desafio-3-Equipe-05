@@ -2,11 +2,6 @@
 using Modalmais.Business.Models;
 using Modalmais.Business.Models.Enums;
 using Modalmais.Business.Models.ObjectValues;
-using Modalmais.Business.Models.Validation;
-using Newtonsoft.Json;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
 using Xunit;
 
 namespace Modalmais.Test.Unitarios
@@ -34,7 +29,7 @@ namespace Modalmais.Test.Unitarios
         public void NovoCliente_ValidarCpf_DeveCorresponderAoResultadoEsperado(string cpf, bool resultadoEsperado)
         {
             // Arrange
-            var cliente = new Cliente("Beatriz", "Pires", 
+            var cliente = new Cliente("Beatriz", "Pires",
                                 new Contato(
                                     new Celular(DDDBrasil.AC_RioBranco, "940041211"),
                                     "email@email.com"),
@@ -42,7 +37,7 @@ namespace Modalmais.Test.Unitarios
                                 );
 
             // Act
-            var resultado = cliente.IsValid();
+            var resultado = cliente.EstaInvalido();
 
             // Assert
             Assert.Equal(resultadoEsperado, resultado);
@@ -59,15 +54,15 @@ namespace Modalmais.Test.Unitarios
         public void NovoCliente_ValidarEmail_DeveCorresponderAoResultadoEsperado(string email, bool resultadoEsperado)
         {
             // Arrange
-            var cliente = new Cliente("Beatriz", "Pires", 
+            var cliente = new Cliente("Beatriz", "Pires",
                 new Contato(
                     new Celular(DDDBrasil.AC_RioBranco, "940041211"),
                     email),
-               new Documento( "78080103089")
+               new Documento("78080103089")
             );
 
             // Act
-            var resultado = cliente.IsValid();
+            var resultado = cliente.EstaInvalido();
 
             // Assert
             Assert.Equal(resultadoEsperado, resultado);
@@ -81,7 +76,7 @@ namespace Modalmais.Test.Unitarios
             var cliente = _clienteFixtureTestes.GerarClienteValido();
 
             // Act & Assert
-            Assert.False(cliente.IsValid());
+            Assert.False(cliente.EstaInvalido());
         }
 
         [Trait("Categoria", "Testes Cliente")]
@@ -92,7 +87,7 @@ namespace Modalmais.Test.Unitarios
             var cliente = _clienteFixtureTestes.GerarClienteIncorreto();
 
             // Act & Assert
-            Assert.True(cliente.IsValid());
+            Assert.True(cliente.EstaInvalido());
         }
 
         //PIX
@@ -103,7 +98,7 @@ namespace Modalmais.Test.Unitarios
         [InlineData("99999999999", TipoChavePix.Telefone)]
         [InlineData("", TipoChavePix.CPF)]
 
-        public void NovaChavePix_ChavePixValida_ValidadorDeveRetornarFalso(string chave ,TipoChavePix tipo)
+        public void NovaChavePix_ChavePixValida_ValidadorDeveRetornarFalso(string chave, TipoChavePix tipo)
         {
             // Arrange
             var cliente = _clienteFixtureTestes.GerarClienteValido();
@@ -112,7 +107,9 @@ namespace Modalmais.Test.Unitarios
             cliente.ContaCorrente.AdicionarChavePix(chavePix);
 
             // Act & Assert
-            Assert.False(cliente.ContaCorrente.ChavePix.IsValid());
+            var a = cliente.ContaCorrente.ChavePix.EstaInvalido();
+            var b = cliente.ContaCorrente.ChavePix;
+            Assert.False(cliente.ContaCorrente.ChavePix.EstaInvalido());
         }
 
         [Trait("Categoria", "Testes Cliente")]
@@ -129,7 +126,7 @@ namespace Modalmais.Test.Unitarios
             cliente.ContaCorrente.AdicionarChavePix(chavePix);
 
             // Act & Assert
-            Assert.True(cliente.ContaCorrente.ChavePix.IsValid());
+            Assert.True(cliente.ContaCorrente.ChavePix.EstaInvalido());
         }
 
     }

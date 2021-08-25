@@ -11,7 +11,7 @@ namespace Modalmais.Business.Models.Validation
         public static int ClienteNomeSobrenomeMinimoChar => 3;
         public static int ClienteEmailMinimoChar => 5;
         public static int ClienteCpfMinimoMaxChar => 11;
-        public static int ClienteCelularMinimoMaxChar => 9;
+        public static int CelularMinimoMaxDigitos => 9;
         public static int ClienteContaNumeroMaximoChar => 16;
         public static string ClienteContaCorrenteAgencia => "0001";
         public static string ClienteContaCorrenteBanco => "746";
@@ -58,7 +58,7 @@ namespace Modalmais.Business.Models.Validation
                 .NotEmpty().WithMessage(ClientePropriedadeVazia);
 
             RuleFor(cliente => cliente.Contato.Celular.Numero)
-                .Length(ClienteCelularMinimoMaxChar, ClienteCelularMinimoMaxChar)
+                .Length(CelularMinimoMaxDigitos)
                 .WithMessage(ClientePropriedadeCharLimite)
                 .NotEmpty().WithMessage(ClientePropriedadeVazia)
                 .Must(UtilsDigitosNumericos.SoNumeros).WithMessage(ClientePropriedadeSoNumeros);

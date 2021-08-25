@@ -21,7 +21,7 @@ namespace Modalmais.Business.Models
         {
             ListaDeErros = new List<ValidationFailure>();
             Ativo = Status.Inativo;
-            Chave = chave == null ? GerarChavePix() : chave;
+            Chave = tipo == TipoChavePix.Aleatoria ? GerarChavePix() : chave;
             Tipo = tipo;
             DataCriacao = DateTime.Now;
 
@@ -64,7 +64,7 @@ namespace Modalmais.Business.Models
         public List<ValidationFailure> ListaDeErros { get; private set; }
 
         // Retorna True se tiverem erros
-        public bool IsValid()
+        public bool EstaInvalido()
         {
             ListaDeErros.Clear();
 

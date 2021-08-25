@@ -73,7 +73,7 @@ namespace Modalmais.API.DTOs.Validation
                 RuleFor(chavePixRequest => chavePixRequest.Chave.Substring(2, (chavePixRequest.Chave.Length - 2)))
                 .NotNull().WithMessage(ClientePropriedadeVazia)
                 .NotEmpty().WithMessage(ClientePropriedadeVazia)
-                .Length(8, 9).WithMessage("O numero tem que ter entre 8 e 9 digitos.")
+                .Length(9).WithMessage("O numero tem que ter entre 9 digitos.")
                 .Must(UtilsDigitosNumericos.SoNumeros).WithMessage("Somente digitos nos numeros");
             });
 
