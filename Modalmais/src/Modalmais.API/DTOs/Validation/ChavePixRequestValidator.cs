@@ -57,7 +57,7 @@ namespace Modalmais.API.DTOs.Validation
             When(chavePixRequest => chavePixRequest.Tipo == TipoChavePix.Telefone && chavePixRequest.Chave != null, () =>
             {
 
-                RuleFor(chavePixRequest => chavePixRequest.Chave.Substring(0, 2))
+                RuleFor(chavePixRequest => chavePixRequest.Chave.Length != 11 ? "" : chavePixRequest.Chave.Substring(0, 2))
                 .NotNull().WithMessage(ClientePropriedadeVazia)
                 .NotEmpty().WithMessage(ClientePropriedadeVazia)
                 .Must(o =>
@@ -70,10 +70,10 @@ namespace Modalmais.API.DTOs.Validation
                 }
                 ).WithMessage("Não è um DDD válido.");
 
-                RuleFor(chavePixRequest => chavePixRequest.Chave.Substring(2, (chavePixRequest.Chave.Length - 2)))
+                RuleFor(chavePixRequest => chavePixRequest.Chave.Length != 11 ? "" : chavePixRequest.Chave.Substring(2, (chavePixRequest.Chave.Length - 2)))
                 .NotNull().WithMessage(ClientePropriedadeVazia)
                 .NotEmpty().WithMessage(ClientePropriedadeVazia)
-                .Length(9).WithMessage("O numero tem que ter entre 9 digitos.")
+                .Length(9).WithMessage("O numero tem que ter 11 digitos.")
                 .Must(UtilsDigitosNumericos.SoNumeros).WithMessage("Somente digitos nos numeros");
             });
 

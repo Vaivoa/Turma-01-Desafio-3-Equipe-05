@@ -50,6 +50,11 @@ namespace Modalmais.Test
         {
             // Arrange
             var cliente = _testsFixture.GerarClienteValido();
+            while (cliente.Documento.CPF == "26283944051") 
+            {
+                cliente = _testsFixture.GerarClienteValido();
+            }
+
             var postResponse = await _testsFixture.Client.PostAsJsonAsync("/api/v1/clientes", cliente);
 
             //Act
@@ -270,20 +275,21 @@ namespace Modalmais.Test
         }
 
 
+
         [InlineData(TipoChavePix.Aleatoria,"")]
         [InlineData(TipoChavePix.Email, "asdasd@gmail.com")]
         [InlineData(TipoChavePix.Telefone, "17956235958")]
         [InlineData(TipoChavePix.CPF, "")]
         [Trait("Categoria", "Testes Integracao Cliente")]
         [Theory(DisplayName = "Validar cadastro pix valido."), TestPriority(6)]
-        public async void NovoPix_PixValido_DeveRetornaStatus200PixAtivo(TipoChavePix tipoPix, string chave) 
+        public async void NovoPix_PixValido_DeveRetornaStatus200PixAtivo (TipoChavePix tipoPix, string chave) 
         {
             // Arrange
             var getResponse = await _testsFixture.Client.GetAsync("api/v1/clientes");
             var clientesResponse = JsonConvert.DeserializeObject
                     <ResponseBase<List<ClienteResponse>>>(getResponse.Content.ReadAsStringAsync().Result);
             var cliente = clientesResponse.Data[0];
-            ChavePixRequest chavePix = new() { Chave = chave, Tipo = tipoPix };
+            ChavePixRequest chavePix = new(chave, tipoPix);
             if (tipoPix == TipoChavePix.CPF) {
                 chavePix.Chave = cliente.Documento.CPF;
             }
@@ -307,6 +313,32 @@ namespace Modalmais.Test
             {
                 Assert.Equal(32, response.Data.ContaCorrente.ChavePix.Chave.Length);
             }
+        }
+
+        [InlineData(TipoChavePix.Email, "")]
+        [InlineData(TipoChavePix.Telefone, "")]
+        [InlineData(TipoChavePix.Telefone, "4521518")]
+        [InlineData(TipoChavePix.CPF, "26283944051")]
+        [InlineData((TipoChavePix)5, "asdasd")]
+        [InlineData(TipoChavePix.Email, "@email.com")]
+        [Trait("Categoria", "Testes Integracao Cliente")]
+        [Theory(DisplayName = "Validar cadastro pix invalido."), TestPriority(7)]
+        public async void NovoPix_PixInvalido_DeveRetornaStatus400PixAtivo(TipoChavePix tipoPix, string chave) 
+        {
+            // Arrange
+            var getResponse = await _testsFixture.Client.GetAsync("api/v1/clientes");
+            var clientesResponse = JsonConvert.DeserializeObject
+                    <ResponseBase<List<ClienteResponse>>>(getResponse.Content.ReadAsStringAsync().Result);
+            var cliente = clientesResponse.Data[0];
+            ChavePixRequest chavePix = new(chave, tipoPix);
+            // Act
+            var postResponse = await _testsFixture.Client.PostAsJsonAsync($"api/v1/clientes/{cliente.Id}/chavepix", chavePix);
+            var response = JsonConvert.DeserializeObject
+                    <ResponseBase<ClienteResponse>>(postResponse.Content.ReadAsStringAsync().Result);
+            // Assert
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            Assert.False(response.Success);
+
         }
 
     }
