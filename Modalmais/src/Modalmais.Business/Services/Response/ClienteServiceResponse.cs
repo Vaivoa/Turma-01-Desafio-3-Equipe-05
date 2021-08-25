@@ -25,6 +25,14 @@ namespace Modalmais.Business.Services.Response
             return await _clienteRepository.ObterPorId(id);
         }
 
+
+
+        public async Task<Cliente> BuscarClientePelaChavePix(string chavePix)
+        {
+            return await _clienteRepository.BuscarComFuncao(o => o.ContaCorrente.ChavePix.Chave, chavePix);
+        }
+
+
         public async Task<IEnumerable<Cliente>> BuscarTodos()
         {
             return await _clienteRepository.ObterTodos();

@@ -43,7 +43,7 @@ namespace Modalmais.Business.Models
         {
             var chavePix = "";
             var random = new Random();
-            var chars = "abcdefghijklmnopqrstuvwxyz--------";
+            var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz--------";
 
             for (int i = 0; i < 32; i++)
             {
