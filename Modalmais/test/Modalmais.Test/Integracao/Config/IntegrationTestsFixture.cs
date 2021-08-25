@@ -19,7 +19,7 @@ namespace Modalmais.Test.Tests.Config
     public class IntegrationTestsFixture<TStartup> : IDisposable where TStartup : class
     {
 
-        public string UsuarioEmail;
+        public static string UsuarioEmail;
 
         public readonly StartUpFactory<TStartup> Factory;
         public HttpClient Client;
@@ -43,10 +43,11 @@ namespace Modalmais.Test.Tests.Config
             Client = Factory.CreateClient(clientOptions);
         }
 
-        public void GerarClienteFake()
+        public static string GerarClienteEmailFake()
         {
             var faker = new Faker("pt_BR");
             UsuarioEmail = faker.Internet.Email(faker.Name.FirstName(), faker.Name.LastName()).ToLower();
+            return UsuarioEmail;
         }
         public Cliente GerarClienteValido()
         {

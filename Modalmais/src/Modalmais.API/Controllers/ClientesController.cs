@@ -99,27 +99,21 @@ namespace Modalmais.API.Controllers
         {
             if (!ModelState.IsValid) return ResponseModelErro(ModelState);
             if (!ObjectIdValidacao.Validar(id)) return ResponseBadRequest("Formato de dado inválido.");
-
             var cliente = await _clienteServiceResponse.BuscarClientePorId(id);
             if (cliente == null) return ResponseNotFound("O cliente não foi encontrado.");
-
             if (chavePixRequest.Tipo == TipoChavePix.CPF && chavePixRequest.Chave != cliente.Documento.CPF)
                 return ResponseBadRequest("A chave Pix só pode ser o CPF, caso for igual ao do Titular.");
             if (chavePixRequest.Tipo != TipoChavePix.Aleatoria && String.IsNullOrEmpty(chavePixRequest.Chave))
                 return ResponseBadRequest($"O tipo de chave {chavePixRequest.Tipo} requer uma chave.");
+
             if (chavePixRequest.Tipo == TipoChavePix.Aleatoria) chavePixRequest.Chave = null;
 
             var chavePix = _mapper.Map<ChavePix>(chavePixRequest);
             if (chavePix.EstaInvalido()) return ResponseEntidadeErro(chavePix.ListaDeErros);
-
             await _clienteServiceRequest.AdicionarPixContaCliente(cliente, chavePix);
-
             if (NotificadorContemErros()) return ResponseBadRequest();
-
             var clienteResponse = _mapper.Map<ClienteResponse>(cliente);
-
             return ResponseCreated(clienteResponse);
-
         }
 
 

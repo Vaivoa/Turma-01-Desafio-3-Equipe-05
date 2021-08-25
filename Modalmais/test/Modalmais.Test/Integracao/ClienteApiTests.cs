@@ -50,6 +50,11 @@ namespace Modalmais.Test
         {
             // Arrange
             var cliente = _testsFixture.GerarClienteValido();
+            while (cliente.Documento.CPF == "26283944051") 
+            {
+                cliente = _testsFixture.GerarClienteValido();
+            }
+
             var postResponse = await _testsFixture.Client.PostAsJsonAsync("/api/v1/clientes", cliente);
 
             //Act
@@ -97,56 +102,6 @@ namespace Modalmais.Test
             Assert.Contains("A requisição é inválida", response.Errors);
             Assert.Null(response.Data);
             Assert.True(response.Errors.Count() > 1);
-
-
-
-            //Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-            //Assert.Contains(ClienteValidator.ClientePropriedadeVazia
-            //    .Replace("{PropertyName}", nameof(Cliente.Nome)),
-            //    response.Errors);
-            //Assert.Contains(ClienteValidator.ClientePropriedadeVazia
-            //    .Replace("{PropertyName}", nameof(Cliente.Sobrenome)),
-            //    response.Errors);
-            //Assert.Contains(ClienteValidator.ClientePropriedadeVazia
-            //    .Replace("{PropertyName}", $"{nameof(Contato)} {nameof(Contato.Email)}"),
-            //    response.Errors);
-            //Assert.Contains(ClienteValidator.ClientePropriedadeVazia
-            //    .Replace("{PropertyName}", $"{nameof(Contato)} {nameof(Contato.Celular)} {nameof(Contato.Celular.Numero)}"),
-            //    response.Errors);
-            //Assert.Contains(ClienteValidator.ClientePropriedadeVazia
-            //    .Replace("{PropertyName}", $"{nameof(Documento)} {nameof(Documento.CPF)}"),
-            //    response.Errors);
-            //Assert.Contains(ClienteValidator.ClientePropriedadeValida
-            //    .Replace("{PropertyName}", $"{nameof(Documento)} {nameof(Documento.CPF)}"),
-            //     response.Errors);
-            //Assert.Contains(ClienteValidator.ClientePropriedadeValida
-            //    .Replace("{PropertyName}", $"{nameof(Contato)} {nameof(Contato.Email)}"),
-            //    response.Errors);
-            //Assert.Contains(ClienteValidator.ClientePropriedadeCharLimite
-            //    .Replace("{PropertyName}", $"{nameof(Contato)} {nameof(Contato.Email)}")
-            //    .Replace("{MinLength}", ClienteValidator.ClienteEmailMinimoChar.ToString())
-            //    .Replace("{MaxLength}", ClienteValidator.ClienteNomeSobrenomeEmailMaximoChar.ToString()),
-            //    response.Errors);
-            //Assert.Contains(ClienteValidator.ClientePropriedadeCharLimite
-            //    .Replace("{PropertyName}", $"{nameof(Contato)} {nameof(Contato.Celular)} {nameof(Contato.Celular.Numero)}")
-            //    .Replace("{MinLength}", ClienteValidator.ClienteCelularMinimoMaxChar.ToString())
-            //    .Replace("{MaxLength}", ClienteValidator.ClienteCelularMinimoMaxChar.ToString()),
-            //    response.Errors);
-            //Assert.Contains(ClienteValidator.ClientePropriedadeCharLimite
-            //    .Replace("{PropertyName}", nameof(Cliente.Nome))
-            //    .Replace("{MinLength}", ClienteValidator.ClienteNomeSobrenomeMinimoChar.ToString())
-            //    .Replace("{MaxLength}", ClienteValidator.ClienteNomeSobrenomeEmailMaximoChar.ToString()),
-            //    response.Errors);
-            //Assert.Contains(ClienteValidator.ClientePropriedadeCharLimite
-            //    .Replace("{PropertyName}", nameof(Cliente.Sobrenome))
-            //    .Replace("{MinLength}", ClienteValidator.ClienteNomeSobrenomeMinimoChar.ToString())
-            //    .Replace("{MaxLength}", ClienteValidator.ClienteNomeSobrenomeEmailMaximoChar.ToString()),
-            //    response.Errors);
-            //Assert.Contains(ClienteValidator.ClientePropriedadeCharLimite
-            //    .Replace("{PropertyName}", $"{nameof(Cliente.Documento)} {nameof(Cliente.Documento.CPF)}")
-            //    .Replace("{MinLength}", ClienteValidator.ClienteCpfMinimoMaxChar.ToString())
-            //    .Replace("{MaxLength}", ClienteValidator.ClienteCpfMinimoMaxChar.ToString()),
-            //    response.Errors);
         }
 
 
@@ -161,7 +116,6 @@ namespace Modalmais.Test
         [InlineData(6)]
         [InlineData(7)]
         [Trait("Categoria", "Testes Integracao Cliente")]
-        //[Fact(DisplayName = "Validar envio de documento com validação randomica."), TestPriority(5)]
         public async void NovoDocumentoImagem_DocumentoValido_DeveRetornaStatus201AtivarContaEDocumento_PodeRetornarImagemNaoValidaStatus400(int numeroImage)
         {
             // Arrange
@@ -320,6 +274,72 @@ namespace Modalmais.Test
 
         }
 
+
+
+        [InlineData(TipoChavePix.Aleatoria,"")]
+        [InlineData(TipoChavePix.Email, "asdasd@gmail.com")]
+        [InlineData(TipoChavePix.Telefone, "17956235958")]
+        [InlineData(TipoChavePix.CPF, "")]
+        [Trait("Categoria", "Testes Integracao Cliente")]
+        [Theory(DisplayName = "Validar cadastro pix valido."), TestPriority(6)]
+        public async void NovoPix_PixValido_DeveRetornaStatus200PixAtivo (TipoChavePix tipoPix, string chave) 
+        {
+            // Arrange
+            var getResponse = await _testsFixture.Client.GetAsync("api/v1/clientes");
+            var clientesResponse = JsonConvert.DeserializeObject
+                    <ResponseBase<List<ClienteResponse>>>(getResponse.Content.ReadAsStringAsync().Result);
+            var cliente = clientesResponse.Data[0];
+            ChavePixRequest chavePix = new(chave, tipoPix);
+            if (tipoPix == TipoChavePix.CPF) {
+                chavePix.Chave = cliente.Documento.CPF;
+            }
+            // Act
+            var postResponse = await _testsFixture.Client.PostAsJsonAsync($"api/v1/clientes/{cliente.Id}/chavepix", chavePix);
+            var response = JsonConvert.DeserializeObject
+                    <ResponseBase<ClienteResponse>>(postResponse.Content.ReadAsStringAsync().Result);
+            // Assert
+            Assert.Equal(cliente.Documento.CPF, response.Data.Documento.CPF);
+            Assert.NotNull(response.Data.ContaCorrente.ChavePix);
+            Assert.Equal(Status.Ativo,response.Data.ContaCorrente.ChavePix.Ativo);
+            Assert.True(response.Success);
+            Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+            Assert.NotNull(response.Data);
+            Assert.Null(response.Errors);
+            if (tipoPix == TipoChavePix.CPF)
+            {
+                Assert.Equal(cliente.Documento.CPF, response.Data.ContaCorrente.ChavePix.Chave);
+            }
+            if (tipoPix == TipoChavePix.Aleatoria) 
+            {
+                Assert.Equal(32, response.Data.ContaCorrente.ChavePix.Chave.Length);
+            }
+        }
+
+        [InlineData(TipoChavePix.Email, "")]
+        [InlineData(TipoChavePix.Telefone, "")]
+        [InlineData(TipoChavePix.Telefone, "4521518")]
+        [InlineData(TipoChavePix.CPF, "26283944051")]
+        [InlineData((TipoChavePix)5, "asdasd")]
+        [InlineData(TipoChavePix.Email, "@email.com")]
+        [Trait("Categoria", "Testes Integracao Cliente")]
+        [Theory(DisplayName = "Validar cadastro pix invalido."), TestPriority(7)]
+        public async void NovoPix_PixInvalido_DeveRetornaStatus400PixAtivo(TipoChavePix tipoPix, string chave) 
+        {
+            // Arrange
+            var getResponse = await _testsFixture.Client.GetAsync("api/v1/clientes");
+            var clientesResponse = JsonConvert.DeserializeObject
+                    <ResponseBase<List<ClienteResponse>>>(getResponse.Content.ReadAsStringAsync().Result);
+            var cliente = clientesResponse.Data[0];
+            ChavePixRequest chavePix = new(chave, tipoPix);
+            // Act
+            var postResponse = await _testsFixture.Client.PostAsJsonAsync($"api/v1/clientes/{cliente.Id}/chavepix", chavePix);
+            var response = JsonConvert.DeserializeObject
+                    <ResponseBase<ClienteResponse>>(postResponse.Content.ReadAsStringAsync().Result);
+            // Assert
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            Assert.False(response.Success);
+
+        }
 
     }
 }
