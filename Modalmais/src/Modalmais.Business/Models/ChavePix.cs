@@ -27,8 +27,6 @@ namespace Modalmais.Business.Models
 
         }
 
-        protected ChavePix() { }
-
         public void AtivarChavePix()
         {
             Ativo = Status.Ativo;
