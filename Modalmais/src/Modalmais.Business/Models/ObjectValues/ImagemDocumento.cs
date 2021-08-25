@@ -1,6 +1,11 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using FluentValidation.Results;
+using Microsoft.AspNetCore.Http;
 using Modalmais.Business.Models.Enums;
+using Modalmais.Business.Models.Validation;
+using MongoDB.Bson.Serialization.Attributes;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Modalmais.Business.Models.ObjectValues
 {
@@ -18,6 +23,7 @@ namespace Modalmais.Business.Models.ObjectValues
             NomeImagem = documentorecebido.FileName;
             DataImagemRecebida();
             DocumentoEstaValido(documentorecebido);
+            ListaDeErros = new List<ValidationFailure>();
         }
 
         private void DataImagemRecebida()
@@ -60,7 +66,19 @@ namespace Modalmais.Business.Models.ObjectValues
             return validacao;
         }
 
+        [BsonIgnore]
+        public List<ValidationFailure> ListaDeErros { get; private set; }
 
+
+        // Retorna True se tiverem erros
+        public bool EstaInvalido()
+        {
+            ListaDeErros.Clear();
+
+            ListaDeErros = new ImagemDocumentoValidator().Validate(this).Errors;
+
+            return ListaDeErros.Any();
+        }
 
     }
 

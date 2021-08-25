@@ -36,7 +36,7 @@ namespace Modalmais.Business.Models
 
 
         // Retorna True se tiverem erros
-        public bool IsValid()
+        public bool EstaInvalido()
         {
             ListaDeErros.Clear();
 

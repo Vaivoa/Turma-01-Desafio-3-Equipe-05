@@ -19,14 +19,14 @@ namespace Modalmais.API.Controllers
 {
 
     [Route("api/v1/clientes")]
-    public class ClientesCorrenteController : MainController
+    public class ClientesController : MainController
     {
 
 
         protected readonly IClienteServiceRequest _clienteServiceRequest;
         protected readonly IClienteServiceResponse _clienteServiceResponse;
 
-        public ClientesCorrenteController(IMapper mapper,
+        public ClientesController(IMapper mapper,
                                        INotificador notificador,
                                        IClienteServiceRequest clienteServiceRequest,
                                        IClienteServiceResponse clienteServiceResponse
@@ -46,7 +46,7 @@ namespace Modalmais.API.Controllers
 
             var cliente = _mapper.Map<Cliente>(clienteRequest);
 
-            if (!cliente.IsValid()) ResponseEntidadeErro(cliente.ListaDeErros);
+            if (cliente.EstaInvalido()) ResponseEntidadeErro(cliente.ListaDeErros);
 
             await _clienteServiceRequest.AdicionarCliente(cliente);
 
@@ -109,6 +109,7 @@ namespace Modalmais.API.Controllers
                 return ResponseBadRequest($"O tipo de chave {chavePixRequest.Tipo} requer uma chave.");
 
             var chavePix = _mapper.Map<ChavePix>(chavePixRequest);
+            if (chavePix.EstaInvalido()) return ResponseEntidadeErro(chavePix.ListaDeErros);
 
             await _clienteServiceRequest.AdicionarPixContaCliente(cliente, chavePix);
 
@@ -181,6 +182,13 @@ namespace Modalmais.API.Controllers
             if (String.IsNullOrEmpty(urlImagemDocumento)) return false;
 
             imagemDocumento.AtribuirUrl(urlImagemDocumento);
+
+            if (imagemDocumento.EstaInvalido())
+            {
+                AdicionarNotificacaoErro(imagemDocumento.ListaDeErros);
+                return false;
+            }
+
 
             if (cliente.Documento.Imagens.Any())
             {
