@@ -1,9 +1,9 @@
-﻿using Api.MercadoLivre.Testes.Config.PriorityOrderer;
-using Modalmais.API.DTOs;
+﻿using Modalmais.API.DTOs;
 using Modalmais.API.Extensions;
 using Modalmais.API.MVC;
 using Modalmais.Business.Models;
 using Modalmais.Business.Models.Enums;
+using Modalmais.Test.Tests;
 using Modalmais.Test.Tests.Config;
 using Newtonsoft.Json;
 using System.Collections.Generic;
@@ -15,9 +15,9 @@ using System.Net.Http.Json;
 using Xunit;
 
 
-namespace Modalmais.Test.Tests
+namespace Modalmais.Test
 {
-    [TestCaseOrderer("Modalmais.Test.Integracao.Config.PriorityOrderer", "Modalmais.Test")]
+    [TestCaseOrderer("Modalmais.Test.PriorityOrderer", "Modalmais.Test")]
     [Collection(nameof(IntegrationApiTestsFixtureCollection))]
     public class ClienteApiTests
     {
@@ -151,15 +151,18 @@ namespace Modalmais.Test.Tests
 
 
 
-        //[Theory(DisplayName = "Validar envio de documento com validação randomica.")]
-        //[InlineData(0)]
-        //[InlineData(1)]
-        //[InlineData(2)]
-        //[InlineData(3)]
-        //[InlineData(4)]
+        [Theory(DisplayName = "Validar envio de documento com validação randomica."), TestPriority(5)]
+        [InlineData(0)]
+        [InlineData(1)]
+        [InlineData(2)]
+        [InlineData(3)]
+        [InlineData(4)]
+        [InlineData(5)]
+        [InlineData(6)]
+        [InlineData(7)]
         [Trait("Categoria", "Testes Integracao Cliente")]
-        [Fact(DisplayName = "Validar envio de documento com validação randomica."), TestPriority(5)]
-        public async void NovoDocumentoImagem_DocumentoValido_DeveRetornaStatus201AtivarContaEDocumento_PodeRetornarImagemNaoValidaStatus400()
+        //[Fact(DisplayName = "Validar envio de documento com validação randomica."), TestPriority(5)]
+        public async void NovoDocumentoImagem_DocumentoValido_DeveRetornaStatus201AtivarContaEDocumento_PodeRetornarImagemNaoValidaStatus400(int numeroImage)
         {
             // Arrange
             var getResponse = await _testsFixture.Client.GetAsync("api/v1/clientes");
@@ -203,9 +206,11 @@ namespace Modalmais.Test.Tests
                 Assert.Equal(HttpStatusCode.Created, response.StatusCode);
                 Assert.Equal(Status.Ativo, response.Data.ContaCorrente.Status);
                 Assert.Equal(Status.Ativo, response.Data.Documento.Status);
-                Assert.Single(response.Data.Documento.Imagens);
-                Assert.Equal(Status.Ativo, response.Data.Documento.Imagens[0].Status);
-                Assert.Equal("pequena.png", response.Data.Documento.Imagens[0].NomeImagem);
+                Assert.Equal(Status.Ativo, response.Data.Documento.Imagens.Last().Status);
+                Assert.Equal("pequena.png", response.Data.Documento.Imagens.Last().NomeImagem);
+
+                var imagensDesativadas = response.Data.Documento.Imagens.Where(o => o.Status == Status.Desativado);
+                Assert.Equal(response.Data.Documento.Imagens.Count() - 1, imagensDesativadas.Count());
             }
         }
 

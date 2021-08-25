@@ -1,6 +1,4 @@
-﻿using System;
-using System.Net.Http;
-using Bogus;
+﻿using Bogus;
 using Bogus.DataSets;
 using Bogus.Extensions.Brazil;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -8,7 +6,10 @@ using Modalmais.API.MVC;
 using Modalmais.Business.Models;
 using Modalmais.Business.Models.Enums;
 using Modalmais.Business.Models.ObjectValues;
-using Modalmais.Test.Unitarios;
+using Modalmais.Infra.Data;
+using MongoDB.Bson;
+using System;
+using System.Net.Http;
 using Xunit;
 
 namespace Modalmais.Test.Tests.Config
@@ -23,6 +24,8 @@ namespace Modalmais.Test.Tests.Config
         public readonly StartUpFactory<TStartup> Factory;
         public HttpClient Client;
 
+        public readonly DbContext _context;
+
         public IntegrationTestsFixture()
         {
             var clientOptions = new WebApplicationFactoryClientOptions
@@ -33,6 +36,9 @@ namespace Modalmais.Test.Tests.Config
                 MaxAutomaticRedirections = 7
             };
 
+            _context = new DbContext("mongodb://localhost:27017", "Testes");
+            _context.Clientes.DeleteMany(new BsonDocument());
+
             Factory = new StartUpFactory<TStartup>();
             Client = Factory.CreateClient(clientOptions);
         }
@@ -40,7 +46,7 @@ namespace Modalmais.Test.Tests.Config
         public void GerarClienteFake()
         {
             var faker = new Faker("pt_BR");
-            UsuarioEmail = faker.Internet.Email(faker.Name.FirstName(),faker.Name.LastName()).ToLower();
+            UsuarioEmail = faker.Internet.Email(faker.Name.FirstName(), faker.Name.LastName()).ToLower();
         }
         public Cliente GerarClienteValido()
         {

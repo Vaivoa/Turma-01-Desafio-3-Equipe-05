@@ -4,8 +4,9 @@ using System.Linq;
 using Xunit.Abstractions;
 using Xunit.Sdk;
 
-namespace Api.MercadoLivre.Testes.Config.PriorityOrderer
+namespace Modalmais.Test
 {
+
     [AttributeUsage(AttributeTargets.Method)]
     public class TestPriorityAttribute : Attribute
     {
@@ -51,4 +52,6 @@ namespace Api.MercadoLivre.Testes.Config.PriorityOrderer
             return result;
         }
     }
+
+
 }
