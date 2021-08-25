@@ -2,7 +2,9 @@
 using Modalmais.Business.Models;
 using Modalmais.Infra.Data;
 using MongoDB.Driver;
+using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace Modalmais.Infra.Repository
@@ -35,6 +37,15 @@ namespace Modalmais.Infra.Repository
             var data = await DbSet.FindAsync(Builders<TEntity>.Filter.Eq(campo, comparar));
             return data.FirstOrDefault();
         }
+
+
+        public virtual async Task<TEntity> BuscarComFuncao(Expression<Func<TEntity, object>> field, object value)
+        {
+            var data = await DbSet.FindAsync(Builders<TEntity>.Filter.Eq(field, value));
+            return data.FirstOrDefault();
+        }
+
+
         public virtual async Task<bool> ChecarEntidadeExistente(string campo, string comparar)
         {
             var data = await DbSet.FindAsync(Builders<TEntity>.Filter.Eq(campo, comparar));

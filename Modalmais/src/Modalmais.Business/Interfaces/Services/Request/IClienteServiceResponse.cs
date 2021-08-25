@@ -11,5 +11,7 @@ namespace Modalmais.Business.Interfaces.Services.Request
         Task<bool> ChecarPorEmailSeClienteExiste(string cpf);
         Task<Cliente> BuscarClientePorId(string id);
         Task<IEnumerable<Cliente>> BuscarTodos();
+        Task<Cliente> BuscarClientePelaChavePix(string chavePix);
+
     }
 }
