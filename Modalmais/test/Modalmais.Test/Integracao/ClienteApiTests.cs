@@ -6,6 +6,7 @@ using Modalmais.Business.Models.Enums;
 using Modalmais.Test.Tests;
 using Modalmais.Test.Tests.Config;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -50,7 +51,7 @@ namespace Modalmais.Test
         {
             // Arrange
             var cliente = _testsFixture.GerarClienteValido();
-            while (cliente.Documento.CPF == "26283944051") 
+            while (cliente.Documento.CPF == "26283944051")
             {
                 cliente = _testsFixture.GerarClienteValido();
             }
@@ -276,21 +277,27 @@ namespace Modalmais.Test
 
 
 
-        [InlineData(TipoChavePix.Aleatoria,"")]
+        [InlineData(TipoChavePix.Aleatoria, "")]
         [InlineData(TipoChavePix.Email, "asdasd@gmail.com")]
         [InlineData(TipoChavePix.Telefone, "17956235958")]
         [InlineData(TipoChavePix.CPF, "")]
         [Trait("Categoria", "Testes Integracao Cliente")]
         [Theory(DisplayName = "Validar cadastro pix valido."), TestPriority(6)]
-        public async void NovoPix_PixValido_DeveRetornaStatus200PixAtivo (TipoChavePix tipoPix, string chave) 
+        public async void NovoPix_PixValido_DeveRetornaStatus201PixAtivo(TipoChavePix tipoPix, string chave)
         {
             // Arrange
             var getResponse = await _testsFixture.Client.GetAsync("api/v1/clientes");
             var clientesResponse = JsonConvert.DeserializeObject
                     <ResponseBase<List<ClienteResponse>>>(getResponse.Content.ReadAsStringAsync().Result);
             var cliente = clientesResponse.Data[0];
-            ChavePixRequest chavePix = new(chave, tipoPix);
-            if (tipoPix == TipoChavePix.CPF) {
+            var chavePix = new ChavePixRequest
+            {
+                Chave = chave,
+                Tipo = tipoPix,
+
+            };
+            if (tipoPix == TipoChavePix.CPF)
+            {
                 chavePix.Chave = cliente.Documento.CPF;
             }
             // Act
@@ -300,7 +307,7 @@ namespace Modalmais.Test
             // Assert
             Assert.Equal(cliente.Documento.CPF, response.Data.Documento.CPF);
             Assert.NotNull(response.Data.ContaCorrente.ChavePix);
-            Assert.Equal(Status.Ativo,response.Data.ContaCorrente.ChavePix.Ativo);
+            Assert.Equal(Status.Ativo, response.Data.ContaCorrente.ChavePix.Ativo);
             Assert.True(response.Success);
             Assert.Equal(HttpStatusCode.Created, response.StatusCode);
             Assert.NotNull(response.Data);
@@ -309,7 +316,7 @@ namespace Modalmais.Test
             {
                 Assert.Equal(cliente.Documento.CPF, response.Data.ContaCorrente.ChavePix.Chave);
             }
-            if (tipoPix == TipoChavePix.Aleatoria) 
+            if (tipoPix == TipoChavePix.Aleatoria)
             {
                 Assert.Equal(32, response.Data.ContaCorrente.ChavePix.Chave.Length);
             }
@@ -323,14 +330,19 @@ namespace Modalmais.Test
         [InlineData(TipoChavePix.Email, "@email.com")]
         [Trait("Categoria", "Testes Integracao Cliente")]
         [Theory(DisplayName = "Validar cadastro pix invalido."), TestPriority(7)]
-        public async void NovoPix_PixInvalido_DeveRetornaStatus400PixAtivo(TipoChavePix tipoPix, string chave) 
+        public async void NovoPix_PixInvalido_DeveRetornaStatus400PixAtivo(TipoChavePix tipoPix, string chave)
         {
             // Arrange
             var getResponse = await _testsFixture.Client.GetAsync("api/v1/clientes");
             var clientesResponse = JsonConvert.DeserializeObject
                     <ResponseBase<List<ClienteResponse>>>(getResponse.Content.ReadAsStringAsync().Result);
             var cliente = clientesResponse.Data[0];
-            ChavePixRequest chavePix = new(chave, tipoPix);
+            var chavePix = new ChavePixRequest
+            {
+                Chave = chave,
+                Tipo = tipoPix,
+
+            };
             // Act
             var postResponse = await _testsFixture.Client.PostAsJsonAsync($"api/v1/clientes/{cliente.Id}/chavepix", chavePix);
             var response = JsonConvert.DeserializeObject
@@ -340,6 +352,82 @@ namespace Modalmais.Test
             Assert.False(response.Success);
 
         }
+
+
+
+
+        [InlineData(TipoChavePix.Aleatoria, "")]
+        [InlineData(TipoChavePix.Email, "asdasd@gmail.com")]
+        [InlineData(TipoChavePix.Telefone, "17956235958")]
+        [InlineData(TipoChavePix.CPF, "")]
+        [Trait("Categoria", "Testes Integracao Cliente")]
+        [Theory(DisplayName = "Verificar se a chave pix possui uma conta relacionada."), TestPriority(8)]
+        public async void ObterContaPelaChavePix_PixExistente_DeveRetornaStatus200EContaRelacionada(TipoChavePix tipoPix, string chave)
+        {
+            // Arrange
+            var getResponse = await _testsFixture.Client.GetAsync("api/v1/clientes");
+            var clientesResponse = JsonConvert.DeserializeObject
+                    <ResponseBase<List<ClienteResponse>>>(getResponse.Content.ReadAsStringAsync().Result);
+            var cliente = clientesResponse.Data[0];
+
+            var chavePix = new ChavePixRequest { Chave = chave, Tipo = tipoPix };
+
+            if (tipoPix == TipoChavePix.CPF) chavePix.Chave = cliente.Documento.CPF;
+
+            var postResponse = await _testsFixture.Client.PostAsJsonAsync($"api/v1/clientes/{cliente.Id}/chavepix", chavePix);
+            var response = JsonConvert.DeserializeObject
+                    <ResponseBase<ClienteResponse>>(postResponse.Content.ReadAsStringAsync().Result);
+
+
+            if (tipoPix == TipoChavePix.Aleatoria)
+            {
+                getResponse = await _testsFixture.Client.GetAsync("api/v1/clientes");
+                clientesResponse = JsonConvert.DeserializeObject
+                       <ResponseBase<List<ClienteResponse>>>(getResponse.Content.ReadAsStringAsync().Result);
+                cliente = clientesResponse.Data[0];
+            }
+
+
+            // Act
+
+
+            if (tipoPix == TipoChavePix.Aleatoria) chavePix.Chave = cliente.ContaCorrente.ChavePix.Chave;
+
+
+
+            var postResponseContaPix = await _testsFixture.Client.GetAsync($"api/v1/clientes/contas/chavepix?" +
+                                                                                    $"chave={chavePix.Chave}&" +
+                                                                                    $"tipo={(int)chavePix.Tipo}");
+            var responseContaPix = JsonConvert.DeserializeObject
+                    <ResponseBase<ContaPixResponse>>(postResponseContaPix.Content.ReadAsStringAsync().Result);
+
+
+
+            // Assert
+            Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+            Assert.Equal(HttpStatusCode.OK, responseContaPix.StatusCode);
+            Assert.True(responseContaPix.Success);
+            Assert.Null(responseContaPix.Errors);
+            Assert.Equal(cliente.Nome, responseContaPix.Data.Nome);
+            Assert.Equal(cliente.Sobrenome, responseContaPix.Data.Sobrenome);
+            Assert.Equal(cliente.ContaCorrente.Banco, responseContaPix.Data.ContaCorrente.Banco);
+
+            if (tipoPix == TipoChavePix.CPF)
+                Assert.Equal(cliente.Documento.CPF, responseContaPix.Data.ContaCorrente.ChavePix.Chave);
+            if (tipoPix == TipoChavePix.Email)
+                Assert.Equal(chave, responseContaPix.Data.ContaCorrente.ChavePix.Chave);
+            if (tipoPix == TipoChavePix.Telefone)
+                Assert.Equal(chave, responseContaPix.Data.ContaCorrente.ChavePix.Chave);
+            if (tipoPix == TipoChavePix.Aleatoria)
+                Assert.Equal(cliente.ContaCorrente.ChavePix.Chave, responseContaPix.Data.ContaCorrente.ChavePix.Chave);
+
+            Assert.Equal(tipoPix, responseContaPix.Data.ContaCorrente.ChavePix.Tipo);
+            Assert.True(DateTime.UtcNow > responseContaPix.Data.ContaCorrente.ChavePix.DataCriacao);
+            Assert.Equal(Status.Ativo, responseContaPix.Data.ContaCorrente.ChavePix.Ativo);
+        }
+
+
+
 
     }
 }

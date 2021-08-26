@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Modalmais.API.DTOs;
+using Modalmais.API.DTOs.Validation;
 using Modalmais.API.Extensions;
 using Modalmais.Business.Interfaces.Notificador;
 using Modalmais.Business.Interfaces.Services.Request;
@@ -156,19 +157,22 @@ namespace Modalmais.API.Controllers
         [CustomResponse(StatusCodes.Status400BadRequest)]
         [CustomResponse(StatusCodes.Status404NotFound)]
         [HttpGet("contas/chavepix")]
-        public async Task<IActionResult> ObterContaPelaChavePix(ChavePixRequest chavePixRequest)
+        public async Task<IActionResult> ObterContaPelaChavePix([FromQuery] string chave, [FromQuery] string tipo)
         {
-            if (!ModelState.IsValid) return ResponseModelErro(ModelState);
+            if (String.IsNullOrEmpty(chave)) ResponseBadRequest("Informe uma chave válida.");
+            if (!int.TryParse(tipo, out int number)) return ResponseBadRequest("Não é um tipo válido de PIX.");
 
+            var chavePixRequest = new ChavePixRequest { Chave = chave, Tipo = (TipoChavePix)number };
 
-            var cliente = await _clienteServiceResponse.BuscarClientePelaChavePix(chavePixRequest.Chave);
+            var validar = new ChavePixRequestValidator().Validate(chavePixRequest).Errors;
+            if (validar.Any()) return ResponseEntidadeErro(validar);
+
+            var cliente = await _clienteServiceResponse.BuscarClientePelaChavePix(chavePixRequest.Chave, chavePixRequest.Tipo);
             if (cliente == null) return ResponseNotFound("Não foi encontrada uma conta relacionada com essa chave pix.");
 
             var contaPixResponse = _mapper.Map<ContaPixResponse>(cliente);
 
             return ResponseOk(contaPixResponse);
-
-
         }
 
 
