@@ -30,6 +30,12 @@ namespace Modalmais.API.DTOs
         public DDDBrasil DDD { get; set; }
         public string Numero { get; set; }
 
+
+        public override string ToString()
+        {
+            return DDD.ToString() + Numero.ToString();
+        }
+
     }
 
     public class ContaCorrenteResponse
