@@ -1,0 +1,19 @@
+version: '3.4'
+
+services:
+  modalmaisdb:
+    container_name: mongodb
+    restart: always
+    ports:
+        - "27017:27017"
+    volumes:
+        - mongo_data:/data/db
+
+  modalmais.api:
+    container_name: Modalmais.API
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+    depends_on:
+      - modalmaisdb
+    ports:
+      - "8000:80"

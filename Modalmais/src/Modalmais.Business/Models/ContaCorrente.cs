@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Modalmais.Business.Models.Enums;
+using System;
 
 namespace Modalmais.Business.Models
 {
@@ -7,8 +8,10 @@ namespace Modalmais.Business.Models
         public string Banco { get; private set; }
         public string Agencia { get; private set; }
         public string Numero { get; private set; }
+        public ChavePix? ChavePix { get; private set; }
         public DateTime DataCriacao { get; private set; }
-
+        public DateTime DataMudancaStatus { get; private set; }
+        public Status Status { get; private set; }
 
         public ContaCorrente()
         {
@@ -16,6 +19,8 @@ namespace Modalmais.Business.Models
             Agencia = "0001";
             Numero = GerarNumeroConta();
             DataCriacao = DateTime.Now;
+            Status = Status.Inativo;
+            DataMudancaStatus = DateTime.Now;
         }
 
         public string GerarNumeroConta()
@@ -32,6 +37,22 @@ namespace Modalmais.Business.Models
             return numeroConta;
         }
 
+        public void AtivarConta()
+        {
+            Status = Status.Ativo;
+            DataMudancaStatus = DateTime.Now;
+        }
+
+        public void AdicionarChavePix(ChavePix chavePix)
+        {
+            ChavePix = chavePix;
+        }
+
+        public void DesativarConta()
+        {
+            Status = Status.Desativado;
+            DataMudancaStatus = DateTime.Now;
+        }
 
     }
 }

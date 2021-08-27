@@ -35,6 +35,15 @@ namespace Modalmais.Infra.Repository
             var data = await DbSet.FindAsync(Builders<TEntity>.Filter.Eq(campo, comparar));
             return data.FirstOrDefault();
         }
+
+
+        public virtual async Task<TEntity> BuscarComFiltro(FilterDefinition<TEntity> field)
+        {
+            var data = await DbSet.FindAsync(field);
+            return data.FirstOrDefault();
+        }
+
+
         public virtual async Task<bool> ChecarEntidadeExistente(string campo, string comparar)
         {
             var data = await DbSet.FindAsync(Builders<TEntity>.Filter.Eq(campo, comparar));
@@ -50,7 +59,7 @@ namespace Modalmais.Infra.Repository
         public virtual async Task Update(TEntity obj)
         {
 
-            await DbSet.ReplaceOneAsync(Builders<TEntity>.Filter.Eq("_id", obj.Id), obj);
+            await DbSet.ReplaceOneAsync(Builders<TEntity>.Filter.Eq(o => o.Id, obj.Id), obj);
 
         }
 

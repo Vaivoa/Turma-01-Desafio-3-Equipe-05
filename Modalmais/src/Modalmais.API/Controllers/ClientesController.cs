@@ -2,28 +2,32 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Modalmais.API.DTOs;
+using Modalmais.API.DTOs.Validation;
 using Modalmais.API.Extensions;
 using Modalmais.Business.Interfaces.Notificador;
 using Modalmais.Business.Interfaces.Services.Request;
 using Modalmais.Business.Interfaces.Services.Response;
 using Modalmais.Business.Models;
+using Modalmais.Business.Models.Enums;
+using Modalmais.Business.Models.ObjectValues;
 using Modalmais.Business.Utils;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Modalmais.API.Controllers
 {
 
     [Route("api/v1/clientes")]
-    public class ClientesCorrenteController : MainController
+    public class ClientesController : MainController
     {
 
 
         protected readonly IClienteServiceRequest _clienteServiceRequest;
         protected readonly IClienteServiceResponse _clienteServiceResponse;
 
-        public ClientesCorrenteController(IMapper mapper,
+        public ClientesController(IMapper mapper,
                                        INotificador notificador,
                                        IClienteServiceRequest clienteServiceRequest,
                                        IClienteServiceResponse clienteServiceResponse
@@ -36,23 +40,81 @@ namespace Modalmais.API.Controllers
 
         [CustomResponse(StatusCodes.Status201Created)]
         [CustomResponse(StatusCodes.Status400BadRequest)]
-        [HttpPost]
+        [HttpPost("")]
         public async Task<IActionResult> AdicionarCliente(ClienteAdicionarRequest clienteRequest)
         {
             if (!ModelState.IsValid) return ResponseModelErro(ModelState);
 
             var cliente = _mapper.Map<Cliente>(clienteRequest);
 
-            if (!cliente.IsValid()) ResponseEntidadeErro(cliente.ListaDeErros);
+            if (cliente.EstaInvalido()) ResponseEntidadeErro(cliente.ListaDeErros);
 
             await _clienteServiceRequest.AdicionarCliente(cliente);
 
             if (NotificadorContemErros()) return ResponseBadRequest();
 
-            var clienteAdicionarResponse = _mapper.Map<ClienteAdicionarResponse>(cliente);
+            var clienteAdicionarResponse = _mapper.Map<ClienteResponse>(cliente);
 
             return ResponseCreated(clienteAdicionarResponse);
 
+        }
+
+
+        [CustomResponse(StatusCodes.Status201Created)]
+        [CustomResponse(StatusCodes.Status400BadRequest)]
+        [CustomResponse(StatusCodes.Status404NotFound)]
+        [CustomResponse(StatusCodes.Status403Forbidden)]
+        [HttpPost("{id}/documentos")]
+        public async Task<IActionResult> AdicionarImagemDocumento([FromForm] ImagemDocumentoRequest imagemDocumentoRequest, [FromRoute] string id)
+        {
+            if (!ModelState.IsValid) return ResponseModelErro(ModelState);
+            if (!ObjectIdValidacao.Validar(id)) return ResponseBadRequest("Formato de dado inválido.");
+
+            var cliente = await _clienteServiceResponse.BuscarClientePorId(id);
+            if (cliente == null) return ResponseNotFound("O cliente não foi encontrado.");
+
+            if (cliente.ContaCorrente.Numero != imagemDocumentoRequest.Numero ||
+                cliente.Documento.CPF != imagemDocumentoRequest.CPF) return ResponseForbidden();
+
+            if (!AtribuirDocumentoAoCliente(cliente, imagemDocumentoRequest.ImagemDocumento))
+                return ResponseBadRequest("A imagem do documento não é válida.");
+
+            await _clienteServiceRequest.AdicionarImagemDocumentoCliente(cliente);
+
+            if (NotificadorContemErros()) return ResponseBadRequest();
+
+            var clienteResponse = _mapper.Map<ClienteResponse>(cliente);
+
+            return ResponseCreated(clienteResponse);
+
+        }
+
+
+
+        [CustomResponse(StatusCodes.Status201Created)]
+        [CustomResponse(StatusCodes.Status400BadRequest)]
+        [CustomResponse(StatusCodes.Status404NotFound)]
+        [CustomResponse(StatusCodes.Status403Forbidden)]
+        [HttpPost("{id}/chavepix")]
+        public async Task<IActionResult> AdicionaChavePix([FromBody] ChavePixRequest chavePixRequest, [FromRoute] string id)
+        {
+            if (!ModelState.IsValid) return ResponseModelErro(ModelState);
+            if (!ObjectIdValidacao.Validar(id)) return ResponseBadRequest("Formato de dado inválido.");
+            var cliente = await _clienteServiceResponse.BuscarClientePorId(id);
+            if (cliente == null) return ResponseNotFound("O cliente não foi encontrado.");
+            if (chavePixRequest.Tipo == TipoChavePix.CPF && chavePixRequest.Chave != cliente.Documento.CPF)
+                return ResponseBadRequest("A chave Pix só pode ser o CPF, caso for igual ao do Titular.");
+            if (chavePixRequest.Tipo != TipoChavePix.Aleatoria && String.IsNullOrEmpty(chavePixRequest.Chave))
+                return ResponseBadRequest($"O tipo de chave {chavePixRequest.Tipo} requer uma chave.");
+
+            if (chavePixRequest.Tipo == TipoChavePix.Aleatoria) chavePixRequest.Chave = null;
+
+            var chavePix = _mapper.Map<ChavePix>(chavePixRequest);
+            if (chavePix.EstaInvalido()) return ResponseEntidadeErro(chavePix.ListaDeErros);
+            await _clienteServiceRequest.AdicionarPixContaCliente(cliente, chavePix);
+            if (NotificadorContemErros()) return ResponseBadRequest();
+            var clienteResponse = _mapper.Map<ClienteResponse>(cliente);
+            return ResponseCreated(clienteResponse);
         }
 
 
@@ -60,15 +122,15 @@ namespace Modalmais.API.Controllers
         [HttpGet]
         public async Task<IActionResult> ObterTodosClientes()
         {
-            var ListaClientes = await _clienteServiceResponse.BuscarTodos();
-            var ListaClientesResponse = new List<ClienteAdicionarResponse>();
+            var listaClientes = await _clienteServiceResponse.BuscarTodos();
+            var listaClientesResponse = new List<ClienteResponse>();
 
-            foreach (var cliente in ListaClientes)
+            foreach (var cliente in listaClientes)
             {
-                ListaClientesResponse.Add(_mapper.Map<ClienteAdicionarResponse>(cliente));
+                listaClientesResponse.Add(_mapper.Map<ClienteResponse>(cliente));
             }
 
-            return ResponseOk(ListaClientesResponse);
+            return ResponseOk(listaClientesResponse);
         }
 
         [CustomResponse(StatusCodes.Status200OK)]
@@ -80,36 +142,90 @@ namespace Modalmais.API.Controllers
 
             if (!ObjectIdValidacao.Validar(id)) return ResponseBadRequest("Formato de dado inválido.");
 
-            var Cliente = await _clienteServiceResponse.BuscarClientePorId(id);
+            var cliente = await _clienteServiceResponse.BuscarClientePorId(id);
 
-            if (Cliente == null) return ResponseNotFound("O cliente não foi encontrado.");
+            if (cliente == null) return ResponseNotFound("O cliente não foi encontrado.");
 
-            var ClienteResponse = _mapper.Map<ClienteAdicionarResponse>(Cliente);
+            var clienteResponse = _mapper.Map<ClienteResponse>(cliente);
 
-            return ResponseOk(ClienteResponse);
+            return ResponseOk(clienteResponse);
         }
 
-        [ApiExplorerSettings(IgnoreApi = true)]
-        [NonAction]
-        public bool ValidarDocumento(IFormFile documentorecebido)
+
+
+        [CustomResponse(StatusCodes.Status200OK)]
+        [CustomResponse(StatusCodes.Status400BadRequest)]
+        [CustomResponse(StatusCodes.Status404NotFound)]
+        [HttpGet("contas/chavepix")]
+        public async Task<IActionResult> ObterContaPelaChavePix([FromQuery] string chave, [FromQuery] string tipo)
         {
+            if (String.IsNullOrEmpty(chave)) ResponseBadRequest("Informe uma chave válida.");
+            if (!int.TryParse(tipo, out int number)) return ResponseBadRequest("Não é um tipo válido de PIX.");
 
-            var numero = new Random().Next(1, 3);
+            var chavePixRequest = new ChavePixRequest { Chave = chave, Tipo = (TipoChavePix)number };
 
-            return numero % 2 == 0 ? true : false;
+            var validar = new ChavePixRequestValidator().Validate(chavePixRequest).Errors;
+            if (validar.Any()) return ResponseEntidadeErro(validar);
+
+            var cliente = await _clienteServiceResponse.BuscarClientePelaChavePix(chavePixRequest.Chave, chavePixRequest.Tipo);
+            if (cliente == null) return ResponseNotFound("Não foi encontrada uma conta relacionada com essa chave pix.");
+
+            var contaPixResponse = _mapper.Map<ContaPixResponse>(cliente);
+
+            return ResponseOk(contaPixResponse);
         }
+
 
         [ApiExplorerSettings(IgnoreApi = true)]
         [NonAction]
-        public string SalvarDocumento(IFormFile documentorecebido)
+        public string ArmazenarImagemDocumentoCloud(IFormFile documentorecebido)
         {
 
             ////armazena fake
 
             var nomenclaturaPadrao = "_" + Guid.NewGuid().ToString();
-            var urlFake = $"https://i.ibb.co/{documentorecebido.FileName}{nomenclaturaPadrao}";
+            var urlFake = $"https://i.ibb.co/{documentorecebido.FileName + nomenclaturaPadrao}.png";
 
             return urlFake;
+        }
+
+
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [NonAction]
+        public bool AtribuirDocumentoAoCliente(Cliente cliente, IFormFile documentoRecebido)
+        {
+
+            var imagemDocumento = new ImagemDocumento(documentoRecebido);
+            if (imagemDocumento.Status == Status.Inativo) return false;
+
+            var urlImagemDocumento = ArmazenarImagemDocumentoCloud(documentoRecebido);
+            if (String.IsNullOrEmpty(urlImagemDocumento)) return false;
+
+            imagemDocumento.AtribuirUrl(urlImagemDocumento);
+
+            if (imagemDocumento.EstaInvalido())
+            {
+                AdicionarNotificacaoErro(imagemDocumento.ListaDeErros);
+                return false;
+            }
+
+
+            if (cliente.Documento.Imagens.Any())
+            {
+                foreach (var documento in cliente.Documento.Imagens)
+                {
+                    documento.DesativarImagemDocumento();
+                }
+
+                cliente.Documento.Imagens.Add(imagemDocumento);
+                return true;
+            }
+
+            cliente.ContaCorrente.AtivarConta();
+            cliente.Documento.AtivarDocumento();
+            cliente.Documento.Imagens.Add(imagemDocumento);
+
+            return true;
         }
 
     }

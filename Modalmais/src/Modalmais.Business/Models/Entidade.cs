@@ -18,5 +18,10 @@ namespace Modalmais.Business.Models
         {
             DataCriacao = DateTime.Now;
         }
+        public Entidade(string id)
+        {
+            Id = id;
+            DataCriacao = DateTime.Now;
+        }
     }
 }

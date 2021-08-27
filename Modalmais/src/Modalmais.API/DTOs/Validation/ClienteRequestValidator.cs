@@ -11,11 +11,11 @@ namespace Modalmais.Business.Models.Validation
         public static int ClienteNomeSobrenomeMinimoChar => 3;
         public static int ClienteEmailMinimoChar => 5;
         public static int ClienteCpfMinimoMaxChar => 11;
-        public static int ClienteCelularMinimoMaxChar => 9;
-        public static string ClientePropriedadeCharLimite => "A quantidade de letras da propriedade {PropertyName} permitidas {MinLength} a {MaxLength}.";
-        public static string ClientePropriedadeVazia => "A {PropertyName} não pode ser vazio.";
-        public static string ClientePropriedadeValida => "O {PropertyName} deve ser valido segundo as normativas.";
-        public static string ClientePropriedadeSoNumeros => "O {PropertyName} deve ser formado somente por digitos numericos.";
+        public static int CelularMinimoMaxDigitos => 9;
+        public static string ClientePropriedadeCharLimite => "A quantidade de letras permitidas da propriedade {PropertyName} é de {MinLength} a {MaxLength}.";
+        public static string ClientePropriedadeVazia => "O campo {PropertyName} não pode ser vazio.";
+        public static string ClientePropriedadeValida => "O campo {PropertyName} deve ser valido segundo as normativas.";
+        public static string ClientePropriedadeSoNumeros => "O campo {PropertyName} deve ser formado somente por digitos numericos.";
         public static string ClienteDDDEnumValido => "O DDD deve ser formado por 11 digitos numericos.";
 
 
@@ -33,7 +33,7 @@ namespace Modalmais.Business.Models.Validation
                 .WithMessage(ClientePropriedadeCharLimite)
                 .NotEmpty().WithMessage(ClientePropriedadeVazia);
 
-            RuleFor(cliente => cliente.CPF)
+            RuleFor(cliente => cliente.Documento.CPF)
                 .Length(ClienteCpfMinimoMaxChar, ClienteCpfMinimoMaxChar)
                 .WithMessage(ClientePropriedadeCharLimite)
                 .NotNull().WithMessage(ClientePropriedadeVazia)
@@ -56,7 +56,7 @@ namespace Modalmais.Business.Models.Validation
 
             RuleFor(cliente => cliente.Contato.Celular.Numero)
                 .NotNull().WithMessage(ClientePropriedadeVazia)
-                .Length(ClienteCelularMinimoMaxChar, ClienteCelularMinimoMaxChar)
+                .Length(CelularMinimoMaxDigitos)
                 .WithMessage(ClientePropriedadeCharLimite)
                 .NotEmpty().WithMessage(ClientePropriedadeVazia)
                 .Must(UtilsDigitosNumericos.SoNumeros).WithMessage(ClientePropriedadeSoNumeros);

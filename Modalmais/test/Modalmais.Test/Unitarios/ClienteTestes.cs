@@ -2,7 +2,6 @@
 using Modalmais.Business.Models;
 using Modalmais.Business.Models.Enums;
 using Modalmais.Business.Models.ObjectValues;
-using Modalmais.Business.Models.Validation;
 using Xunit;
 
 namespace Modalmais.Test.Unitarios
@@ -30,14 +29,15 @@ namespace Modalmais.Test.Unitarios
         public void NovoCliente_ValidarCpf_DeveCorresponderAoResultadoEsperado(string cpf, bool resultadoEsperado)
         {
             // Arrange
-            var cliente = new Cliente("Beatriz", "Pires", cpf,
+            var cliente = new Cliente("Beatriz", "Pires",
                                 new Contato(
                                     new Celular(DDDBrasil.AC_RioBranco, "940041211"),
-                                    "email@email.com")
+                                    "email@email.com"),
+                                new Documento(cpf)
                                 );
 
             // Act
-            var resultado = cliente.ValidarUsuario();
+            var resultado = cliente.EstaInvalido();
 
             // Assert
             Assert.Equal(resultadoEsperado, resultado);
@@ -54,14 +54,15 @@ namespace Modalmais.Test.Unitarios
         public void NovoCliente_ValidarEmail_DeveCorresponderAoResultadoEsperado(string email, bool resultadoEsperado)
         {
             // Arrange
-            var cliente = new Cliente("Beatriz", "Pires", "78080103089",
+            var cliente = new Cliente("Beatriz", "Pires",
                 new Contato(
                     new Celular(DDDBrasil.AC_RioBranco, "940041211"),
-                    email)
+                    email),
+               new Documento("78080103089")
             );
 
             // Act
-            var resultado = cliente.ValidarUsuario();
+            var resultado = cliente.EstaInvalido();
 
             // Assert
             Assert.Equal(resultadoEsperado, resultado);
@@ -75,7 +76,7 @@ namespace Modalmais.Test.Unitarios
             var cliente = _clienteFixtureTestes.GerarClienteValido();
 
             // Act & Assert
-            Assert.False(cliente.ValidarUsuario());
+            Assert.False(cliente.EstaInvalido());
         }
 
         [Trait("Categoria", "Testes Cliente")]
@@ -86,7 +87,47 @@ namespace Modalmais.Test.Unitarios
             var cliente = _clienteFixtureTestes.GerarClienteIncorreto();
 
             // Act & Assert
-            Assert.True(cliente.ValidarUsuario());
+            Assert.True(cliente.EstaInvalido());
         }
+
+        //PIX
+        [Trait("Categoria", "Testes Cliente")]
+        [Theory(DisplayName = "Validar criação de uma chave pix válida")]
+        [InlineData(null, TipoChavePix.Aleatoria)]
+        [InlineData("usuario@valido.com", TipoChavePix.Email)]
+        [InlineData("99999999999", TipoChavePix.Telefone)]
+        [InlineData("", TipoChavePix.CPF)]
+
+        public void NovaChavePix_ChavePixValida_ValidadorDeveRetornarFalso(string chave, TipoChavePix tipo)
+        {
+            // Arrange
+            var cliente = _clienteFixtureTestes.GerarClienteValido();
+            if (tipo == TipoChavePix.CPF) chave = cliente.Documento.CPF;
+            var chavePix = new ChavePix(chave, tipo);
+            cliente.ContaCorrente.AdicionarChavePix(chavePix);
+
+            // Act & Assert
+            var a = cliente.ContaCorrente.ChavePix.EstaInvalido();
+            var b = cliente.ContaCorrente.ChavePix;
+            Assert.False(cliente.ContaCorrente.ChavePix.EstaInvalido());
+        }
+
+        [Trait("Categoria", "Testes Cliente")]
+        [Theory(DisplayName = "Validar criação de uma chave pix inválida")]
+        [InlineData("usuariovalido.com", TipoChavePix.Email)]
+        [InlineData("999999999910", TipoChavePix.Telefone)]
+        [InlineData("675661360034", TipoChavePix.CPF)]
+
+        public void NovaChavePix_ChavePixInvalida_ValidadorDeveRetornarVerdadeiro(string chave, TipoChavePix tipo)
+        {
+            // Arrange
+            var cliente = _clienteFixtureTestes.GerarClienteValido();
+            var chavePix = new ChavePix(chave, tipo);
+            cliente.ContaCorrente.AdicionarChavePix(chavePix);
+
+            // Act & Assert
+            Assert.True(cliente.ContaCorrente.ChavePix.EstaInvalido());
+        }
+
     }
 }

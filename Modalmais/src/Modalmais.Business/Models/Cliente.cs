@@ -10,12 +10,12 @@ namespace Modalmais.Business.Models
     public class Cliente : Entidade
     {
 
-        public Cliente(string nome, string sobrenome, string CPF, Contato contato)
+        public Cliente(string nome, string sobrenome, Contato contato, Documento documento)
         {
             ListaDeErros = new List<ValidationFailure>();
             Nome = nome;
             Sobrenome = sobrenome;
-            this.CPF = CPF;
+            Documento = documento;
             Contato = contato;
             ContaCorrente = new ContaCorrente();
 
@@ -24,7 +24,7 @@ namespace Modalmais.Business.Models
 
         public string Nome { get; private set; }
         public string Sobrenome { get; private set; }
-        public string CPF { get; private set; }
+        public Documento Documento { get; private set; }
         public Contato Contato { get; private set; }
         public ContaCorrente ContaCorrente { get; private set; }
 
@@ -36,7 +36,7 @@ namespace Modalmais.Business.Models
 
 
         // Retorna True se tiverem erros
-        public bool IsValid()
+        public bool EstaInvalido()
         {
             ListaDeErros.Clear();
 

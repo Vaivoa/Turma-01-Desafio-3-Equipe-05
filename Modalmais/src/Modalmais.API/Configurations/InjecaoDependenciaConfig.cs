@@ -8,16 +8,20 @@ using Modalmais.Business.Services.Response;
 using Modalmais.Business.Notificador;
 using Modalmais.Infra.Data;
 using Modalmais.Infra.Repository;
+using Microsoft.Extensions.Configuration;
 
 namespace Modalmais.API.Configurations
 {
     public static class InjecaoDependenciaConfig
     {
 
-        public static IServiceCollection InjecaoDependencias(this IServiceCollection services)
+        public static IServiceCollection InjecaoDependencias(this IServiceCollection services, IConfiguration configuration)
         {
             //DbContext
-            services.AddScoped<DbContext>();
+            services.AddScoped(p => new DbContext(
+                configuration.GetConnectionString("Api-StringBd-Mongodb").ToString(),
+                configuration.GetConnectionString("NomeApiDb").ToString()
+                ));
             //NotificationPattern
             services.AddScoped<INotificador, NotificadorHandler>();
             //Repositorys

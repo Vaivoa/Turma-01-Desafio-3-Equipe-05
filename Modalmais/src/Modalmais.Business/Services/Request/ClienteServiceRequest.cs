@@ -15,11 +15,24 @@ namespace Modalmais.Business.Services.Request
 
         public async Task AdicionarCliente(Cliente clienteAdicionar)
         {
-            if (ChecarPorCpfSeClienteExiste(clienteAdicionar.CPF).Result)
-            { AdicionarNotificacao("CPF Existente em nosso banco de dados"); return; }
-            if (ChecarPorEmailSeClienteExiste(clienteAdicionar.Contato.Email).Result) 
-            { AdicionarNotificacao("Email Existente em nosso banco de dados"); return; }
+            if (ChecarPorCpfSeClienteExiste(clienteAdicionar.Documento.CPF).Result)
+            { AdicionarNotificacao("CPF Existente em nosso banco de dados."); return; }
+            if (ChecarPorEmailSeClienteExiste(clienteAdicionar.Contato.Email).Result)
+            { AdicionarNotificacao("Email Existente em nosso banco de dados."); return; }
             await _clienteRepository.Adicionar(clienteAdicionar);
+        }
+
+        public async Task AdicionarImagemDocumentoCliente(Cliente clienteAdicionarImagem)
+        {
+            await _clienteRepository.Update(clienteAdicionarImagem);
+        }
+
+        public async Task AdicionarPixContaCliente(Cliente clienteAdicionarPix, ChavePix chavePix)
+        {
+            clienteAdicionarPix.ContaCorrente.AdicionarChavePix(chavePix);
+            clienteAdicionarPix.ContaCorrente.ChavePix.AtivarChavePix();
+
+            await _clienteRepository.Update(clienteAdicionarPix);
         }
     }
 }

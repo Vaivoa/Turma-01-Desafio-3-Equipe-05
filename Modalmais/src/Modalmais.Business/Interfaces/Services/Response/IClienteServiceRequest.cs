@@ -1,8 +1,5 @@
 ﻿using Modalmais.Business.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Modalmais.Business.Interfaces.Services.Response
@@ -10,5 +7,9 @@ namespace Modalmais.Business.Interfaces.Services.Response
     public interface IClienteServiceRequest : IDisposable
     {
         Task AdicionarCliente(Cliente clienteAdicionar);
+
+        Task AdicionarImagemDocumentoCliente(Cliente clienteAdicionar);
+
+        Task AdicionarPixContaCliente(Cliente clienteAdicionar, ChavePix chavePix);
     }
 }
