@@ -1,4 +1,5 @@
 ﻿using Modalmais.Business.Models;
+using Modalmais.Core.Models;
 using System;
 using System.Threading.Tasks;
 

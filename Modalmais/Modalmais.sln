@@ -17,7 +17,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Src", "Src", "{71226B9A-353
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{9D716588-ECD2-40E6-86BB-41FED9446FFB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Modalmais.Transacoes.API", "src\Modalmais.Transacoes.API\Modalmais.Transacoes.API.csproj", "{FAFB0631-D669-4B38-A20C-751DAF8141DF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Modalmais.Transacoes.API", "src\Modalmais.Transacoes.API\Modalmais.Transacoes.API.csproj", "{FAFB0631-D669-4B38-A20C-751DAF8141DF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Modalmais.Core", "..\Modalmais.Core\Modalmais.Core.csproj", "{F57F532F-43C6-48A0-85D8-53FA1C1D7536}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -49,6 +51,10 @@ Global
 		{FAFB0631-D669-4B38-A20C-751DAF8141DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FAFB0631-D669-4B38-A20C-751DAF8141DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FAFB0631-D669-4B38-A20C-751DAF8141DF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F57F532F-43C6-48A0-85D8-53FA1C1D7536}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F57F532F-43C6-48A0-85D8-53FA1C1D7536}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F57F532F-43C6-48A0-85D8-53FA1C1D7536}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F57F532F-43C6-48A0-85D8-53FA1C1D7536}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -59,6 +65,7 @@ Global
 		{08583E31-0DB8-4568-B476-90E989B13CC3} = {71226B9A-3532-47BF-AC87-963ABAD5376B}
 		{70E5CCBA-F651-4313-8B07-F0A11449DA0E} = {71226B9A-3532-47BF-AC87-963ABAD5376B}
 		{FAFB0631-D669-4B38-A20C-751DAF8141DF} = {71226B9A-3532-47BF-AC87-963ABAD5376B}
+		{F57F532F-43C6-48A0-85D8-53FA1C1D7536} = {71226B9A-3532-47BF-AC87-963ABAD5376B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {72D811B0-5201-4403-84F0-97098F38CC19}

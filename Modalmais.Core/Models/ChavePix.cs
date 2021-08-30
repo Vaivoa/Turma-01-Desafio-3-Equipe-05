@@ -1,12 +1,12 @@
 ﻿using FluentValidation.Results;
-using Modalmais.Business.Models.Enums;
+using Modalmais.Core.Models.Enums;
 using Modalmais.Business.Models.Validation;
 using MongoDB.Bson.Serialization.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Modalmais.Business.Models
+namespace Modalmais.Core.Models
 {
     public class ChavePix
     {

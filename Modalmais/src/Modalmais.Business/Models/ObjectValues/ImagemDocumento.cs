@@ -1,6 +1,6 @@
 ﻿using FluentValidation.Results;
 using Microsoft.AspNetCore.Http;
-using Modalmais.Business.Models.Enums;
+using Modalmais.Core.Models.Enums;
 using Modalmais.Business.Models.Validation;
 using MongoDB.Bson.Serialization.Attributes;
 using System;

@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using FluentValidation.Validators;
-using Modalmais.Business.Models.Enums;
-using Modalmais.Business.Utils;
+using Modalmais.Core.Models.Enums;
+using Modalmais.Core.Utils;
 using System;
 
 namespace Modalmais.API.DTOs.Validation

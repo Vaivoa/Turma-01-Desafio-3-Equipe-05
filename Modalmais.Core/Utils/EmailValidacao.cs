@@ -1,6 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 
-namespace Modalmais.Business.Utils
+namespace Modalmais.Core.Utils
 {
     public static class EmailValidacao
     {

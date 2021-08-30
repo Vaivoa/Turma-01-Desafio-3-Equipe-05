@@ -1,4 +1,4 @@
-﻿using Modalmais.Business.Models.Enums;
+﻿using Modalmais.Core.Models.Enums;
 
 namespace Modalmais.Business.Models.ObjectValues
 {
