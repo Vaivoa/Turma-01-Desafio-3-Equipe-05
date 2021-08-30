@@ -3,12 +3,14 @@ using FluentValidation.Validators;
 using Modalmais.Core.Models.Enums;
 using Modalmais.Core.Utils;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace Modalmais.API.DTOs.Validation
+namespace Modalmais.Transacoes.API.Models.Validations
 {
-    public class ChavePixRequestValidator : AbstractValidator<ChavePixRequest>
+    public class TransacaoValidator : AbstractValidator<Transacao>
     {
-
         public static int ClienteNomeSobrenomeEmailMaximoChar => 50;
         public static int ClienteNomeSobrenomeMinimoChar => 3;
         public static int ClienteEmailMinimoChar => 5;
@@ -19,10 +21,7 @@ namespace Modalmais.API.DTOs.Validation
         public static string ClientePropriedadeValida => "O {PropertyName} deve ser valido segundo as normativas.";
         public static string ClientePropriedadeSoNumeros => "O {PropertyName} deve ser formado somente por digitos numericos.";
         public static string ClienteDDDEnumValido => "O DDD deve ser formado por 11 digitos numericos.";
-
-
-
-        public ChavePixRequestValidator()
+        public TransacaoValidator()
         {
             RuleFor(chavePixRequest => chavePixRequest.Tipo)
                 .IsInEnum().WithMessage("Não é um tipo válido de PIX.")
@@ -73,7 +72,16 @@ namespace Modalmais.API.DTOs.Validation
                 .Must(UtilsDigitosNumericos.SoNumeros).WithMessage("Somente digitos nos numeros");
             });
 
-        }
+            RuleFor(valor => valor.Valor)
+                .NotEmpty().WithMessage(ClientePropriedadeVazia)
+                .LessThanOrEqualTo(5000);
 
+            RuleFor(descricao => descricao.Descricao)
+                .MaximumLength(30);
+
+
+
+        }
+        
     }
 }
