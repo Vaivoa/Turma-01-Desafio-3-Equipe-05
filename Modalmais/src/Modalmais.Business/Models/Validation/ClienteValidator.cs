@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 using FluentValidation.Validators;
-using Modalmais.Business.Utils;
+using Modalmais.Core.Utils;
 using System;
 
 namespace Modalmais.Business.Models.Validation

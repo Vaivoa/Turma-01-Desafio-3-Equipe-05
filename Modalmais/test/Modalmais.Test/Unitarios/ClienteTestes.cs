@@ -1,8 +1,9 @@
 ﻿using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Modalmais.Business.Models;
-using Modalmais.Business.Models.Enums;
+using Modalmais.Core.Models.Enums;
 using Modalmais.Business.Models.ObjectValues;
 using Xunit;
+using Modalmais.Core.Models;
 
 namespace Modalmais.Test.Unitarios
 {

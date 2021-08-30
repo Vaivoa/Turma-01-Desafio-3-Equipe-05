@@ -2,7 +2,7 @@
 using Modalmais.API.Extensions;
 using Modalmais.API.MVC;
 using Modalmais.Business.Models;
-using Modalmais.Business.Models.Enums;
+using Modalmais.Core.Models.Enums;
 using Modalmais.Test.Tests;
 using Modalmais.Test.Tests.Config;
 using Newtonsoft.Json;

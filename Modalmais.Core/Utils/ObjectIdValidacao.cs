@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Modalmais.Business.Utils
+namespace Modalmais.Core.Utils
 {
     public class ObjectIdValidacao
     {

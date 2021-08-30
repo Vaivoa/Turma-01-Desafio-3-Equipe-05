@@ -1,4 +1,4 @@
-﻿namespace Modalmais.Business.Models.Enums
+﻿namespace Modalmais.Core.Models.Enums
 {
     public enum TipoChavePix
     {

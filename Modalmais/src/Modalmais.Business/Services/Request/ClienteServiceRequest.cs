@@ -3,6 +3,7 @@ using Modalmais.Business.Interfaces.Repository;
 using Modalmais.Business.Interfaces.Services.Response;
 using Modalmais.Business.Models;
 using Modalmais.Business.Services.Response;
+using Modalmais.Core.Models;
 using System.Threading.Tasks;
 
 namespace Modalmais.Business.Services.Request

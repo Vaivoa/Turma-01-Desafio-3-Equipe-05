@@ -1,5 +1,5 @@
 ﻿using Modalmais.Business.Models;
-using Modalmais.Business.Models.Enums;
+using Modalmais.Core.Models.Enums;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;

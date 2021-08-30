@@ -2,10 +2,10 @@
 using Modalmais.Business.Interfaces.Repository;
 using Modalmais.Business.Interfaces.Services.Request;
 using Modalmais.Business.Models;
-using Modalmais.Business.Models.Enums;
+using Modalmais.Core.Models.Enums;
 using Modalmais.Business.Models.ObjectValues;
 using Modalmais.Business.Service;
-using Modalmais.Business.Utils;
+using Modalmais.Core.Utils;
 using MongoDB.Driver;
 using System.Collections.Generic;
 using System.Threading.Tasks;

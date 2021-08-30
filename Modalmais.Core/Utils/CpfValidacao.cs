@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-namespace Modalmais.Business.Utils
+namespace Modalmais.Core.Utils
 {
     public class CpfValidacao
     {

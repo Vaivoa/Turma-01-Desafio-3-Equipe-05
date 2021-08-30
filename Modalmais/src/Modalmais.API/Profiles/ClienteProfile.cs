@@ -2,6 +2,7 @@
 using Modalmais.API.DTOs;
 using Modalmais.Business.Models;
 using Modalmais.Business.Models.ObjectValues;
+using Modalmais.Core.Models;
 using System.Linq;
 
 namespace Modalmais.API.Profiles
@@ -29,7 +30,7 @@ namespace Modalmais.API.Profiles
             CreateMap<Cliente, ClienteResponse>();
             CreateMap<Documento, DocumentoResponse>()
                 .ForMember(parameter => parameter.Imagens, opt =>
-                opt.MapFrom(s => s.Imagens.Where(o => o.Status == Business.Models.Enums.Status.Ativo)));
+                opt.MapFrom(s => s.Imagens.Where(o => o.Status == Core.Models.Enums.Status.Ativo)));
 
 
             CreateMap<ImagemDocumento, ImagemDocumentoResponse>();

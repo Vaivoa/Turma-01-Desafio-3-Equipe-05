@@ -1,4 +1,4 @@
-﻿namespace Modalmais.Business.Utils
+﻿namespace Modalmais.Core.Utils
 {
     public class UtilsDigitosNumericos
     {
