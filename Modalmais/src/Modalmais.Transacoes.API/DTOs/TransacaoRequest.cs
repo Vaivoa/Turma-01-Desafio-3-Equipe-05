@@ -8,7 +8,7 @@ namespace Modalmais.Transacoes.API.DTOs
 {
     public class TransacaoRequest
     {
-        public StatusTransacao StatusTransacao { get; set; }
+        
         public TipoChavePix Tipo { get; set; }
         public string Chave { get; set; }
         public decimal Valor { get; set; }
