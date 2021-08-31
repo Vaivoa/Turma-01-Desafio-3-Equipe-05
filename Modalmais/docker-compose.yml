@@ -3,11 +3,21 @@ version: '3.4'
 services:
   modalmaisdb:
     image: mongo
+  
+  transacaodb:
+    image: postgres
 
   modalmais.api:
     image: ${DOCKER_REGISTRY-}modalmaisapi
     build:
       context: .
       dockerfile: src/Modalmais.API/Dockerfile
+  modalmais.transacoes.api:
+    image: ${DOCKER_REGISTRY-}modalmaistransacoesapi
+    build:
+      context: .
+      dockerfile: src/Modalmais.Transacoes.API/Dockerfile
+
 volumes:
   mongo_data:
+  postgres_data:
