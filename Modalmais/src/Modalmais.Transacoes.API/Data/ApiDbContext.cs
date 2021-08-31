@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Modalmais.Transacoes.API.Models;
 using System.Linq;
 
 namespace Modalmais.Transacoes.API.Data
@@ -9,6 +10,8 @@ namespace Modalmais.Transacoes.API.Data
         {
 
         }
+
+        public DbSet<Transacao> Transacoes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

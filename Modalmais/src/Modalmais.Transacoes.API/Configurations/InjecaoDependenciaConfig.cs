@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Modalmais.Core.Interfaces.Notificador;
 using Modalmais.Core.Notificador;
 using Modalmais.Transacoes.API.Data;
+using Modalmais.Transacoes.API.Repository;
 
 namespace Modalmais.Transacoes.API.Configurations
 {
@@ -18,7 +19,7 @@ namespace Modalmais.Transacoes.API.Configurations
             services.AddScoped<INotificador, NotificadorHandler>();
 
             //Repositorys
-
+            services.AddScoped<TransacaoRepository>();
 
             //Services
 
