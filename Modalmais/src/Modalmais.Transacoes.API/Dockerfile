@@ -9,7 +9,7 @@ FROM mcr.microsoft.com/dotnet/sdk:5.0 AS build
 WORKDIR /src
 COPY ["src/Modalmais.Transacoes.API/Modalmais.Transacoes.API.csproj", "src/Modalmais.Transacoes.API/"]
 COPY ["src/Modalmais.Business/Modalmais.Business.csproj", "src/Modalmais.Business/"]
-COPY ["../Modalmais.Core/Modalmais.Core.csproj", "../Modalmais.Core/"]
+COPY ["src/Modalmais.Core/Modalmais.Core.csproj", "src/Modalmais.Core/"]
 RUN dotnet restore "src/Modalmais.Transacoes.API/Modalmais.Transacoes.API.csproj"
 COPY . .
 WORKDIR "/src/src/Modalmais.Transacoes.API"

@@ -22,6 +22,7 @@ namespace Modalmais.Transacoes.API.DTOs.Validations
         public static readonly string DDDInvalido = "O DDD informado não é válido.";
         public static readonly string SomenteNumerosChave = "O campo Chave deve possuir somente numeros.";
         public static readonly string TelefoneNumeroTotalDigitos = "O campo Chave deve ser um telefone e possuir 11 digitos.";
+        public static readonly string ValorMaximoDeTransacao = "O valor maximo para uma transação é de 5000.";
 
 
 
@@ -76,10 +77,10 @@ namespace Modalmais.Transacoes.API.DTOs.Validations
 
             RuleFor(valor => valor.Valor)
                 .NotEmpty().WithMessage(CampoNaoPodeSerBrancoOuNulo)
-                .LessThanOrEqualTo(5000);
+                .LessThanOrEqualTo(5000).WithMessage(ValorMaximoDeTransacao);
 
             RuleFor(descricao => descricao.Descricao)
-                .MaximumLength(30);
+                .MaximumLength(30).WithMessage(NumeroTotalDeCaracteresPermitidos);
         }
     }
 }
