@@ -114,8 +114,10 @@ namespace Modalmais.Core.Controller
         protected IActionResult ResponseCreated(object data) =>
             Response(HttpStatusCode.Created, data);
 
-        protected IActionResult ResponseNoContent() =>
-            Response(HttpStatusCode.NoContent);
+        protected IActionResult ResponseNoContent()
+        {
+            return NoContent();
+        }
 
         protected IActionResult ResponseNotModified() =>
             Response(HttpStatusCode.NotModified);
