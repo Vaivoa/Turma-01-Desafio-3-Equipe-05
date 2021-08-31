@@ -7,6 +7,7 @@ using Modalmais.Core.Interfaces.Notificador;
 using Modalmais.Transacoes.API.DTOs;
 using Modalmais.Transacoes.API.Models;
 using Modalmais.Transacoes.API.Repository;
+using System;
 using System.Threading.Tasks;
 
 namespace Modalmais.Transacoes.API.Controllers
@@ -41,6 +42,10 @@ namespace Modalmais.Transacoes.API.Controllers
         {
             if (!ModelState.IsValid) return ResponseModelErro(ModelState);
 
+            var teste = await ObterTotalValorDoDiaPorChave(transacaoRequest.Chave);
+
+            if (teste + transacaoRequest.Valor > 200) return ResponseInternalServerError("Limite diario atingido.");
+
             var transacao = _mapper.Map<Transacao>(transacaoRequest);
             _transacaoRepository.Add(transacao);
 
@@ -49,6 +54,13 @@ namespace Modalmais.Transacoes.API.Controllers
             return ResponseNoContent();
         }
 
+        public async Task<decimal> ObterTotalValorDoDiaPorChave(string chave)
+        {
+            var transacoes = await _transacaoRepository.Buscar(c => c.Chave == chave && c.DataCriacao == DateTime.Today);
+            decimal soma = 0;
+            foreach (var transacao in transacoes) soma += transacao.Valor;
+            return soma;
+        }
 
     }
 }
