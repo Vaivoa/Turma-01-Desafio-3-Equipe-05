@@ -9,6 +9,17 @@ services:
     volumes:
         - mongo_data:/data/db
 
+  transacaodb:
+    container_name: postgres
+    environment:
+        - POSTGRES_USER=postgres
+        - POSTGRES_PASSWORD=rootvaivoa
+    restart: always
+    ports:
+        - "5432:5432"
+    volumes:
+        - postgres_data:/var/lib/postgresql/data/
+
   modalmais.api:
     container_name: Modalmais.API
     environment:
@@ -17,3 +28,12 @@ services:
       - modalmaisdb
     ports:
       - "8000:80"
+
+  modalmais.transacoes.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - "Api-StringBd-Postgres:Host=transacaodb;Database=modalmais;Username=postgres;Password=rootvaivoa"
+    ports:
+      - "8001:80"
+    depends_on:
+      - transacaodb
