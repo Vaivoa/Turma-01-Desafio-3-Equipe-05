@@ -27,13 +27,13 @@ services:
     depends_on:
       - modalmaisdb
     ports:
-      - "8000:80"
+      - "5001:80"
 
   modalmais.transacoes.api:
     environment:
       - ASPNETCORE_ENVIRONMENT=Docker
       - "Api-StringBd-Postgres:Host=transacaodb;Database=modalmais;Username=postgres;Password=rootvaivoa"
     ports:
-      - "8001:80"
+      - "5101:80"
     depends_on:
       - transacaodb

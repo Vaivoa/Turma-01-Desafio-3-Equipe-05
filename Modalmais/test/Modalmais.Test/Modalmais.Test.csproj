@@ -25,6 +25,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\Modalmais.API\Modalmais.API.csproj" />
     <ProjectReference Include="..\..\src\Modalmais.Business\Modalmais.Business.csproj" />
+    <ProjectReference Include="..\..\src\Modalmais.Core\Modalmais.Core.csproj" />
   </ItemGroup>
 
 </Project>

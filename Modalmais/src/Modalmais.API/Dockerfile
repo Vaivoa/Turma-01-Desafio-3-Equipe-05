@@ -10,7 +10,7 @@ WORKDIR /src
 COPY ["src/Modalmais.API/Modalmais.API.csproj", "src/Modalmais.API/"]
 COPY ["src/Modalmais.Infra/Modalmais.Infra.csproj", "src/Modalmais.Infra/"]
 COPY ["src/Modalmais.Business/Modalmais.Business.csproj", "src/Modalmais.Business/"]
-COPY ["../Modalmais.Core/Modalmais.Core.csproj", "../Modalmais.Core/"]
+COPY ["src/Modalmais.Core/Modalmais.Core.csproj", "src/Modalmais.Core/"]
 RUN dotnet restore "src/Modalmais.API/Modalmais.API.csproj"
 COPY . .
 WORKDIR "/src/src/Modalmais.API"
