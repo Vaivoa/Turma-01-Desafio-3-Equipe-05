@@ -45,9 +45,9 @@ namespace Modalmais.Transacoes.API.Repository
             return Db.SaveChangesAsync().Result > 0;
         }
 
-        public virtual async void Add(TEntity entidade)
+        public virtual void Add(TEntity entidade)
         {
-            await Db.AddAsync(entidade);
+            Db.Add(entidade);
         }
 
 

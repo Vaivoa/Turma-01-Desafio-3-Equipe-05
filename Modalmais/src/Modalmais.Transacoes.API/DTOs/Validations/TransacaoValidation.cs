@@ -15,7 +15,7 @@ namespace Modalmais.Transacoes.API.DTOs.Validations
         public static readonly int CPFQuantidadeDeDigitos = 11;
         public static readonly int EmailQuantidadeDeDigitosMin = 7;
         public static readonly int EmailQuantidadeDeDigitosMax = 50;
-        public static readonly string NumeroTotalDeCaracteresPermitidos = "O campo {PropertyName} deve possuir {TotalLength} caracteres/digitos.";
+        public static readonly string NumeroTotalDeCaracteresPermitidos = "O campo {PropertyName} deve possuir {MaxLength} caracteres/digitos.";
         public static readonly string NumeroDeCaracteresPermitidos = "O campo {PropertyName} deve possuir entre {MinLength} e {MaxLength} caracteres/digitos.";
         public static readonly string CPFInvalido = "O CPF precisa ser um válido.";
         public static readonly string EmailInvalido = "O Email informado precisa ser um válido.";

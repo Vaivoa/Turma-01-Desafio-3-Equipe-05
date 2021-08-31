@@ -11,7 +11,7 @@ namespace Modalmais.Transacoes.API.Models
 
         public Entidade()
         {
-            Id = new Guid();
+            Id = Guid.NewGuid();
             DataCriacao = DateTime.Now;
         }
     }

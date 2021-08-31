@@ -1,5 +1,5 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
+using System;
 
 namespace Modalmais.Transacoes.API.Data.Migrations
 {
@@ -18,7 +18,7 @@ namespace Modalmais.Transacoes.API.Data.Migrations
                     Id = table.Column<Guid>(type: "uuid", maxLength: 36, nullable: false),
                     StatusTransacao = table.Column<int>(type: "integer", nullable: false),
                     Tipo = table.Column<int>(type: "integer", nullable: false),
-                    Chave = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: false),
+                    Chave = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     Valor = table.Column<decimal>(type: "numeric(8,2)", nullable: false),
                     Descricao = table.Column<string>(type: "character varying(30)", maxLength: 30, nullable: true),
                     DataCriacao = table.Column<DateTime>(type: "timestamp without time zone", nullable: false)
