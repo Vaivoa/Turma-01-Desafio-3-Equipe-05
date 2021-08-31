@@ -1,11 +1,8 @@
-﻿using Modalmais.Business.Interfaces.Notificador;
-using System;
+﻿using Modalmais.Core.Interfaces.Notificador;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Modalmais.Business.Notificador
+namespace Modalmais.Core.Notificador
 {
     //
     public class NotificadorHandler : INotificador

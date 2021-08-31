@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Modalmais.API.Controllers.Shared;
+using Modalmais.Core.Controller.Shared;
 using System;
 
-namespace Modalmais.API.Extensions
+namespace Modalmais.Core.Extensions
 {
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = true, Inherited = true)]
     public class CustomResponseAttribute : ProducesResponseTypeAttribute

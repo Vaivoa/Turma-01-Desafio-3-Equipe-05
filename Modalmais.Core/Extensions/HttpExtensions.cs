@@ -1,7 +1,7 @@
 ﻿using System.Net;
 using System.Net.Http;
 
-namespace Modalmais.API.Extensions
+namespace Modalmais.Core.Extensions
 {
     public static class HttpExtensions
     {

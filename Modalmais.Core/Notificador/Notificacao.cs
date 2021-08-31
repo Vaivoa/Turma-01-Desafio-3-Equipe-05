@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Modalmais.Business.Notificador
+﻿namespace Modalmais.Core.Notificador
 {
     public class Notificacao
     {
@@ -17,6 +11,6 @@ namespace Modalmais.Business.Notificador
         {
             Mensagem = mensagem;
         }
-        public string Mensagem { get;  }
+        public string Mensagem { get; }
     }
 }
