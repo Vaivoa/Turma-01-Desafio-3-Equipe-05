@@ -1,13 +1,14 @@
-﻿using Modalmais.Business.Interfaces.Notificador;
-using Modalmais.Business.Notificador;
-using FluentValidation;
+﻿using FluentValidation;
 using FluentValidation.Results;
 using Modalmais.Business.Models;
+using Modalmais.Core.Interfaces.Notificador;
+using Modalmais.Core.Notificador;
 using System.Collections.Generic;
 
 namespace Modalmais.Business.Service
 {
-    public abstract class BaseService { 
+    public abstract class BaseService
+    {
 
         protected readonly INotificador _notificador;
 

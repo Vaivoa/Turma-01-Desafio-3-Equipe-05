@@ -1,7 +1,7 @@
-﻿using Modalmais.Business.Notificador;
+﻿using Modalmais.Core.Notificador;
 using System.Collections.Generic;
 
-namespace Modalmais.Business.Interfaces.Notificador
+namespace Modalmais.Core.Interfaces.Notificador
 {
     public interface INotificador
     {
@@ -10,3 +10,4 @@ namespace Modalmais.Business.Interfaces.Notificador
         void AdicionarNotificacao(Notificacao notificacao);
     }
 }
+

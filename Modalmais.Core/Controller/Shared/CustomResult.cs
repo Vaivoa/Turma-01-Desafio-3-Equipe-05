@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Net;
 
-namespace Modalmais.API.Controllers.Shared
+namespace Modalmais.Core.Controller.Shared
 {
     public class CustomResult
     {
@@ -25,5 +25,4 @@ namespace Modalmais.API.Controllers.Shared
         public CustomResult(HttpStatusCode statusCode, bool success, object data, IEnumerable<string> errors) : this(statusCode, success, data) =>
             Errors = errors;
     }
-
 }

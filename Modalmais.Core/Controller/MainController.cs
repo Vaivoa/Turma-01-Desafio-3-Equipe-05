@@ -2,16 +2,16 @@
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Modalmais.API.Controllers.Shared;
-using Modalmais.API.Extensions;
-using Modalmais.Business.Interfaces.Notificador;
-using Modalmais.Business.Notificador;
+using Modalmais.Core.Controller.Shared;
+using Modalmais.Core.Extensions;
+using Modalmais.Core.Interfaces.Notificador;
+using Modalmais.Core.Notificador;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 
-namespace Modalmais.API.Controllers
+namespace Modalmais.Core.Controller
 {
     [ApiController]
     public class MainController : ControllerBase
