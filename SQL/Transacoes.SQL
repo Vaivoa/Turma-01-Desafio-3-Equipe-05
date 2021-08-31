@@ -12,7 +12,7 @@ CREATE TABLE modalmais."Transacoes" (
     "Id" uuid NOT NULL,
     "StatusTransacao" integer NOT NULL,
     "Tipo" integer NOT NULL,
-    "Chave" character varying(32) NOT NULL,
+    "Chave" character varying(50) NOT NULL,
     "Valor" numeric(8,2) NOT NULL,
     "Descricao" character varying(30) NULL,
     "DataCriacao" timestamp without time zone NOT NULL,
