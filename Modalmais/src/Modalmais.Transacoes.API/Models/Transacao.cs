@@ -1,9 +1,5 @@
-﻿using Modalmais.Business.Models;
-using Modalmais.Core.Models.Enums;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Modalmais.Core.Models.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace Modalmais.Transacoes.API.Models
 {
