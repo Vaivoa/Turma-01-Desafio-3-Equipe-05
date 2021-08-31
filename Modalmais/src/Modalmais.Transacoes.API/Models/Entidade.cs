@@ -8,6 +8,7 @@ namespace Modalmais.Transacoes.API.Models
         public DateTime DataCriacao { get; private set; }
 
 
+
         public Entidade()
         {
             Id = new Guid();

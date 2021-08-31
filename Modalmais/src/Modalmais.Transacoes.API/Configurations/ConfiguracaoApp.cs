@@ -22,7 +22,7 @@ namespace Modalmais.Transacoes.API.Configurations
                 options.UseNpgsql(configuration.GetConnectionString("Api-StringBd-Postgres"), o =>
                 {
                     o.EnableRetryOnFailure();
-                });
+                }).UseValidationCheckConstraints().UseAllCheckConstraints();
                 options.EnableSensitiveDataLogging();
                 options.LogTo(Console.WriteLine, LogLevel.Information);
             });
