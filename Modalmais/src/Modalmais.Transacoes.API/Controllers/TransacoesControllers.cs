@@ -14,18 +14,21 @@ namespace Modalmais.Transacoes.API.Controllers
 
 
 
-    [Route("")]
+    [Route("api/v1/transacoes")]
     public class TransacoesControllers : MainController
     {
 
         private readonly TransacaoRepository _transacaoRepository;
+        //private readonly ApiDbContext _dbContext;
 
         public TransacoesControllers(IMapper mapper,
                                      INotificador notificador,
                                      TransacaoRepository transacaoRepository
+                                       //ApiDbContext dbContext
                                        ) : base(mapper, notificador)
         {
             _transacaoRepository = transacaoRepository;
+            //_dbContext = dbContext;
         }
 
 
@@ -36,7 +39,7 @@ namespace Modalmais.Transacoes.API.Controllers
         [HttpPost("")]
         public async Task<IActionResult> RealizarTransacao(TransacaoRequest transacaoRequest)
         {
-            if (ModelState.IsValid) return ResponseModelErro(ModelState);
+            if (!ModelState.IsValid) return ResponseModelErro(ModelState);
 
             var transacao = _mapper.Map<Transacao>(transacaoRequest);
             _transacaoRepository.Add(transacao);

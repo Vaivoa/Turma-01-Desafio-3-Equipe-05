@@ -5,13 +5,13 @@ namespace Modalmais.Transacoes.API.Models
     public class Transacao : Entidade
     {
 
-        public Transacao(StatusTransacao statusTransacao, TipoChavePix tipo, string chave, decimal valor, string descricao)
+        public Transacao(TipoChavePix tipo, string chave, decimal valor, string descricao)
         {
-            StatusTransacao = statusTransacao;
+            StatusTransacao = StatusTransacao.NaoConcluido;
             Tipo = tipo;
             Chave = chave;
             Valor = valor;
-            Descricao = descricao == null ? "" : descricao;
+            Descricao = descricao ?? "";
         }
 
         public StatusTransacao StatusTransacao { get; private set; }
