@@ -5,7 +5,7 @@ namespace Modalmais.Transacoes.API.Refit
 {
     public interface IContaService
     {
-        [Get("/clientes/contas/chavepix?chave={chave}&tipo={tipo}")]
+        [Get("/clientes/contas/chavepix")]
         public Task<RespostaConta> ObterConta([AliasAs("chave")] string chave, [AliasAs("tipo")] string tipo);
     }
 }
