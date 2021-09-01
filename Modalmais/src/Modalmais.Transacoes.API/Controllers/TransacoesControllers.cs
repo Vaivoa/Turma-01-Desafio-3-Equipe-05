@@ -31,7 +31,7 @@ namespace Modalmais.Transacoes.API.Controllers
         }
 
 
-        [CustomResponse(StatusCodes.Status204NoContent)]
+        [CustomResponse(StatusCodes.Status201Created)]
         [CustomResponse(StatusCodes.Status400BadRequest)]
         [CustomResponse(StatusCodes.Status404NotFound)]
         [HttpPost("")]
@@ -39,24 +39,35 @@ namespace Modalmais.Transacoes.API.Controllers
         {
             if (!ModelState.IsValid) return ResponseModelErro(ModelState);
 
+            //trocar isso pelo retorno do refit trazendo a conta e os dados e montar uma conta
+            //validar se a conta esta ativa, se a chave pix esta ativa pix esta ativo
+            // para passar para a transação como nas linhas abaixo
+
+            //if (SeContaNaoAtiva || SePixNaoAtivo) return ResponseBadRequest("A conta ou pix informado nao pode receber transacoes no momento.");
+            //if (SeNaoAcharContaNoRefitComAChavePix) return ResponseNotFound("Chave pix não encontrada.");
+
+            transacaoRequest.AtribuirConta("7705895726698413"); // numero da conta que o refit trazer
+
             var transacao = _mapper.Map<Transacao>(transacaoRequest);
 
-            var limiteAtingido = transacao.LimiteAtingido(transacaoRequest.Valor + await ObterTotalValorDoDiaPorChave(transacaoRequest.Chave));
-
+            var limiteAtingido = transacao.LimiteAtingido(transacaoRequest.Valor
+                                 + await ObterTotalValorDoDiaPorNumeroConta(transacaoRequest.ObterNumeroConta()));
             if (limiteAtingido) return ResponseBadRequest("Limite diário de 100 mil atingido.");
 
-            _transacaoRepository.Add(transacao);
 
+            _transacaoRepository.Add(transacao);
             if (!await _transacaoRepository.Salvar()) return ResponseInternalServerError("Erro na operação, tente mais tarde.");
 
-            return ResponseNoContent();
+            var transacaoResponse = _mapper.Map<TransacaoResponse>(transacao);
+
+            return ResponseCreated(transacaoResponse);
         }
 
         [ApiExplorerSettings(IgnoreApi = true)]
         [NonAction]
-        public async Task<decimal> ObterTotalValorDoDiaPorChave(string chave)
+        public async Task<decimal> ObterTotalValorDoDiaPorNumeroConta(string numeroConta)
         {
-            var transacoes = await _transacaoRepository.Buscar(c => c.Chave == chave && c.DataCriacao.Date == DateTime.Today);
+            var transacoes = await _transacaoRepository.Buscar(c => c.Conta.Numero == numeroConta && c.DataCriacao.Date == DateTime.Today);
             decimal soma = 0;
             foreach (var transacao in transacoes) soma += transacao.Valor;
             return soma;
