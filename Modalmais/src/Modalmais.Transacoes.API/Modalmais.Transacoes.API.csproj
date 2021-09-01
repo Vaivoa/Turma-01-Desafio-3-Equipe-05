@@ -31,6 +31,10 @@
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.11.1" />
 
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="5.0.7" />
+
+    <PackageReference Include="Refit" Version="6.0.94" />
+
+    <PackageReference Include="Refit.HttpClientFactory" Version="6.0.94" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.1" />
   </ItemGroup>
 
