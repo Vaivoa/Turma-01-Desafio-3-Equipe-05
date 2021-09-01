@@ -20,13 +20,7 @@ namespace Modalmais.Transacoes.API.Models
         public decimal Valor { get; private set; }
         public string Descricao { get; private set; }
 
-
-
-        public bool LimiteTransferencia()
-        {
-            //Validar se já foi transferido 100.000.000 ou mais para uma mesma conta corrente.
-            return true;
-        }
+        public bool LimiteAtingido(decimal valor){ return valor > 100000; }
 
     }
 }

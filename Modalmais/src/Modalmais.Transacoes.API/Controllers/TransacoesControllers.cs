@@ -13,8 +13,6 @@ using System.Threading.Tasks;
 namespace Modalmais.Transacoes.API.Controllers
 {
 
-
-
     [Route("api/v1/transacoes")]
     public class TransacoesControllers : MainController
     {
@@ -33,7 +31,6 @@ namespace Modalmais.Transacoes.API.Controllers
         }
 
 
-
         [CustomResponse(StatusCodes.Status204NoContent)]
         [CustomResponse(StatusCodes.Status400BadRequest)]
         [CustomResponse(StatusCodes.Status404NotFound)]
@@ -42,11 +39,12 @@ namespace Modalmais.Transacoes.API.Controllers
         {
             if (!ModelState.IsValid) return ResponseModelErro(ModelState);
 
-            var teste = await ObterTotalValorDoDiaPorChave(transacaoRequest.Chave);
-
-            if (teste + transacaoRequest.Valor > 200) return ResponseInternalServerError("Limite diario atingido.");
-
             var transacao = _mapper.Map<Transacao>(transacaoRequest);
+
+            var limiteAtingido = transacao.LimiteAtingido(transacaoRequest.Valor + await ObterTotalValorDoDiaPorChave(transacaoRequest.Chave));
+
+            if (limiteAtingido) return ResponseBadRequest("Limite diário de 100 mil atingido.");
+
             _transacaoRepository.Add(transacao);
 
             if (!await _transacaoRepository.Salvar()) return ResponseInternalServerError("Erro na operação, tente mais tarde.");
@@ -54,9 +52,11 @@ namespace Modalmais.Transacoes.API.Controllers
             return ResponseNoContent();
         }
 
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [NonAction]
         public async Task<decimal> ObterTotalValorDoDiaPorChave(string chave)
         {
-            var transacoes = await _transacaoRepository.Buscar(c => c.Chave == chave && c.DataCriacao == DateTime.Today);
+            var transacoes = await _transacaoRepository.Buscar(c => c.Chave == chave && c.DataCriacao.Date == DateTime.Today);
             decimal soma = 0;
             foreach (var transacao in transacoes) soma += transacao.Valor;
             return soma;
