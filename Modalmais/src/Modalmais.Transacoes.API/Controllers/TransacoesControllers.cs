@@ -20,16 +20,18 @@ namespace Modalmais.Transacoes.API.Controllers
     [Route("api/v1/transacoes")]
     public class TransacoesControllers : MainController
     {
-
+        private readonly IContaService _contaService;
         private readonly TransacaoRepository _transacaoRepository;
         //private readonly ApiDbContext _dbContext;
 
-        public TransacoesControllers(IMapper mapper,
+        public TransacoesControllers(IContaService contaService,
+                                    IMapper mapper,
                                      INotificador notificador,
                                      TransacaoRepository transacaoRepository
                                        //ApiDbContext dbContext
                                        ) : base(mapper, notificador)
         {
+            _contaService = contaService;
             _transacaoRepository = transacaoRepository;
             //_dbContext = dbContext;
         }
@@ -80,13 +82,15 @@ namespace Modalmais.Transacoes.API.Controllers
         [ApiExplorerSettings(IgnoreApi = true)]
         [NonAction]
         public async Task<RespostaConta> ObterContaPelaChavePix(TransacaoRequest transacaoRequest)
-        {
+        {           
+            
             RespostaConta contaCorrente = null;
             try
             {
-                var contaClient = RestService.For<IContaService>("https://localhost:5001/api/v1");
-                var conta = await contaClient.ObterConta(transacaoRequest.Chave, $"{(int)transacaoRequest.Tipo}");
-                contaCorrente = conta;
+                //var contaClient = RestService.For<IContaService>("https://localhost:5001/api/v1");
+                var resultado = await _contaService.ObterConta(transacaoRequest.Chave, $"{(int)transacaoRequest.Tipo}");
+                //var conta = await contaClient.ObterConta(transacaoRequest.Chave, $"{(int)transacaoRequest.Tipo}");
+                contaCorrente = resultado;
             }
             catch (ApiException ex)
             {
