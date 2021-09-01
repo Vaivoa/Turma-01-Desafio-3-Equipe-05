@@ -7,8 +7,12 @@ using Modalmais.Core.Interfaces.Notificador;
 using Modalmais.Transacoes.API.DTOs;
 using Modalmais.Transacoes.API.Models;
 using Modalmais.Transacoes.API.Repository;
+using Modalmais.Core.Models.Enums;
 using System;
 using System.Threading.Tasks;
+using Modalmais.Transacoes.API.Refit;
+using Refit;
+using System.Net;
 
 namespace Modalmais.Transacoes.API.Controllers
 {
@@ -46,7 +50,20 @@ namespace Modalmais.Transacoes.API.Controllers
             //if (SeContaNaoAtiva || SePixNaoAtivo) return ResponseBadRequest("A conta ou pix informado nao pode receber transacoes no momento.");
             //if (SeNaoAcharContaNoRefitComAChavePix) return ResponseNotFound("Chave pix não encontrada.");
 
-            transacaoRequest.AtribuirConta("7705895726698413"); // numero da conta que o refit trazer
+
+            //var contaClient = RestService.For<IContaService>("https://localhost:5001/api/v1");
+            //var conta = await contaClient.ObterConta(transacaoRequest.Chave, $"{(int)transacaoRequest.Tipo}");
+            //var contaCorrente = conta.;
+
+            var conta = await VerificarChave(transacaoRequest);
+
+            if (conta == null) return ResponseBadRequest("Não possível realizar a transação, tente novamente mais tarde.");
+            if (conta.statusCode != 200) return ResponseNotFound("Chave pix não encontrada.");
+            if (conta.data.contaCorrente.status != Status.Ativo || conta.data.contaCorrente.chavePix.ativo != Status.Ativo) 
+                return ResponseBadRequest("A conta ou pix informado nao pode receber transacoes no momento.");
+            
+
+            transacaoRequest.AtribuirConta(conta.data.contaCorrente.numero);
 
             var transacao = _mapper.Map<Transacao>(transacaoRequest);
 
@@ -73,5 +90,25 @@ namespace Modalmais.Transacoes.API.Controllers
             return soma;
         }
 
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [NonAction]
+        public async Task<RespostaConta> VerificarChave(TransacaoRequest transacaoRequest)
+        {
+            RespostaConta contaCorrente = null;
+            try
+            {
+                var contaClient = RestService.For<IContaService>("https://localhost:5001/api/v1");
+                var conta = await contaClient.ObterConta(transacaoRequest.Chave, $"{(int)transacaoRequest.Tipo}");
+                contaCorrente = conta;
+            }
+            catch (ApiException ex)
+            {
+                var statusCode = ex.StatusCode;
+                if (statusCode != HttpStatusCode.InternalServerError)
+                    contaCorrente = ex.GetContentAsAsync<RespostaConta>().Result;                                
+            }
+
+            return contaCorrente;
+        }
     }
 }

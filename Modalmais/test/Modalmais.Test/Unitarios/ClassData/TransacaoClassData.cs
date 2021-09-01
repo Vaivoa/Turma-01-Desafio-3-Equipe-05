@@ -4,8 +4,12 @@ using Modalmais.Business.Models;
 using Modalmais.Core.Models;
 using Modalmais.Core.Models.Enums;
 using Modalmais.Transacoes.API.Models;
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Modalmais.Test.Unitarios
 {

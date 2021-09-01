@@ -18,14 +18,16 @@ namespace mercadolivre.Data.Mapping
             builder.Property(e => e.Descricao).HasMaxLength(30);
 
 
-            builder.Ignore(e => e.Conta)
-                .OwnsOne(e => e.Conta, v =>
-                {
-                    v.Property(vc => vc.Banco).IsRequired().HasMaxLength(3);
-                    v.Property(vc => vc.Agencia).IsRequired().HasMaxLength(4);
-                    v.Property(vc => vc.Numero).IsRequired().HasMaxLength(16);
-                });
+            builder.Ignore(e => e.Conta).OwnsOne(e => e.Conta, v =>
+            {
+                v.Property(vc => vc.Banco).IsRequired().HasMaxLength(3).HasColumnType("varchar(3)");
+                v.Property(vc => vc.Agencia).IsRequired().HasMaxLength(4).HasColumnType("varchar(4)");
+                v.Property(vc => vc.Numero).IsRequired().HasMaxLength(16).HasColumnType("varchar(16)");
+            });
+            ;
 
+
+            builder.Ignore(e => e.ListaDeErros);
 
             builder.ToTable("Transacoes", "modalmais");
         }
