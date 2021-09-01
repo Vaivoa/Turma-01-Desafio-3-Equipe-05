@@ -18,7 +18,7 @@ namespace Modalmais.Transacoes.API.Data
             foreach (var property in modelBuilder.Model.GetEntityTypes()
                  .SelectMany(e => e.GetProperties()
                      .Where(p => p.ClrType == typeof(string))))
-                property.SetColumnType("varchar(100)");
+                property.SetColumnType("varchar(50)");
 
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApiDbContext).Assembly);
 
