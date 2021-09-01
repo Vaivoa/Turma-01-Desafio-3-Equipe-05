@@ -21,6 +21,7 @@ namespace Modalmais.Transacoes.API.Models
             ListaDeErros = new List<ValidationFailure>();
 
         }
+
         private Transacao(TipoChavePix tipo, string chave, decimal valor, string descricao)
         {
             StatusTransacao = StatusTransacao.NaoConcluido;
@@ -29,13 +30,13 @@ namespace Modalmais.Transacoes.API.Models
             Valor = valor;
             Descricao = descricao ?? "";
             ListaDeErros = new List<ValidationFailure>();
-
         }
+
 
         public StatusTransacao StatusTransacao { get; private set; }
         public TipoChavePix Tipo { get; private set; }
         public string Chave { get; private set; }
-        [Range(0.01,5000.00)]
+        [Range(0.01, 5000.00)]
         public decimal Valor { get; private set; }
         public string Descricao { get; private set; }
         public Conta Conta { get; private set; }

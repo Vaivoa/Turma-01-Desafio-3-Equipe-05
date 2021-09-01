@@ -55,7 +55,7 @@ namespace Modalmais.Transacoes.API.Configurations
 
             app.UseConfiguracaoSwagger();
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
 
             app.UseRouting();
 

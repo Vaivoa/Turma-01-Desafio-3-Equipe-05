@@ -17,12 +17,14 @@ namespace Modalmais.Transacoes.API.DTOs.Validations
         public static readonly int EmailQuantidadeDeDigitosMax = 50;
         public static readonly string NumeroTotalDeCaracteresPermitidos = "O campo {PropertyName} deve possuir {MaxLength} caracteres/digitos.";
         public static readonly string NumeroDeCaracteresPermitidos = "O campo {PropertyName} deve possuir entre {MinLength} e {MaxLength} caracteres/digitos.";
+        public static readonly string ChaveAleatoriaNumeroMaximoDigitos = "A chave aleatoria não pode ter mais de 50 digitos.";
         public static readonly string CPFInvalido = "O CPF precisa ser um válido.";
         public static readonly string EmailInvalido = "O Email informado precisa ser um válido.";
         public static readonly string DDDInvalido = "O DDD informado não é válido.";
         public static readonly string SomenteNumerosChave = "O campo Chave deve possuir somente numeros.";
         public static readonly string TelefoneNumeroTotalDigitos = "O campo Chave deve ser um telefone e possuir 11 digitos.";
         public static readonly string ValorMaximoDeTransacao = "O valor maximo para uma transação é de 5000.";
+        public static readonly string ValorMinimoDeTransacao = "O valor minimo para uma transação é de 0,1.";
 
 
 
@@ -32,6 +34,10 @@ namespace Modalmais.Transacoes.API.DTOs.Validations
             RuleFor(chavePixRequest => chavePixRequest.Tipo)
                .IsInEnum().WithMessage(NaoEhUmaChavePixValida)
                .NotNull().WithMessage(CampoNaoPodeSerBrancoOuNulo);
+
+            RuleFor(chavePixRequest => chavePixRequest.Chave)
+               .NotNull().WithMessage(CampoNaoPodeSerBrancoOuNulo)
+                .NotEmpty().WithMessage(CampoNaoPodeSerBrancoOuNulo);
 
             When(chavePixRequest => chavePixRequest.Tipo == TipoChavePix.CPF && chavePixRequest.Chave != null, () =>
             {
@@ -50,6 +56,14 @@ namespace Modalmais.Transacoes.API.DTOs.Validations
                 .EmailAddress(EmailValidationMode.Net4xRegex).WithMessage(EmailInvalido)
                 .NotEmpty().WithMessage(CampoNaoPodeSerBrancoOuNulo)
                 .Length(EmailQuantidadeDeDigitosMin, EmailQuantidadeDeDigitosMax).WithMessage(NumeroDeCaracteresPermitidos);
+            });
+
+            When(chavePixRequest => chavePixRequest.Tipo == TipoChavePix.Aleatoria && chavePixRequest.Chave != null, () =>
+            {
+                RuleFor(chavePixRequest => chavePixRequest.Chave)
+                .NotNull().WithMessage(CampoNaoPodeSerBrancoOuNulo)
+                .NotEmpty().WithMessage(CampoNaoPodeSerBrancoOuNulo)
+                .MaximumLength(50).WithMessage(ChaveAleatoriaNumeroMaximoDigitos);
             });
 
             When(chavePixRequest => chavePixRequest.Tipo == TipoChavePix.Telefone && chavePixRequest.Chave != null, () =>
@@ -76,13 +90,14 @@ namespace Modalmais.Transacoes.API.DTOs.Validations
             });
 
             RuleFor(valor => valor.Valor)
-                .NotEmpty().WithMessage(CampoNaoPodeSerBrancoOuNulo)
+                .NotNull().WithMessage(CampoNaoPodeSerBrancoOuNulo)
+                .GreaterThanOrEqualTo((decimal)0.1).WithMessage(ValorMinimoDeTransacao)
                 .LessThanOrEqualTo(5000).WithMessage(ValorMaximoDeTransacao);
 
             RuleFor(descricao => descricao.Descricao)
                 .MaximumLength(30).WithMessage(NumeroTotalDeCaracteresPermitidos);
 
-            
+
         }
     }
 }

@@ -1,10 +1,6 @@
 ﻿using AutoMapper;
 using Modalmais.Transacoes.API.DTOs;
 using Modalmais.Transacoes.API.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Modalmais.Transacoes.API.Profiles
 {
@@ -12,7 +8,10 @@ namespace Modalmais.Transacoes.API.Profiles
     {
         public TransacaoProfile()
         {
-            CreateMap<Transacao, TransacaoRequest>().ReverseMap();
+            CreateMap<TransacaoRequest, Transacao>()
+                .ForMember(parameter => parameter.Conta, opt =>
+                opt.MapFrom(s => s.ObterConta()));
+
             CreateMap<Transacao, TransacaoResponse>().ReverseMap();
         }
     }
