@@ -10,8 +10,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Modalmais.Transacoes.API.Data.Migrations
 {
     [DbContext(typeof(ApiDbContext))]
-    [Migration("20210831200815_Initial")]
-    partial class Initial
+    [Migration("20210901124736_primeira")]
+    partial class primeira
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -31,14 +31,14 @@ namespace Modalmais.Transacoes.API.Data.Migrations
                     b.Property<string>("Chave")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("varchar(100)");
+                        .HasColumnType("varchar(50)");
 
                     b.Property<DateTime>("DataCriacao")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("Descricao")
                         .HasMaxLength(30)
-                        .HasColumnType("varchar(100)");
+                        .HasColumnType("varchar(50)");
 
                     b.Property<int>("StatusTransacao")
                         .HasColumnType("integer");
@@ -47,7 +47,7 @@ namespace Modalmais.Transacoes.API.Data.Migrations
                         .HasColumnType("integer");
 
                     b.Property<decimal>("Valor")
-                        .HasColumnType("numeric(8,2)");
+                        .HasColumnType("numeric(6,2)");
 
                     b.HasKey("Id");
 
@@ -56,6 +56,39 @@ namespace Modalmais.Transacoes.API.Data.Migrations
                     b.HasCheckConstraint("CK_Transacoes_StatusTransacao_Enum", "\"StatusTransacao\" IN (0, 1, 2)");
 
                     b.HasCheckConstraint("CK_Transacoes_Tipo_Enum", "\"Tipo\" IN (1, 2, 3, 4)");
+                });
+
+            modelBuilder.Entity("Modalmais.Transacoes.API.Models.Transacao", b =>
+                {
+                    b.OwnsOne("Modalmais.Transacoes.API.Models.Conta", "Conta", b1 =>
+                        {
+                            b1.Property<Guid>("TransacaoId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("Agencia")
+                                .IsRequired()
+                                .HasMaxLength(4)
+                                .HasColumnType("varchar(4)");
+
+                            b1.Property<string>("Banco")
+                                .IsRequired()
+                                .HasMaxLength(3)
+                                .HasColumnType("varchar(3)");
+
+                            b1.Property<string>("Numero")
+                                .IsRequired()
+                                .HasMaxLength(16)
+                                .HasColumnType("varchar(16)");
+
+                            b1.HasKey("TransacaoId");
+
+                            b1.ToTable("Transacoes");
+
+                            b1.WithOwner()
+                                .HasForeignKey("TransacaoId");
+                        });
+
+                    b.Navigation("Conta");
                 });
 #pragma warning restore 612, 618
         }
