@@ -6,6 +6,7 @@ using Modalmais.Transacoes.API.Data;
 using Modalmais.Transacoes.API.Refit;
 using Modalmais.Transacoes.API.Repository;
 using Refit;
+using System;
 
 namespace Modalmais.Transacoes.API.Configurations
 {
@@ -14,15 +15,20 @@ namespace Modalmais.Transacoes.API.Configurations
 
         public static IServiceCollection InjecaoDependencias(this IServiceCollection services, IConfiguration configuration)
         {
-
-            services.AddRefitClient<IContaService>().ConfigureHttpClient(c =>
+            if (Startup.env != "Docker") 
+            { 
+                services.AddRefitClient<IContaService>().ConfigureHttpClient(c =>
+                {
+                    c.BaseAddress = new Uri("https://localhost:5001/api/v1");
+                }); 
+            }
+            else
             {
-                c.BaseAddress = new System.Uri("http://modalmais.api:80/api/v1");
-                if (Startup.env != "Docker")                
-                    c.BaseAddress = new System.Uri("http://localhost:5001/api/v1");
-                
-                
-            });
+                services.AddRefitClient<IContaService>().ConfigureHttpClient(c =>
+                {
+                    c.BaseAddress = new Uri("http://modalmais.api:80/api/v1");
+                });
+            }
             //DbContext
             services.AddScoped<ApiDbContext>();
 
