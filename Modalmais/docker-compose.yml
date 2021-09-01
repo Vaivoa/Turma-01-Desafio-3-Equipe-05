@@ -2,21 +2,33 @@ version: '3.4'
 
 services:
   modalmaisdb:
+    networks:
+      - webproxy
     image: mongo
   
   transacaodb:
+    networks:
+      - webproxy
     image: postgres
 
   modalmais.api:
+    networks:
+      - webproxy
     image: ${DOCKER_REGISTRY-}modalmaisapi
     build:
       context: .
       dockerfile: src/Modalmais.API/Dockerfile
   modalmais.transacoes.api:
+    networks:
+      - webproxy
     image: ${DOCKER_REGISTRY-}modalmaistransacoesapi
     build:
       context: .
       dockerfile: src/Modalmais.Transacoes.API/Dockerfile
+
+networks:
+  webproxy:
+    driver: bridge
 
 volumes:
   mongo_data:
