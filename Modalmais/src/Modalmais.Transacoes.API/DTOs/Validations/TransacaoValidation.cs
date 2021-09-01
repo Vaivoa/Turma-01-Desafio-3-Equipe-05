@@ -81,6 +81,8 @@ namespace Modalmais.Transacoes.API.DTOs.Validations
 
             RuleFor(descricao => descricao.Descricao)
                 .MaximumLength(30).WithMessage(NumeroTotalDeCaracteresPermitidos);
+
+            
         }
     }
 }
