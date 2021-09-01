@@ -17,6 +17,12 @@ namespace Modalmais.Transacoes.API.DTOs
             Conta = new Conta("746", "0001", numero);
         }
 
+        public Conta ObterConta()
+        {
+            return Conta;
+
+        }
+
         public string ObterNumeroConta() => Conta.Numero;
 
 

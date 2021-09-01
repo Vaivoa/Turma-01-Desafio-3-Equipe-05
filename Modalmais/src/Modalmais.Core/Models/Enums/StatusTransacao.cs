@@ -2,7 +2,7 @@
 {
     public enum StatusTransacao
     {
-        Concluido,
+        Concluido = 1,
         NaoConcluido,
         Cancelado
     }

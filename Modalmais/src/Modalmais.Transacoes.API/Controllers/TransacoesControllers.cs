@@ -4,15 +4,15 @@ using Microsoft.AspNetCore.Mvc;
 using Modalmais.Core.Controller;
 using Modalmais.Core.Extensions;
 using Modalmais.Core.Interfaces.Notificador;
+using Modalmais.Core.Models.Enums;
 using Modalmais.Transacoes.API.DTOs;
 using Modalmais.Transacoes.API.Models;
-using Modalmais.Transacoes.API.Repository;
-using Modalmais.Core.Models.Enums;
-using System;
-using System.Threading.Tasks;
 using Modalmais.Transacoes.API.Refit;
+using Modalmais.Transacoes.API.Repository;
 using Refit;
+using System;
 using System.Net;
+using System.Threading.Tasks;
 
 namespace Modalmais.Transacoes.API.Controllers
 {
@@ -43,34 +43,21 @@ namespace Modalmais.Transacoes.API.Controllers
         {
             if (!ModelState.IsValid) return ResponseModelErro(ModelState);
 
-            //trocar isso pelo retorno do refit trazendo a conta e os dados e montar uma conta
-            //validar se a conta esta ativa, se a chave pix esta ativa pix esta ativo
-            // para passar para a transação como nas linhas abaixo
-
-            //if (SeContaNaoAtiva || SePixNaoAtivo) return ResponseBadRequest("A conta ou pix informado nao pode receber transacoes no momento.");
-            //if (SeNaoAcharContaNoRefitComAChavePix) return ResponseNotFound("Chave pix não encontrada.");
-
-
-            //var contaClient = RestService.For<IContaService>("https://localhost:5001/api/v1");
-            //var conta = await contaClient.ObterConta(transacaoRequest.Chave, $"{(int)transacaoRequest.Tipo}");
-            //var contaCorrente = conta.;
-
-            var conta = await VerificarChave(transacaoRequest);
-
+            var conta = await ObterContaPelaChavePix(transacaoRequest);
             if (conta == null) return ResponseBadRequest("Não possível realizar a transação, tente novamente mais tarde.");
             if (conta.statusCode != 200) return ResponseNotFound("Chave pix não encontrada.");
-            if (conta.data.contaCorrente.status != Status.Ativo || conta.data.contaCorrente.chavePix.ativo != Status.Ativo) 
-                return ResponseBadRequest("A conta ou pix informado nao pode receber transacoes no momento.");
-            
+            if (conta.data.contaCorrente.status != Status.Ativo || conta.data.contaCorrente.chavePix.ativo != Status.Ativo)
+                return ResponseBadRequest("A conta ou a chave pix informada não pode receber transações no momento.");
 
             transacaoRequest.AtribuirConta(conta.data.contaCorrente.numero);
 
             var transacao = _mapper.Map<Transacao>(transacaoRequest);
+            transacao.ConcluirTransacao();
 
             var limiteAtingido = transacao.LimiteAtingido(transacaoRequest.Valor
                                  + await ObterTotalValorDoDiaPorNumeroConta(transacaoRequest.ObterNumeroConta()));
             if (limiteAtingido) return ResponseBadRequest("Limite diário de 100 mil atingido.");
-
+            if (transacao.EstaInvalido()) return ResponseEntidadeErro(transacao.ListaDeErros);
 
             _transacaoRepository.Add(transacao);
             if (!await _transacaoRepository.Salvar()) return ResponseInternalServerError("Erro na operação, tente mais tarde.");
@@ -92,7 +79,7 @@ namespace Modalmais.Transacoes.API.Controllers
 
         [ApiExplorerSettings(IgnoreApi = true)]
         [NonAction]
-        public async Task<RespostaConta> VerificarChave(TransacaoRequest transacaoRequest)
+        public async Task<RespostaConta> ObterContaPelaChavePix(TransacaoRequest transacaoRequest)
         {
             RespostaConta contaCorrente = null;
             try
@@ -105,7 +92,7 @@ namespace Modalmais.Transacoes.API.Controllers
             {
                 var statusCode = ex.StatusCode;
                 if (statusCode != HttpStatusCode.InternalServerError)
-                    contaCorrente = ex.GetContentAsAsync<RespostaConta>().Result;                                
+                    contaCorrente = ex.GetContentAsAsync<RespostaConta>().Result;
             }
 
             return contaCorrente;
