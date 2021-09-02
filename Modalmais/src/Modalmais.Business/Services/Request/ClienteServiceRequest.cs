@@ -35,5 +35,11 @@ namespace Modalmais.Business.Services.Request
 
             await _clienteRepository.Update(clienteAdicionarPix);
         }
+
+        public async Task AtualizarDadosContaCliente(Cliente cliente)
+        {
+            cliente.ValidarDataAlteracao();
+            await _clienteRepository.Update(cliente);
+        }
     }
 }
