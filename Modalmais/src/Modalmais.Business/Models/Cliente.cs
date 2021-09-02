@@ -45,5 +45,10 @@ namespace Modalmais.Business.Models
             return ListaDeErros.Any();
         }
 
+        public override string ToString()
+        {
+            return $"Id: ,Nome: {Nome},SobreNome: {Sobrenome}, Telefone: {((int)Contato.Celular.DDD)}{Contato.Celular.Numero}, Email: {Contato.Email}";
+        }
+
     }
 }

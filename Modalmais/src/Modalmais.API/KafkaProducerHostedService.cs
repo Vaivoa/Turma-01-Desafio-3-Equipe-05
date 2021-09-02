@@ -1,23 +1,23 @@
 ﻿using Confluent.Kafka;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+using Confluent.SchemaRegistry.Serdes;
 using Modalmais.Business.Models;
+using Newtonsoft.Json;
+using SolTechnology.Avro;
 using System;
-using System.Threading;
-using System.Threading.Tasks;
+using System.Text;
 
 namespace Modalmais.API
 {
-    public class KafkaProducerHostedService
+    public class KafkaProducerHostedService 
     {
-        private readonly ProducerConfig config = new ProducerConfig
-        { BootstrapServers = "localhost:9092" };
+        private readonly ProducerConfig config = new() { BootstrapServers = "localhost:9092" };
         private readonly string topic = "CADASTRO_CONTA_CORRENTE_ATUALIZADO";
 
         public Object SendToKafka(Cliente message)
         {
+            
             using (var producer =
-                 new ProducerBuilder<Null, Cliente>(config).Build())
+                 new ProducerBuilder<Null, Cliente>(config).SetValueSerializer(new GenericSerializer<Cliente>()).Build())
             {
                 try
                 {
@@ -31,6 +31,22 @@ namespace Modalmais.API
                 }
             }
             return null;
+        }
+
+        
+    }
+
+    public class GenericSerializer<T> : ISerializer<T>
+    {
+        public byte[] Serialize(T data, SerializationContext context)
+        {
+            var stringobj = JsonConvert.SerializeObject(data, typeof(T), new JsonSerializerSettings());
+            if (stringobj == null)
+            {
+                return null;
+            }
+
+            return Encoding.UTF8.GetBytes(stringobj);
         }
     }
 }
