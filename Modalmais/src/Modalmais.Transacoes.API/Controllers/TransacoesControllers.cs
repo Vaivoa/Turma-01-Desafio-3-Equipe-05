@@ -69,6 +69,22 @@ namespace Modalmais.Transacoes.API.Controllers
             return ResponseCreated(transacaoResponse);
         }
 
+
+        [CustomResponse(StatusCodes.Status200OK)]
+        [CustomResponse(StatusCodes.Status400BadRequest)]
+        [CustomResponse(StatusCodes.Status404NotFound)]
+        [HttpPost("extratos")]
+        public async Task<IActionResult> ObterExtrato(ExtratoRequest extratoRequest)
+        {
+            if (!ModelState.IsValid) return ResponseModelErro(ModelState);
+            //verificar se a conta existe com redis
+            //verificar se a conta existe com postgres + dapper
+
+
+            return ResponseOk(extratoRequest);
+        }
+
+
         [ApiExplorerSettings(IgnoreApi = true)]
         [NonAction]
         public async Task<decimal> ObterTotalValorDoDiaPorNumeroConta(string numeroConta)
@@ -82,8 +98,8 @@ namespace Modalmais.Transacoes.API.Controllers
         [ApiExplorerSettings(IgnoreApi = true)]
         [NonAction]
         public async Task<RespostaConta> ObterContaPelaChavePix(TransacaoRequest transacaoRequest)
-        {           
-            
+        {
+
             RespostaConta contaCorrente = null;
             try
             {
