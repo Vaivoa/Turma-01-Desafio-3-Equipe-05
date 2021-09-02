@@ -15,20 +15,11 @@ namespace Modalmais.Transacoes.API.Configurations
 
         public static IServiceCollection InjecaoDependencias(this IServiceCollection services, IConfiguration configuration)
         {
-            if (Startup.env != "Docker") 
-            { 
                 services.AddRefitClient<IContaService>().ConfigureHttpClient(c =>
                 {
-                    c.BaseAddress = new Uri("https://localhost:5001/api/v1");
+                    c.BaseAddress = new Uri($"{configuration.GetConnectionString("ConexaoRefit")}");
                 }); 
-            }
-            else
-            {
-                services.AddRefitClient<IContaService>().ConfigureHttpClient(c =>
-                {
-                    c.BaseAddress = new Uri("http://modalmais.api:80/api/v1");
-                });
-            }
+
             //DbContext
             services.AddScoped<ApiDbContext>();
 
