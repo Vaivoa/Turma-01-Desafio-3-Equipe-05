@@ -16,6 +16,7 @@ using Modalmais.Core.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Modalmais.API.Controllers
@@ -124,13 +125,17 @@ namespace Modalmais.API.Controllers
         [HttpGet]
         public async Task<IActionResult> ObterTodosClientes()
         {
+            var kafka = new KafkaProducerHostedService();
+            
             var listaClientes = await _clienteServiceResponse.BuscarTodos();
             var listaClientesResponse = new List<ClienteResponse>();
 
             foreach (var cliente in listaClientes)
             {
                 listaClientesResponse.Add(_mapper.Map<ClienteResponse>(cliente));
+                kafka.SendToKafka(cliente);
             }
+            
 
             return ResponseOk(listaClientesResponse);
         }
