@@ -8,9 +8,9 @@ namespace Modalmais.Transacoes.API.DTOs.Validations
         public static readonly string CampoNaoPodeSerBrancoOuNulo = "O campo {PropertyName} não pode estar em branco ou ser nulo.";
         public static readonly string AgenciaInvalida = "As consultas de extratos só podem ser realizadas para a agencia 0001.";
         public static readonly string SomenteNumeros = "O campo {PropertyName} deve possuir somente numeros.";
-        public static readonly string DataFinalInvalida = "O campo de filtro da data final deve ser maior que a data de inicio.";
-        public static readonly string DataInicioInvalida = "O campo de filtro da data inicial deve ser menor que a data final.";
-
+        public static readonly string DataFinalInvalida = "O periodo da data final deve ser maior que a data de inicio.";
+        public static readonly string DataInicioInvalida = "O periodo da data inicial deve ser menor que a data final.";
+        public static readonly string PeriodoFiltroInvalido = "O periodo entre a data inicial e a data final deve ser no maximo 30 dias.";
 
 
         public ExtratoRequestValidation()
@@ -33,11 +33,24 @@ namespace Modalmais.Transacoes.API.DTOs.Validations
                 .LessThan(extratoRequest => extratoRequest.Periodo.DataFinal).WithMessage(DataInicioInvalida);
 
 
-            //RuleFor(extratoRequest => extratoRequest.Periodo.DataInicio)
+            RuleFor(extratoRequest => extratoRequest.Periodo)
+                .NotEmpty().WithMessage(CampoNaoPodeSerBrancoOuNulo)
+                .Must((extratoRequest) =>
+                {
+                    var dias = extratoRequest.DataFinal.Subtract(extratoRequest.DataInicio).Days;
+                    if (dias > 30) return false;
+
+                    return true;
+
+                }).WithMessage(PeriodoFiltroInvalido);
+
+            //When(extratoRequest => extratoRequest.Periodo.DataFinal == DateTime.MinValue, () =>
+            //{
+            //    RuleFor(chavePixRequest => chavePixRequest.Chave)
+            //    .NotNull().WithMessage(CampoNaoPodeSerBrancoOuNulo)
             //    .NotEmpty().WithMessage(CampoNaoPodeSerBrancoOuNulo)
-            //    .LessThanOrEqualTo(extratoRequest => (int)(extratoRequest.Periodo.DataFinal
-            //                      - extratoRequest.Periodo.DataInicio).)
-            //    .WithMessage(DataInicioInvalida);
+            //    .MaximumLength(50).WithMessage(ChaveAleatoriaNumeroMaximoDigitos);
+            //});
 
         }
 
