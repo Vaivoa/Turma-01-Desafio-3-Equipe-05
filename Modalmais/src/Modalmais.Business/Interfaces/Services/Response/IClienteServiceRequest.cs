@@ -12,5 +12,7 @@ namespace Modalmais.Business.Interfaces.Services.Response
         Task AdicionarImagemDocumentoCliente(Cliente clienteAdicionar);
 
         Task AdicionarPixContaCliente(Cliente clienteAdicionar, ChavePix chavePix);
+
+        Task AtualizarDadosContaCliente(Cliente cliente);
     }
 }

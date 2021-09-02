@@ -127,15 +127,17 @@ namespace Modalmais.API.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> AlterarCadastroCliente(ClienteAlteracaoRequest clienteAlteracaoRequest, [FromRoute] string id)
         {
+            
             if (!ModelState.IsValid) return ResponseModelErro(ModelState);
             if (!ObjectIdValidacao.Validar(id)) return ResponseBadRequest("Formato de dado inválido.");
             var cliente = await _clienteServiceResponse.BuscarClientePorId(id);
             if (cliente == null) return ResponseNotFound("O cliente não foi encontrado.");
 
-            //colocar metodos para alterar os dados
-            //colocar metodo para envio da mensagem para kafka
-            //colocar e modificar data alteração no cliente
-            //salvar no banco
+            cliente.AlterarCliente(clienteAlteracaoRequest.Nome, clienteAlteracaoRequest.Sobrenome, clienteAlteracaoRequest.Contato.Email, clienteAlteracaoRequest.Contato.Celular.DDD,             clienteAlteracaoRequest.Contato.Celular.Numero);
+
+            await _clienteServiceRequest.AtualizarDadosContaCliente(cliente);
+            var kafka = new KafkaProducerHostedService();
+            kafka.SendToKafka(cliente);           
 
             return ResponseNoContent();
         }
@@ -145,7 +147,7 @@ namespace Modalmais.API.Controllers
         [HttpGet]
         public async Task<IActionResult> ObterTodosClientes()
         {
-            var kafka = new KafkaProducerHostedService();
+            
             
             var listaClientes = await _clienteServiceResponse.BuscarTodos();
             var listaClientesResponse = new List<ClienteResponse>();
@@ -153,7 +155,7 @@ namespace Modalmais.API.Controllers
             foreach (var cliente in listaClientes)
             {
                 listaClientesResponse.Add(_mapper.Map<ClienteResponse>(cliente));
-                kafka.SendToKafka(cliente);
+                
             }
             
 
