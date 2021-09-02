@@ -73,13 +73,19 @@ namespace Modalmais.Transacoes.API.Controllers
         [CustomResponse(StatusCodes.Status200OK)]
         [CustomResponse(StatusCodes.Status400BadRequest)]
         [CustomResponse(StatusCodes.Status404NotFound)]
-        [HttpPost("extratos")]
+        [HttpGet("extratos")]
         public async Task<IActionResult> ObterExtrato(ExtratoRequest extratoRequest)
         {
             if (!ModelState.IsValid) return ResponseModelErro(ModelState);
-            //verificar se a conta existe com redis
             //verificar se a conta existe com postgres + dapper
 
+            //puxar os dados do banco, levando em conta os filtos de data
+            // montar o extrato response e o extrato.
+
+            //verificar se o extrato ja existe no Redis, se ja retornar ele  
+            //armazenar no redis o Extrato
+
+            //retornar um ExtratoResponse 
 
             return ResponseOk(extratoRequest);
         }

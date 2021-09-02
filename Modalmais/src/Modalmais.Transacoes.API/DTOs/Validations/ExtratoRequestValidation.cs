@@ -11,7 +11,7 @@ namespace Modalmais.Transacoes.API.DTOs.Validations
         public static readonly string DataFinalInvalida = "O campo de filtro da data final deve ser maior que a data de inicio.";
         public static readonly string DataInicioInvalida = "O campo de filtro da data inicial deve ser menor que a data final.";
         public static readonly string PeriodoFiltroInvalido = "O campo de filtro da data inicial deve ser menor que a data final.";
-
+        public static readonly string PeriodoLimite = "O limite do periodo de filtro é de 30 dias.";
 
         public ExtratoRequestValidation()
         {
@@ -42,15 +42,7 @@ namespace Modalmais.Transacoes.API.DTOs.Validations
 
                    return true;
 
-               }).WithMessage(PeriodoFiltroInvalido);
-
-            //When(extratoRequest => extratoRequest.Periodo.DataFinal == DateTime.MinValue, () =>
-            //{
-            //    RuleFor(chavePixRequest => chavePixRequest.Chave)
-            //    .NotNull().WithMessage(CampoNaoPodeSerBrancoOuNulo)
-            //    .NotEmpty().WithMessage(CampoNaoPodeSerBrancoOuNulo)
-            //    .MaximumLength(50).WithMessage(ChaveAleatoriaNumeroMaximoDigitos);
-            //});
+               }).WithMessage(PeriodoLimite);
 
         }
 
