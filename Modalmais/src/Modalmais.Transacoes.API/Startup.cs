@@ -8,7 +8,6 @@ namespace Modalmais.Transacoes.API
 {
     public class Startup
     {
-        public static string env { get; set; }
         public Startup(IWebHostEnvironment hostEnvironment)
         {
             var builder = new ConfigurationBuilder()
@@ -16,7 +15,6 @@ namespace Modalmais.Transacoes.API
                 .AddJsonFile("appsettings.json", true, true)
                 .AddJsonFile($"appsettings.{hostEnvironment.EnvironmentName}.json", true, true)
                 .AddEnvironmentVariables();
-            env = hostEnvironment.EnvironmentName;
             Configuration = builder.Build();
         }
 
