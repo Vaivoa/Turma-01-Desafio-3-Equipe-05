@@ -120,6 +120,26 @@ namespace Modalmais.API.Controllers
         }
 
 
+        [CustomResponse(StatusCodes.Status204NoContent)]
+        [CustomResponse(StatusCodes.Status400BadRequest)]
+        [CustomResponse(StatusCodes.Status404NotFound)]
+        [HttpPut("{id}")]
+        public async Task<IActionResult> AlterarCadastroCliente(ClienteAlteracaoRequest clienteAlteracaoRequest, [FromRoute] string id)
+        {
+            if (!ModelState.IsValid) return ResponseModelErro(ModelState);
+            if (!ObjectIdValidacao.Validar(id)) return ResponseBadRequest("Formato de dado inválido.");
+            var cliente = await _clienteServiceResponse.BuscarClientePorId(id);
+            if (cliente == null) return ResponseNotFound("O cliente não foi encontrado.");
+
+            //colocar metodos para alterar os dados
+            //colocar metodo para envio da mensagem para kafka
+            //colocar e modificar data alteração no cliente
+            //salvar no banco
+
+            return ResponseNoContent();
+        }
+
+
         [CustomResponse(StatusCodes.Status200OK)]
         [HttpGet]
         public async Task<IActionResult> ObterTodosClientes()
