@@ -13,6 +13,7 @@ using Refit;
 using System;
 using System.Net;
 using System.Threading.Tasks;
+using Modalmais.Transacoes.API.Data;
 
 namespace Modalmais.Transacoes.API.Controllers
 {
@@ -22,18 +23,18 @@ namespace Modalmais.Transacoes.API.Controllers
     {
         private readonly IContaService _contaService;
         private readonly TransacaoRepository _transacaoRepository;
-        //private readonly ApiDbContext _dbContext;
+        private readonly ApiDbContext _dbContext;
 
         public TransacoesControllers(IContaService contaService,
                                     IMapper mapper,
                                      INotificador notificador,
-                                     TransacaoRepository transacaoRepository
-                                       //ApiDbContext dbContext
+                                     TransacaoRepository transacaoRepository,
+                                       ApiDbContext dbContext
                                        ) : base(mapper, notificador)
         {
             _contaService = contaService;
             _transacaoRepository = transacaoRepository;
-            //_dbContext = dbContext;
+            _dbContext = dbContext;
         }
 
 
@@ -73,23 +74,22 @@ namespace Modalmais.Transacoes.API.Controllers
         [CustomResponse(StatusCodes.Status200OK)]
         [CustomResponse(StatusCodes.Status400BadRequest)]
         [CustomResponse(StatusCodes.Status404NotFound)]
-        [HttpGet("extratos")]
+        [HttpPost("extratos")]
         public async Task<IActionResult> ObterExtrato(ExtratoRequest extratoRequest)
         {
             if (!ModelState.IsValid) return ResponseModelErro(ModelState);
-            //verificar se a conta existe com postgres + dapper
 
-            //puxar os dados do banco, levando em conta os filtos de data
-            // montar o extrato response e o extrato.
+            if (!await _transacaoRepository.TransacoesDisponiveis(extratoRequest.Conta)) return ResponseNotFound("Não foi encontrado transações para esta conta.");
+
+            var extrato = await _transacaoRepository.ObterPorContaDapper(extratoRequest);
+
+            var extratoResponse = _mapper.Map<ExtratoResponse>(extrato);
 
             //verificar se o extrato ja existe no Redis, se ja retornar ele  
             //armazenar no redis o Extrato
 
-            //retornar um ExtratoResponse 
-
-            return ResponseOk(extratoRequest);
+            return ResponseOk(extratoResponse);
         }
-
 
         [ApiExplorerSettings(IgnoreApi = true)]
         [NonAction]
@@ -109,9 +109,7 @@ namespace Modalmais.Transacoes.API.Controllers
             RespostaConta contaCorrente = null;
             try
             {
-                //var contaClient = RestService.For<IContaService>("https://localhost:5001/api/v1");
                 var resultado = await _contaService.ObterConta(transacaoRequest.Chave, $"{(int)transacaoRequest.Tipo}");
-                //var conta = await contaClient.ObterConta(transacaoRequest.Chave, $"{(int)transacaoRequest.Tipo}");
                 contaCorrente = resultado;
             }
             catch (ApiException ex)

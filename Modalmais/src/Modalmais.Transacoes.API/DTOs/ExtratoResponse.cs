@@ -6,11 +6,12 @@ namespace Modalmais.Transacoes.API.DTOs
 {
     public class ExtratoResponse
     {
-        public string Banco { get; set; }
+        public Guid Id { get; set; }
+        public string Banco => "746";
         public string Agencia { get; set; }
         public string Conta { get; set; }
-        public PeriodoReponse PeriodoReponse { get; set; }
-        public IEnumerable<ExtratoTransacaoResponse> MyProperty { get; set; }
+        public PeriodoReponse Periodo { get; set; }
+        public List<ExtratoTransacaoResponse> Transacoes { get; set; }
 
     }
 
@@ -23,7 +24,6 @@ namespace Modalmais.Transacoes.API.DTOs
         public string Descricao { get; set; }
         public Guid Id { get; set; }
         public DateTime DataCriacao { get; set; }
-
     }
 
     public class PeriodoReponse
@@ -31,7 +31,6 @@ namespace Modalmais.Transacoes.API.DTOs
         public DateTime DataInicio { get; set; }
 
         public DateTime DataFinal { get; set; }
-
     }
 
 

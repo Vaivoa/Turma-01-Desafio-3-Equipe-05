@@ -1,5 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Modalmais.Transacoes.API.Models;
+using Npgsql;
+using System;
+using System.Data;
 using System.Linq;
 
 namespace Modalmais.Transacoes.API.Data
