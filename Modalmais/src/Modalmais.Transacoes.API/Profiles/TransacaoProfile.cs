@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Modalmais.Transacoes.API.DTOs;
 using Modalmais.Transacoes.API.Models;
+using Modalmais.Transacoes.API.Models.ObjectValues;
 
 namespace Modalmais.Transacoes.API.Profiles
 {
@@ -13,6 +14,12 @@ namespace Modalmais.Transacoes.API.Profiles
                 opt.MapFrom(s => s.ObterConta()));
 
             CreateMap<Transacao, TransacaoResponse>().ReverseMap();
+
+            CreateMap<Extrato, ExtratoResponse>().ReverseMap();
+
+            CreateMap<Transacao, ExtratoTransacaoResponse>().ReverseMap();
+
+            CreateMap<Periodo, PeriodoReponse>().ReverseMap();
         }
     }
 }

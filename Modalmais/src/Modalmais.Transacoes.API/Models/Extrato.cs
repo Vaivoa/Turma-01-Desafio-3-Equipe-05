@@ -13,7 +13,7 @@ namespace Modalmais.Transacoes.API.Models
             Transacoes = transacoes;
         }
 
-        protected Extrato()
+        public Extrato()
         {
             //para realizar as migrations
         }
