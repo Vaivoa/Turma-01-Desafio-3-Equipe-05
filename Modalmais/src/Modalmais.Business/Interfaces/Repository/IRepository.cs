@@ -20,6 +20,8 @@ namespace Modalmais.Business.Interfaces.Repository
 
         Task<bool> ChecarEntidadeExistente(string campo, string comparar);
 
+        Task<bool> ChecarEntidadeExistente(FilterDefinition<TEntity> filter);
+
         Task<IEnumerable<TEntity>> ObterTodos();
 
 

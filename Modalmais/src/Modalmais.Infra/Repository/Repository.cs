@@ -50,6 +50,12 @@ namespace Modalmais.Infra.Repository
             return data.Any();
         }
 
+        public virtual async Task<bool> ChecarEntidadeExistente(FilterDefinition<TEntity> filter)
+        {
+            var data = await DbSet.FindAsync(filter);
+            return data.Any();
+        }
+
         public virtual async Task<IEnumerable<TEntity>> ObterTodos()
         {
             var all = await DbSet.FindAsync(Builders<TEntity>.Filter.Empty);

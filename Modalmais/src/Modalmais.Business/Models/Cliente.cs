@@ -20,6 +20,7 @@ namespace Modalmais.Business.Models
             Documento = documento;
             Contato = contato;
             ContaCorrente = new ContaCorrente();
+            DataAlteracao = DateTime.Now;
 
         }
 

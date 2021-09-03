@@ -38,6 +38,8 @@ namespace Modalmais.Business.Services.Request
 
         public async Task AtualizarDadosContaCliente(Cliente cliente)
         {
+            if (ChecarPorEmailSeClienteExiste(cliente.Contato.Email, cliente.Id).Result)
+            { AdicionarNotificacao("Email Existente em nosso banco de dados."); return; }
             cliente.ValidarDataAlteracao();
             await _clienteRepository.Update(cliente);
         }

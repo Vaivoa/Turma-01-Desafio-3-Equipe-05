@@ -58,6 +58,16 @@ namespace Modalmais.Business.Services.Response
             return await _clienteRepository.ChecarEntidadeExistente(nameof(Contato) + "." + nameof(Contato.Email), email);
         }
 
+        public async Task<bool> ChecarPorEmailSeClienteExiste(string email, string id)
+        {
+            var filter = Builders<Cliente>.Filter.And(
+                Builders<Cliente>.Filter.Where(p => p.Id != id),
+                Builders<Cliente>.Filter.Where(p => p.Contato.Email == email)
+            );
+
+            return await _clienteRepository.ChecarEntidadeExistente(filter);
+        }
+
         public void Dispose()
         {
             _clienteRepository?.Dispose();

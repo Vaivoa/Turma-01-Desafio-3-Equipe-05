@@ -138,7 +138,9 @@ namespace Modalmais.API.Controllers
             cliente.AlterarCliente(clienteAlteracaoRequest.Nome, clienteAlteracaoRequest.Sobrenome, clienteAlteracaoRequest.Contato.Email, clienteAlteracaoRequest.Contato.Celular.DDD, clienteAlteracaoRequest.Contato.Celular.Numero);
 
             await _clienteServiceRequest.AtualizarDadosContaCliente(cliente);
-            //var kafka = new KafkaProducerHostedService();
+
+            if (NotificadorContemErros()) return ResponseBadRequest();
+
             _kafkaProducerHostedService.SendToKafka(cliente);
 
             return ResponseNoContent();
