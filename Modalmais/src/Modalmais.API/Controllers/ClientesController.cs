@@ -16,7 +16,6 @@ using Modalmais.Core.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Modalmais.API.Controllers
@@ -29,15 +28,18 @@ namespace Modalmais.API.Controllers
 
         protected readonly IClienteServiceRequest _clienteServiceRequest;
         protected readonly IClienteServiceResponse _clienteServiceResponse;
+        protected readonly KafkaProducerHostedService _kafkaProducerHostedService;
 
         public ClientesController(IMapper mapper,
                                        INotificador notificador,
                                        IClienteServiceRequest clienteServiceRequest,
-                                       IClienteServiceResponse clienteServiceResponse
+                                       IClienteServiceResponse clienteServiceResponse,
+                                       KafkaProducerHostedService kafkaProducerHostedService
                                        ) : base(mapper, notificador)
         {
             _clienteServiceRequest = clienteServiceRequest;
             _clienteServiceResponse = clienteServiceResponse;
+            _kafkaProducerHostedService = kafkaProducerHostedService;
         }
 
 
@@ -127,17 +129,17 @@ namespace Modalmais.API.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> AlterarCadastroCliente(ClienteAlteracaoRequest clienteAlteracaoRequest, [FromRoute] string id)
         {
-            
+
             if (!ModelState.IsValid) return ResponseModelErro(ModelState);
             if (!ObjectIdValidacao.Validar(id)) return ResponseBadRequest("Formato de dado inválido.");
             var cliente = await _clienteServiceResponse.BuscarClientePorId(id);
             if (cliente == null) return ResponseNotFound("O cliente não foi encontrado.");
 
-            cliente.AlterarCliente(clienteAlteracaoRequest.Nome, clienteAlteracaoRequest.Sobrenome, clienteAlteracaoRequest.Contato.Email, clienteAlteracaoRequest.Contato.Celular.DDD,             clienteAlteracaoRequest.Contato.Celular.Numero);
+            cliente.AlterarCliente(clienteAlteracaoRequest.Nome, clienteAlteracaoRequest.Sobrenome, clienteAlteracaoRequest.Contato.Email, clienteAlteracaoRequest.Contato.Celular.DDD, clienteAlteracaoRequest.Contato.Celular.Numero);
 
             await _clienteServiceRequest.AtualizarDadosContaCliente(cliente);
-            var kafka = new KafkaProducerHostedService();
-            kafka.SendToKafka(cliente);           
+            //var kafka = new KafkaProducerHostedService();
+            _kafkaProducerHostedService.SendToKafka(cliente);
 
             return ResponseNoContent();
         }
@@ -147,17 +149,14 @@ namespace Modalmais.API.Controllers
         [HttpGet]
         public async Task<IActionResult> ObterTodosClientes()
         {
-            
-            
             var listaClientes = await _clienteServiceResponse.BuscarTodos();
             var listaClientesResponse = new List<ClienteResponse>();
 
             foreach (var cliente in listaClientes)
             {
                 listaClientesResponse.Add(_mapper.Map<ClienteResponse>(cliente));
-                
+                _kafkaProducerHostedService.SendToKafka(cliente);
             }
-            
 
             return ResponseOk(listaClientesResponse);
         }
