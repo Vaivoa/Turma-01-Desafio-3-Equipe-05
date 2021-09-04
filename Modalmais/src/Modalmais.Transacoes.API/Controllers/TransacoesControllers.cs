@@ -7,11 +7,13 @@ using Modalmais.Core.Extensions;
 using Modalmais.Core.Interfaces.Notificador;
 using Modalmais.Core.Models.Enums;
 using Modalmais.Transacoes.API.DTOs;
+using Modalmais.Transacoes.API.DTOs.Validations;
 using Modalmais.Transacoes.API.Models;
 using Modalmais.Transacoes.API.Refit;
 using Modalmais.Transacoes.API.Repository;
 using Refit;
 using System;
+using System.Linq;
 using System.Net;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -74,10 +76,20 @@ namespace Modalmais.Transacoes.API.Controllers
         [CustomResponse(StatusCodes.Status200OK)]
         [CustomResponse(StatusCodes.Status400BadRequest)]
         [CustomResponse(StatusCodes.Status404NotFound)]
-        [HttpGet("extratos")]
-        public async Task<IActionResult> ObterExtrato(ExtratoRequest extratoRequest)
+        [HttpGet("extratos/{agencia}/{conta}")]
+        public async Task<IActionResult> ObterExtrato(string agencia, string conta, [FromQuery] DateTime? dataInicial, [FromQuery] DateTime? dataFinal)
         {
-            if (!ModelState.IsValid) return ResponseModelErro(ModelState);
+
+            var extratoRequest = new ExtratoRequest(agencia, conta);
+
+            if (dataFinal == null && dataInicial != null || dataFinal != null && dataInicial == null)
+                return ResponseBadRequest("O filtro do periodo de extrato precisa de 2 datas: dataInicial e dataFinal.");
+
+            if (dataFinal != null && dataInicial != null)
+                extratoRequest.AtribuirPeriodo((DateTime)dataFinal, (DateTime)dataInicial);
+
+            var validar = new ExtratoRequestValidation().Validate(extratoRequest).Errors;
+            if (validar.Any()) return ResponseEntidadeErro(validar);
 
             var extratoCache = await _transacaoRepository.ObterExtratoCacheado(extratoRequest);
             if (!String.IsNullOrEmpty(extratoCache))

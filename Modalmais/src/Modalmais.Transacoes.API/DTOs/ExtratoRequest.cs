@@ -5,7 +5,7 @@ namespace Modalmais.Transacoes.API.DTOs
     public class ExtratoRequest
     {
 
-        public ExtratoRequest(string agencia, string conta, PeriodoRequest periodo)
+        public ExtratoRequest(string agencia, string conta, PeriodoRequest periodo = null)
         {
             Agencia = agencia;
             Conta = conta;
@@ -15,6 +15,12 @@ namespace Modalmais.Transacoes.API.DTOs
         public string Agencia { get; set; }
         public string Conta { get; set; }
         public PeriodoRequest Periodo { get; set; }
+
+
+        public void AtribuirPeriodo(DateTime dataFinal, DateTime dataInicial)
+        {
+            Periodo = new PeriodoRequest { DataInicio = dataInicial, DataFinal = dataFinal };
+        }
     }
 
 

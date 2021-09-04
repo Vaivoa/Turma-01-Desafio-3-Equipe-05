@@ -157,7 +157,6 @@ namespace Modalmais.API.Controllers
             foreach (var cliente in listaClientes)
             {
                 listaClientesResponse.Add(_mapper.Map<ClienteResponse>(cliente));
-                _kafkaProducerHostedService.SendToKafka(cliente);
             }
 
             return ResponseOk(listaClientesResponse);
