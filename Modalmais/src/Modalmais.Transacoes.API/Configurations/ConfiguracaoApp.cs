@@ -29,6 +29,11 @@ namespace Modalmais.Transacoes.API.Configurations
 
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
+            services.AddStackExchangeRedisCache(options =>
+            {
+                options.Configuration = $"{configuration.GetConnectionString("Api-StringBd-Redis")}";
+            });
+
             services.InjecaoDependencias(configuration);
 
             services.Configure<ApiBehaviorOptions>(options =>

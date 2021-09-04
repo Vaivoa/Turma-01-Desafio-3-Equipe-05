@@ -53,9 +53,19 @@ services:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
 
+  redis:
+    image: redis
+    command: redis-server
+    container_name: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - webproxy
+
 networks:
   webproxy:
     driver: bridge
+
 
 volumes:
   mongo_data:

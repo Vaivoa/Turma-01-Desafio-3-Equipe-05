@@ -15,7 +15,7 @@ namespace Modalmais.Transacoes.API.Repository
 {
     public abstract class Repository<TEntity> : IDisposable where TEntity : Entidade
     {
-        
+
         protected readonly ApiDbContext Db;
         protected readonly DbSet<TEntity> DbSet;
 
@@ -57,7 +57,8 @@ namespace Modalmais.Transacoes.API.Repository
             var data = await conn.QueryAsync<dynamic>(updateSQL);
 
             var transacoes = new List<Transacao>();
-            foreach (var item in data){
+            foreach (var item in data)
+            {
                 transacoes.Add(mapearTransacao(item));
             };
 

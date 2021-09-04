@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Distributed;
 using Modalmais.Core.Controller;
 using Modalmais.Core.Extensions;
 using Modalmais.Core.Interfaces.Notificador;
@@ -12,8 +13,8 @@ using Modalmais.Transacoes.API.Repository;
 using Refit;
 using System;
 using System.Net;
+using System.Text.Json;
 using System.Threading.Tasks;
-using Modalmais.Transacoes.API.Data;
 
 namespace Modalmais.Transacoes.API.Controllers
 {
@@ -23,18 +24,17 @@ namespace Modalmais.Transacoes.API.Controllers
     {
         private readonly IContaService _contaService;
         private readonly TransacaoRepository _transacaoRepository;
-        private readonly ApiDbContext _dbContext;
+
 
         public TransacoesControllers(IContaService contaService,
                                     IMapper mapper,
                                      INotificador notificador,
-                                     TransacaoRepository transacaoRepository,
-                                       ApiDbContext dbContext
+                                      IDistributedCache dbRedis,
+                                     TransacaoRepository transacaoRepository
                                        ) : base(mapper, notificador)
         {
             _contaService = contaService;
             _transacaoRepository = transacaoRepository;
-            _dbContext = dbContext;
         }
 
 
@@ -47,7 +47,7 @@ namespace Modalmais.Transacoes.API.Controllers
             if (!ModelState.IsValid) return ResponseModelErro(ModelState);
 
             var conta = await ObterContaPelaChavePix(transacaoRequest);
-            if (conta == null) return ResponseBadRequest("Não possível realizar a transação, tente novamente mais tarde.");
+            if (conta == null) return ResponseBadRequest("Não foi possível realizar a transação, tente novamente mais tarde.");
             if (conta.statusCode != 200) return ResponseNotFound("Chave pix não encontrada.");
             if (conta.data.contaCorrente.status != Status.Ativo || conta.data.contaCorrente.chavePix.ativo != Status.Ativo)
                 return ResponseBadRequest("A conta ou a chave pix informada não pode receber transações no momento.");
@@ -74,19 +74,24 @@ namespace Modalmais.Transacoes.API.Controllers
         [CustomResponse(StatusCodes.Status200OK)]
         [CustomResponse(StatusCodes.Status400BadRequest)]
         [CustomResponse(StatusCodes.Status404NotFound)]
-        [HttpPost("extratos")]
+        [HttpGet("extratos")]
         public async Task<IActionResult> ObterExtrato(ExtratoRequest extratoRequest)
         {
             if (!ModelState.IsValid) return ResponseModelErro(ModelState);
 
+            var extratoCache = await _transacaoRepository.ObterExtratoCacheado(extratoRequest);
+            if (!String.IsNullOrEmpty(extratoCache))
+            {
+                var extratoSerializer = JsonSerializer.Deserialize<Extrato>(extratoCache);
+                return ResponseOk(_mapper.Map<ExtratoResponse>(extratoSerializer));
+            }
+
             if (!await _transacaoRepository.TransacoesDisponiveis(extratoRequest.Conta)) return ResponseNotFound("Não foi encontrado transações para esta conta.");
 
             var extrato = await _transacaoRepository.ObterPorContaDapper(extratoRequest);
-
             var extratoResponse = _mapper.Map<ExtratoResponse>(extrato);
 
-            //verificar se o extrato ja existe no Redis, se ja retornar ele  
-            //armazenar no redis o Extrato
+            await _transacaoRepository.ArmazenarExtratoCacheado(extrato);
 
             return ResponseOk(extratoResponse);
         }
