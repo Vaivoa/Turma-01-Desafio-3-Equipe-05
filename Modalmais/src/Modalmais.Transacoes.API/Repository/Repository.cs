@@ -49,9 +49,10 @@ namespace Modalmais.Transacoes.API.Repository
         {
             var conn = Db.Database.GetDbConnection();
             string dataInicio = extratoRequest.Periodo.DataInicio.ToString("yyyy/MM/dd");
+            extratoRequest.Periodo.DataFinal = extratoRequest.Periodo.DataFinal.AddDays(1).AddSeconds(-1);
             string dataFim = extratoRequest.Periodo.DataFinal.ToString("yyyy/MM/dd");
             var updateSQL =
-                string.Format(@"SELECT * FROM modalmais.""Transacoes"" WHERE ""Conta_Agencia"" = '{0}' AND ""Conta_Numero"" = '{1}' AND ""DataCriacao"" >= '{2}' AND ""DataCriacao"" <= '{3}'",
+                string.Format(@"SELECT * FROM modalmais.""Transacoes"" WHERE ""Conta_Agencia"" = '{0}' AND ""Conta_Numero"" = '{1}' AND ""DataCriacao"" >= '{2}' AND ""DataCriacao"" <= '{3} 23:59:59'",
                     extratoRequest.Agencia, extratoRequest.Conta, dataInicio, dataFim);
 
             var data = await conn.QueryAsync<dynamic>(updateSQL);
