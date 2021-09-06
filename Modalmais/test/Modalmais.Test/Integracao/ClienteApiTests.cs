@@ -51,7 +51,7 @@ namespace Modalmais.Test
         {
             // Arrange
             var cliente = _testsFixture.GerarClienteValido();
-            while (cliente.Documento.CPF == "26283944051")
+            while (cliente.Documento.CPF == "61492511013")
             {
                 cliente = _testsFixture.GerarClienteValido();
             }
@@ -324,7 +324,7 @@ namespace Modalmais.Test
         [InlineData(TipoChavePix.Email, "")]
         [InlineData(TipoChavePix.Telefone, "")]
         [InlineData(TipoChavePix.Telefone, "4521518")]
-        [InlineData(TipoChavePix.CPF, "26283944051")]
+        [InlineData(TipoChavePix.CPF, "61492511013")]
         [InlineData((TipoChavePix)5, "asdasd")]
         [InlineData(TipoChavePix.Email, "@email.com")]
         [Trait("Categoria", "Testes Integracao Cliente")]
