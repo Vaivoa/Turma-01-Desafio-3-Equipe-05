@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Caching.Distributed;
+﻿using AutoMapper;
+using Microsoft.Extensions.Caching.Distributed;
 using Modalmais.Transacoes.API.Data;
 using Modalmais.Transacoes.API.DTOs;
 using Modalmais.Transacoes.API.Models;
@@ -14,8 +15,9 @@ namespace Modalmais.Transacoes.API.Repository
         private readonly IDistributedCache _dbRedis;
 
         public TransacaoRepository(ApiDbContext apiDbContext,
-                                   IDistributedCache dbRedis)
-                                   : base(apiDbContext)
+                                   IDistributedCache dbRedis,
+                                   IMapper mapper)
+                                   : base(apiDbContext, mapper)
         {
             _dbRedis = dbRedis;
         }

@@ -10,6 +10,7 @@ namespace Modalmais.Transacoes.API.DTOs
         public string Banco => "746";
         public string Agencia { get; set; }
         public string Conta { get; set; }
+        public decimal ValorMovimentado { get; set; }
         public DateTime DataCriacao { get; set; }
         public PeriodoReponse Periodo { get; set; }
         public List<ExtratoTransacaoResponse> Transacoes { get; set; }
