@@ -5,7 +5,10 @@ on:
     branches:
       - main
       - dev
-
+  pull_request:
+    branches:
+      - main
+      - dev
 jobs:
   horusec-security:
     name: horusec-security
