@@ -41,6 +41,10 @@ namespace Modalmais.API.MVC
             services.AddScoped<IClienteRepository, ClienteRepository>();
             services.AddScoped<IClienteServiceResponse, ClienteServiceResponse>();
             services.AddScoped<IClienteServiceRequest, ClienteServiceRequest>();
+
+            services.AddScoped(p => new KafkaProducerHostedService(
+                Configuration.GetConnectionString("Api-StringBd-Kafka").ToString()));
+
             services.AddControllers();
             services.AddHttpContextAccessor();
         }
