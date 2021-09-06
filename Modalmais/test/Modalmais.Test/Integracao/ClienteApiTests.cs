@@ -426,8 +426,44 @@ namespace Modalmais.Test
             Assert.Equal(Status.Ativo, responseContaPix.Data.ContaCorrente.ChavePix.Ativo);
         }
 
+        [Trait("Categoria", "Testes Integracao Cliente")]
+        [Fact(DisplayName = "Atualizar cadastro de um cliente válido"), TestPriority(9)]
+        public async void AtualizarCliente_ClienteValido_DeveRetornaStatus203()
+        {
+            // Arrange
+            var getResponse = await _testsFixture.Client.GetAsync("api/v1/clientes");
+            var clientesResponse = JsonConvert.DeserializeObject
+                    <ResponseBase<List<ClienteResponse>>>(getResponse.Content.ReadAsStringAsync().Result);
+            var cliente = clientesResponse.Data[0];
 
+            var dadosAtualizados = _testsFixture.GerarClienteValido();
 
+            //Act
+            var putResponse = await _testsFixture.Client.PutAsJsonAsync($"api/v1/clientes/{cliente.Id}", dadosAtualizados);
 
+            // Assert
+            Assert.Equal(HttpStatusCode.NoContent, putResponse.StatusCode);
+            Assert.True(putResponse.IsSuccessStatusCode);
+        }
+
+        [Trait("Categoria", "Testes Integracao Cliente")]
+        [Fact(DisplayName = "Atualizar cadastro de um cliente Inválido"), TestPriority(10)]
+        public async void AtualizarCliente_ClienteInvalido_DeveRetornaStatus400()
+        {
+            // Arrange
+            var getResponse = await _testsFixture.Client.GetAsync("api/v1/clientes");
+            var clientesResponse = JsonConvert.DeserializeObject
+                    <ResponseBase<List<ClienteResponse>>>(getResponse.Content.ReadAsStringAsync().Result);
+            var cliente = clientesResponse.Data[0];
+
+            var dadosAtualizados = _testsFixture.GerarClienteIncorreto();
+
+            //Act
+            var putResponse = await _testsFixture.Client.PutAsJsonAsync($"api/v1/clientes/{cliente.Id}", dadosAtualizados);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.BadRequest, putResponse.StatusCode);
+            Assert.False(putResponse.IsSuccessStatusCode);
+        }
     }
 }
