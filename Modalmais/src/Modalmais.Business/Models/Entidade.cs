@@ -7,8 +7,6 @@ namespace Modalmais.Business.Models
     public abstract class Entidade
     {
 
-
-        //[BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; private set; }
         public DateTime DataCriacao { get; private set; }

@@ -23,7 +23,6 @@ namespace Modalmais.Business.Services.Response
 
         public async Task<Cliente> BuscarClientePorId(string id)
         {
-            //return await _Clienterepository.Buscar(nameof(Cliente.Id), id);
             return await _clienteRepository.ObterPorId(id);
         }
 

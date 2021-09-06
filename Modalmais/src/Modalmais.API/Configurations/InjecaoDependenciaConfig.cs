@@ -17,17 +17,12 @@ namespace Modalmais.API.Configurations
 
         public static IServiceCollection InjecaoDependencias(this IServiceCollection services, IConfiguration configuration)
         {
-            //DbContext
             services.AddScoped(p => new DbContext(
                 configuration.GetConnectionString("Api-StringBd-Mongodb").ToString(),
                 configuration.GetConnectionString("NomeApiDb").ToString()
                 ));
-            //NotificationPattern
             services.AddScoped<INotificador, NotificadorHandler>();
-            //Repositorys
             services.AddScoped<IClienteRepository, ClienteRepository>();
-
-            //Services
             services.AddScoped<IClienteServiceResponse, ClienteServiceResponse>();
             services.AddScoped<IClienteServiceRequest, ClienteServiceRequest>();
 

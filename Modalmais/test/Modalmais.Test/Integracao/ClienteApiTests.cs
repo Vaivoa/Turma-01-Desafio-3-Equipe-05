@@ -130,7 +130,6 @@ namespace Modalmais.Test
             await using var stream = File.OpenRead(@"../../../imgs_para_teste/pequena.png");
             using var content = new MultipartFormDataContent
             {
-                // file
                 { new StreamContent(stream), "ImagemDocumento", "pequena.png" },
                 { new StringContent(cliente.Documento.CPF), "CPF"},
                 { new StringContent(cliente.ContaCorrente.Agencia), "Agencia"},
@@ -140,7 +139,7 @@ namespace Modalmais.Test
             request.Content = content;
 
 
-            //Act https://localhost:5001/api/v1/clientes/6122e1a46d1e0ab1e9798f6d/documentos
+            //Act
             var postResponse = await _testsFixture.Client.SendAsync(request);
             var response = JsonConvert.DeserializeObject
                     <ResponseBase<ClienteResponse>>(postResponse.Content.ReadAsStringAsync().Result);

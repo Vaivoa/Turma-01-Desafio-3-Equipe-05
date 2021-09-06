@@ -41,8 +41,6 @@ namespace Modalmais.API.Configurations
 
             app.UseConfiguracaoSwagger();
 
-            //app.UseHttpsRedirection();
-
             app.UseRouting();
 
             app.UseAuthorization();

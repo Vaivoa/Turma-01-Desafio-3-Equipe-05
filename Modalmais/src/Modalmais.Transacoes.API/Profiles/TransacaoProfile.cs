@@ -15,9 +15,7 @@ namespace Modalmais.Transacoes.API.Profiles
 
             CreateMap<Transacao, TransacaoResponse>().ReverseMap();
 
-            CreateMap<Extrato, ExtratoResponse>();
-
-            CreateMap<ExtratoResponse, Extrato>();
+            CreateMap<Extrato, ExtratoResponse>().ReverseMap();
 
             CreateMap<ExtratoRequest, Extrato>().ReverseMap();
             CreateMap<PeriodoRequest, Periodo>().ReverseMap();

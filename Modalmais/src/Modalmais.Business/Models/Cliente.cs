@@ -47,7 +47,7 @@ namespace Modalmais.Business.Models
             Contato.SetarEmail(email);
             Contato.Celular.SetarCelular(ddd, numero);
         }
-        // Retorna True se tiverem erros
+
         public bool EstaInvalido()
         {
             ListaDeErros.Clear();
