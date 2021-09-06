@@ -69,14 +69,51 @@ Para utilizar e testar o projeto acesse os endereços abaixo:
 
 ```bash
 http://localhost:5001         //colocar redis no primeiro campo.
-http://localhost:5101        // API de cadastro
-http://localhost:5201       // API de Transação
+http://localhost:5101        // API de Transação
+http://localhost:5101       // API de Cadastro
 ```
 Agora você será redirecionado para a página de OpenApi do Swagger onde poderá testar os endpoint, ou também pode utilizar outras ferramentas para isso.
 
 ## Imagens
 
-Em construção ...
+<p align="center" width="100%">
+    <img width="33%" src="https://i.ibb.co/4t6xjdP/estrutura-bds.png"> 
+    <br>
+    <em>Estrutura dos SGBD's: MongoDB e PostgreSQL. </em>
+</p>
+<hr>
+<p align="center" width="100%">
+    <img width="33%" src="https://i.ibb.co/wBDVB2B/exemplo-resposta-extrato.png"> 
+    <br>
+    <em>Exemplo de uma resposta fornecida pela API de cadastro, usando o endpoint para gerar um extrato e a ferramenta Rest Insomnia. </em>
+</p>
+<hr>
+<p align="center" width="100%">
+    <img width="33%" src="https://i.ibb.co/F051nns/swagger-api-cadastro.png"> 
+    <br>
+    <em>Apresentação da página do Swagger (OpenAPI) da API de cadastro. </em>
+</p>
+<hr>
+<p align="center" width="100%">
+    <img width="33%" src="https://i.ibb.co/TbCHSpC/swagger-api-transacoes.png"> 
+    <br>
+    <em>Apresentação da página do Swagger (OpenAPI) da API de transação. </em>
+</p>
+<hr>
+<p align="center" width="100%">
+    <img width="33%" src="https://i.ibb.co/HhVvxP3/visualizar-kafka.png"> 
+    <br>
+    <em>Visualização dos topicos e mensagens do Apache Kafka utilizando a ferramenta KaDeck. </em>
+</p>
+<hr>
+<p align="center" width="100%">
+    <img width="33%" src="https://i.ibb.co/cNkzthm/visualizar-redis.png"> 
+    <br>
+    <em>Apresentação da página de acesso ao Redis, utilizando a ferramenta marian/rebrow que está no Docker-Composse </em>
+</p>
+<br>
+<br>
+
 
 ## Contribuidores
 
