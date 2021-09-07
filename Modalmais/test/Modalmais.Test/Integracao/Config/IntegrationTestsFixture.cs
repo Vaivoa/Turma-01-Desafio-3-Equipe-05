@@ -11,6 +11,9 @@ using MongoDB.Bson;
 using System;
 using System.Net.Http;
 using Xunit;
+using Modalmais.Transacoes.API;
+using Modalmais.Transacoes.API.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace Modalmais.Test.Tests.Config
 {
@@ -23,24 +26,47 @@ namespace Modalmais.Test.Tests.Config
 
         public readonly StartUpFactory<TStartup> Factory;
         public HttpClient Client;
+        public readonly StartUpFactory<StartupTransacaoApiTeste> FactoryTransacao;
+        public HttpClient ClientTransacao;
 
-        public readonly DbContext _context;
+        public readonly MongoDbContext _context;
+
+        public readonly ApiDbContext _contextTransacao;
 
         public IntegrationTestsFixture()
         {
-            var clientOptions = new WebApplicationFactoryClientOptions
+            var clientCadastroOptions = new WebApplicationFactoryClientOptions
             {
                 AllowAutoRedirect = true,
-                BaseAddress = new Uri("http://localhost:5001/"),
+                BaseAddress = new Uri("http://localhost:5000/"),
+                HandleCookies = true,
+                MaxAutomaticRedirections = 7
+            };
+            var clientTransacaoOptions = new WebApplicationFactoryClientOptions
+            {
+                AllowAutoRedirect = true,
+                BaseAddress = new Uri("http://localhost:5100/"),
                 HandleCookies = true,
                 MaxAutomaticRedirections = 7
             };
 
-            _context = new DbContext("mongodb://localhost:27017", "Testes");
+            _context = new MongoDbContext("mongodb://localhost:27017", "Testes");
             _context.Clientes.DeleteMany(new BsonDocument());
+            var dbContextOptions = new 
+                DbContextOptionsBuilder<ApiDbContext>()
+                .UseNpgsql("Host=localhost;Database=modalmaisTeste;Username=postgres;Password=rootvaivoa")
+                .UseAllCheckConstraints()
+                .Options;
+
+            _contextTransacao = new ApiDbContext(dbContextOptions);
+            _contextTransacao.Database.EnsureDeleted();
+            _contextTransacao.Database.Migrate();
 
             Factory = new StartUpFactory<TStartup>();
-            Client = Factory.CreateClient(clientOptions);
+            Client = Factory.CreateClient(clientCadastroOptions);
+            FactoryTransacao = new();
+            ClientTransacao = FactoryTransacao.CreateClient(clientTransacaoOptions);
+            
         }
 
         public static string GerarClienteEmailFake()

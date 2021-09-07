@@ -39,8 +39,6 @@ namespace Modalmais.Transacoes.API
                 options.LogTo(Console.WriteLine, LogLevel.Information);
             });
 
-            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-
             services.AddStackExchangeRedisCache(options =>
             {
                 options.Configuration = $"{Configuration.GetConnectionString("Api-StringBd-Redis")}";
@@ -53,9 +51,10 @@ namespace Modalmais.Transacoes.API
                 options.SuppressModelStateInvalidFilter = true;
             });
 
-
             services.AddControllers()
-                .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<Startup>());
+                .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<StartupTransacaoApiTeste>());
+            services.AddHttpContextAccessor();
+
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

@@ -5,6 +5,7 @@ using Modalmais.Business.Models;
 using Modalmais.Core.Models.Enums;
 using Modalmais.Test.Tests;
 using Modalmais.Test.Tests.Config;
+using Modalmais.Transacoes.API.DTOs;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -464,5 +465,33 @@ namespace Modalmais.Test
             Assert.Equal(HttpStatusCode.BadRequest, putResponse.StatusCode);
             Assert.False(putResponse.IsSuccessStatusCode);
         }
+
+        [Trait("Categoria", "Testes Integracao Cliente")]
+        [Fact(DisplayName = "Chave Pix Valida"), TestPriority(11)]
+        public async void TransacaoPix_ChaveValida_DeveRetornaStatus200()
+        {
+            // Arrange
+            var getResponse = await _testsFixture.Client.GetAsync("api/v1/clientes");
+            var clientesResponse = JsonConvert.DeserializeObject
+                    <ResponseBase<List<ClienteResponse>>>(getResponse.Content.ReadAsStringAsync().Result);
+            var cliente = clientesResponse.Data[0];
+
+            TransacaoRequest transacaoValida = new()
+            { Chave = cliente.ContaCorrente.ChavePix.Chave, 
+                Tipo = cliente.ContaCorrente.ChavePix.Tipo, 
+                Valor = (decimal)5000.00, Descricao = " " };
+
+            //Act
+            var postResponse = await _testsFixture.ClientTransacao.PostAsJsonAsync($"api/v1/transacoes", transacaoValida);
+            var response = JsonConvert.DeserializeObject
+                   <ResponseBase<ContaPixResponse>>(postResponse.Content.ReadAsStringAsync().Result);
+            // Assert
+            Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+            Assert.True(response.Success);
+            Assert.NotNull(response.Data);
+            Assert.Empty(response.Errors);
+        }
+
+
     }
 }

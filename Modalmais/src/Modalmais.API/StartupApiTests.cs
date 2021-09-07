@@ -33,7 +33,7 @@ namespace Modalmais.API.MVC
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddScoped(p => new DbContext(
+            services.AddScoped(p => new MongoDbContext(
                 Configuration.GetConnectionString("Api-StringBd-Mongodb").ToString(),
                 Configuration.GetConnectionString("NomeApiDb").ToString()
                 ));
@@ -55,7 +55,6 @@ namespace Modalmais.API.MVC
             {
                 app.UseDeveloperExceptionPage();
             }
-            app.UseHttpsRedirection();
 
             app.UseRouting();
 

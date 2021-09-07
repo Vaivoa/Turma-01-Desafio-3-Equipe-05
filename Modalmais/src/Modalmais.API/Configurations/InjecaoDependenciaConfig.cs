@@ -17,7 +17,7 @@ namespace Modalmais.API.Configurations
 
         public static IServiceCollection InjecaoDependencias(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddScoped(p => new DbContext(
+            services.AddScoped(p => new MongoDbContext(
                 configuration.GetConnectionString("Api-StringBd-Mongodb").ToString(),
                 configuration.GetConnectionString("NomeApiDb").ToString()
                 ));
