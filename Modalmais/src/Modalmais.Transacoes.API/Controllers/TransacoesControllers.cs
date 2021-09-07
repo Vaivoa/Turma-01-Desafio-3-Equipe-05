@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Caching.Distributed;
 using Modalmais.Core.Controller;
 using Modalmais.Core.Extensions;
 using Modalmais.Core.Interfaces.Notificador;
@@ -31,7 +30,6 @@ namespace Modalmais.Transacoes.API.Controllers
         public TransacoesControllers(IContaService contaService,
                                     IMapper mapper,
                                      INotificador notificador,
-                                      IDistributedCache dbRedis,
                                      TransacaoRepository transacaoRepository
                                        ) : base(mapper, notificador)
         {

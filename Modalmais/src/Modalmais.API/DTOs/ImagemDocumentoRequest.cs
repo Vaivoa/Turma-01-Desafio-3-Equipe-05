@@ -7,8 +7,6 @@ namespace Modalmais.API.DTOs
     {
         [Required(ErrorMessage = "A imagem do documento é obrigatoria.")]
         [DataType(DataType.Upload)]
-        //[MaxFileSize(4 * 1024 * 1024)]
-        //[AllowedExtensions(new string[] { ".png" })]
         public IFormFile ImagemDocumento { get; set; }
 
         [Required]

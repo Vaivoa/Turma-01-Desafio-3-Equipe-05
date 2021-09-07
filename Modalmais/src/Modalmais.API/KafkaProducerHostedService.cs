@@ -8,7 +8,6 @@ namespace Modalmais.API
 {
     public class KafkaProducerHostedService
     {
-        //private readonly ProducerConfig config = new() { BootstrapServers = "localhost:9092" };
         private readonly ProducerConfig config = new();
         private readonly string topic = "CADASTRO_CONTA_CORRENTE_ATUALIZADO";
 
