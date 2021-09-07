@@ -109,7 +109,13 @@ Agora você será redirecionado para a página de OpenApi do Swagger onde poder�
 <p align="center" width="100%">
     <img width="33%" src="https://i.ibb.co/cNkzthm/visualizar-redis.png"> 
     <br>
-    <em>Apresentação da página de acesso ao Redis, utilizando a ferramenta marian/rebrow que está no Docker-Composse </em>
+    <em>Apresentação da página de acesso ao Redis, utilizando a ferramenta marian/rebrow que está no Docker-Composse. </em>
+</p>
+<hr>
+<p align="center" width="100%">
+    <img width="33%" src="https://i.ibb.co/wYvxmz7/estrutura-projeto.png"> 
+    <br>
+    <em>Estrutura do projeto, dividido em camadas e Microsserviços. </em>
 </p>
 <br>
 <br>
