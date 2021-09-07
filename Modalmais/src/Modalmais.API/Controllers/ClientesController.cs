@@ -62,9 +62,9 @@ namespace Modalmais.API.Controllers
 
             if (NotificadorContemErros()) return ResponseBadRequest();
 
-            var clienteAdicionarResponse = _mapper.Map<ClienteResponse>(cliente);
+            var clienteResponse = _mapper.Map<ClienteResponse>(cliente);
 
-            return ResponseCreated(clienteAdicionarResponse);
+            return ResponseCreated(clienteResponse);
 
         }
 
@@ -213,12 +213,9 @@ namespace Modalmais.API.Controllers
         //[NonAction]
         //public string ArmazenarImagemDocumentoCloud(IFormFile documentorecebido)
         //{
-
         //    ////armazena fake
-
         //    var nomenclaturaPadrao = "_" + Guid.NewGuid().ToString();
         //    var urlFake = $"https://i.ibb.co/{documentorecebido.FileName + nomenclaturaPadrao}.png";
-
         //    return urlFake;
         //}
 

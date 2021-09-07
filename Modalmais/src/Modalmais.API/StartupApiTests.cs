@@ -30,7 +30,7 @@ namespace Modalmais.API.MVC
             Configuration = builder.Build();
         }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
+
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddScoped(p => new DbContext(
@@ -38,16 +38,15 @@ namespace Modalmais.API.MVC
                 Configuration.GetConnectionString("NomeApiDb").ToString()
                 ));
             services.AddScoped<INotificador, NotificadorHandler>();
-            //Repositorys
             services.AddScoped<IClienteRepository, ClienteRepository>();
-
-            //Services
             services.AddScoped<IClienteServiceResponse, ClienteServiceResponse>();
             services.AddScoped<IClienteServiceRequest, ClienteServiceRequest>();
 
+            services.AddScoped(p => new KafkaProducerHostedService(
+                Configuration.GetConnectionString("Api-StringBd-Kafka").ToString()));
+
             services.AddControllers();
             services.AddHttpContextAccessor();
-
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
