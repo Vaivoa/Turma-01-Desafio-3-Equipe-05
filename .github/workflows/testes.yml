@@ -23,7 +23,7 @@ jobs:
         with:
           dotnet-version: ${{ matrix.dotnet-version }}
       - name: Build the docker-compose stack
-        run: docker-compose up
+        run: docker-compose -f Modalmais/docker-compose.yml up
       - name: Check running containers
         run: docker ps -a
       - name: Test
