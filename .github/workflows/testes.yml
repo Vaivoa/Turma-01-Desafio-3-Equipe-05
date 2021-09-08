@@ -1,4 +1,4 @@
-name: dotnet package
+name: Realizar_testes
 
 on: 
   push:
@@ -22,5 +22,10 @@ jobs:
         uses: actions/setup-dotnet@v1.7.2
         with:
           dotnet-version: ${{ matrix.dotnet-version }}
+      - name: Build the docker-compose stack
+        run: docker-compose Modalmais/docker-compose.yml up
+      - name: Check running containers
+        run: docker ps -a
       - name: Test
         run: dotnet test Modalmais/test/Modalmais.Test/Modalmais.Test.csproj
+        
