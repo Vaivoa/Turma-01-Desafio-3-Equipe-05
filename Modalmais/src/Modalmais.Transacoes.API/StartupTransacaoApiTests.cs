@@ -7,15 +7,15 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Modalmais.Core.Interfaces;
 using Modalmais.Transacoes.API.Configurations;
 using Modalmais.Transacoes.API.Data;
 using System;
 
 namespace Modalmais.Transacoes.API
 {
-    public class StartupTransacaoApiTeste
-    {
-        public StartupTransacaoApiTeste(IWebHostEnvironment hostEnvironment)
+    public class StartupTransacaoApiTests { 
+        public StartupTransacaoApiTests(IWebHostEnvironment hostEnvironment)
         {
             var builder = new ConfigurationBuilder()
                 .SetBasePath(hostEnvironment.ContentRootPath)
@@ -45,24 +45,31 @@ namespace Modalmais.Transacoes.API
             });
 
             services.InjecaoDependencias(Configuration);
-
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.Configure<ApiBehaviorOptions>(options =>
             {
                 options.SuppressModelStateInvalidFilter = true;
             });
 
+            services.AddCors(options =>
+            {
+                options.AddPolicy("Testing",
+                    builder =>
+                        builder
+                        .AllowAnyOrigin()
+                        .AllowAnyMethod()
+                        .AllowAnyHeader());
+            });
+
             services.AddControllers()
-                .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<StartupTransacaoApiTeste>());
+                .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<StartupTransacaoApiTests>());
             services.AddHttpContextAccessor();
 
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
+            app.UseCors("Testing");
 
             app.UseRouting();
 

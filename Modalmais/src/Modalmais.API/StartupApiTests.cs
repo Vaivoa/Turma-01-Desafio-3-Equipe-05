@@ -1,21 +1,16 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Modalmais.Business.Interfaces.Repository;
-using Modalmais.Business.Interfaces.Services.Request;
-using Modalmais.Business.Interfaces.Services.Response;
-using Modalmais.Business.Services.Request;
-using Modalmais.Business.Services.Response;
-using Modalmais.Core.Interfaces.Notificador;
-using Modalmais.Core.Notificador;
-using Modalmais.Infra.Data;
-using Modalmais.Infra.Repository;
+using Modalmais.API.Configurations;
+using Modalmais.Core.Interfaces;
+using System;
 
 namespace Modalmais.API.MVC
 {
-    public class StartupApiTests
+    public class StartupApiTests 
     {
         public IConfiguration Configuration { get; }
 
@@ -33,29 +28,29 @@ namespace Modalmais.API.MVC
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddScoped(p => new MongoDbContext(
-                Configuration.GetConnectionString("Api-StringBd-Mongodb").ToString(),
-                Configuration.GetConnectionString("NomeApiDb").ToString()
-                ));
-            services.AddScoped<INotificador, NotificadorHandler>();
-            services.AddScoped<IClienteRepository, ClienteRepository>();
-            services.AddScoped<IClienteServiceResponse, ClienteServiceResponse>();
-            services.AddScoped<IClienteServiceRequest, ClienteServiceRequest>();
+            services.InjecaoDependencias(Configuration);
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+            services.Configure<ApiBehaviorOptions>(options =>
+            {
+                options.SuppressModelStateInvalidFilter = true;
+            });
+            services.AddCors(options =>
+            {
+                options.AddPolicy("Testing",
+                    builder =>
+                        builder
+                        .AllowAnyOrigin()
+                        .AllowAnyMethod()
+                        .AllowAnyHeader());
+            });
 
-            services.AddScoped(p => new KafkaProducerHostedService(
-                Configuration.GetConnectionString("Api-StringBd-Kafka").ToString()));
-
-            services.AddControllers();
-            services.AddHttpContextAccessor();
+            services.AddControllers()
+                .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<Startup>());
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-
+            app.UseCors("Testing");
             app.UseRouting();
 
             app.UseAuthorization();

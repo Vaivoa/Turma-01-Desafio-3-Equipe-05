@@ -14,19 +14,23 @@ using Xunit;
 using Modalmais.Transacoes.API;
 using Modalmais.Transacoes.API.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.TestHost;
+using Microsoft.AspNetCore.Hosting;
+using Modalmais.Core.Interfaces;
 
 namespace Modalmais.Test.Tests.Config
 {
     [CollectionDefinition(nameof(IntegrationApiTestsFixtureCollection))]
-    public class IntegrationApiTestsFixtureCollection : ICollectionFixture<IntegrationTestsFixture<StartupApiTests>> { }
-    public class IntegrationTestsFixture<TStartup> : IDisposable where TStartup : class
+    public  class IntegrationApiTestsFixtureCollection : ICollectionFixture<IntegrationTestsFixture<Modalmais.API.Program>> { }
+    public class IntegrationTestsFixture<TStartup> : IDisposable
+        where TStartup : class
     {
 
         public static string UsuarioEmail;
 
-        public readonly StartUpFactory<TStartup> Factory;
+        public readonly ProgramaFactory<TStartup> Factory;
         public HttpClient Client;
-        public readonly StartUpFactory<StartupTransacaoApiTeste> FactoryTransacao;
+        public ProgramaFactory<Transacoes.API.Program> FactoryTransacao;
         public HttpClient ClientTransacao;
 
         public readonly MongoDbContext _context;
@@ -37,15 +41,16 @@ namespace Modalmais.Test.Tests.Config
         {
             var clientCadastroOptions = new WebApplicationFactoryClientOptions
             {
-                AllowAutoRedirect = true,
-                BaseAddress = new Uri("http://localhost:5000/"),
+                AllowAutoRedirect = false,
+                BaseAddress = new Uri("http://localhost:5001"),
                 HandleCookies = true,
                 MaxAutomaticRedirections = 7
+                
             };
             var clientTransacaoOptions = new WebApplicationFactoryClientOptions
             {
-                AllowAutoRedirect = true,
-                BaseAddress = new Uri("http://localhost:5100/"),
+                AllowAutoRedirect = false,
+                BaseAddress = new Uri("http://localhost:5101"),
                 HandleCookies = true,
                 MaxAutomaticRedirections = 7
             };
@@ -61,12 +66,10 @@ namespace Modalmais.Test.Tests.Config
             _contextTransacao = new ApiDbContext(dbContextOptions);
             _contextTransacao.Database.EnsureDeleted();
             _contextTransacao.Database.Migrate();
-
-            Factory = new StartUpFactory<TStartup>();
+            Factory = new ProgramaFactory<TStartup>();
             Client = Factory.CreateClient(clientCadastroOptions);
-            FactoryTransacao = new();
+            FactoryTransacao = new() ;
             ClientTransacao = FactoryTransacao.CreateClient(clientTransacaoOptions);
-            
         }
 
         public static string GerarClienteEmailFake()
@@ -108,8 +111,8 @@ namespace Modalmais.Test.Tests.Config
 
         public void Dispose()
         {
-            Client.Dispose();
-            Factory.Dispose();
+            Client?.Dispose();
+            Factory?.Dispose();
         }
     }
 }

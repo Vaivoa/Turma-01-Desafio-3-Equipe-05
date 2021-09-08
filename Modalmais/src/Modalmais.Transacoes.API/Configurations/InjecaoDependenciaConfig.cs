@@ -17,6 +17,7 @@ namespace Modalmais.Transacoes.API.Configurations
         {
             services.AddRefitClient<IContaService>().ConfigureHttpClient(c =>
             {
+
                 c.BaseAddress = new Uri($"{configuration.GetConnectionString("ConexaoRefit")}");
             });
 

@@ -130,9 +130,15 @@ namespace Modalmais.Transacoes.API.Controllers
             catch (ApiException ex)
             {
                 var statusCode = ex.StatusCode;
-                if (statusCode != HttpStatusCode.InternalServerError)
+                if (statusCode != HttpStatusCode.InternalServerError )
                     contaCorrente = ex.GetContentAsAsync<RespostaConta>().Result;
             }
+            catch (Exception ex)
+            {
+                var statusCode = ex;
+
+            }
+            
 
             return contaCorrente;
         }
