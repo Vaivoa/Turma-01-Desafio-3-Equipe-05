@@ -36,7 +36,7 @@ O desafio foi idealizado pelo instrutor Eduardo Bueno, e construído inteirament
 - .Net Core 5
 - Swagger
 - Docker
-- Docker Composse
+- Docker Compose
 - Apache Kafka
 - Redis
 - PostgreSQL
@@ -64,7 +64,7 @@ Clonar o repositório:
 git clone https://github.com/Vaivoa/Turma-01-Desafio-3-Equipe-05.git
 ```
 
-Para executar todo o ecossistema do projeto é necessário utilizar o Docker Composse usando o seguindo comando na pasta raiz do projeto (Modalmais)::
+Para executar todo o ecossistema do projeto é necessário utilizar o Docker Compose usando o seguindo comando na pasta raiz do projeto (Modalmais)::
 
 ```bash
 docker-compose up
@@ -116,7 +116,7 @@ Agora você será redirecionado para a página de OpenApi do Swagger onde poder�
 <p align="center" width="100%">
     <img width="33%" src="https://i.ibb.co/cNkzthm/visualizar-redis.png"> 
     <br>
-    <em>Apresentação da página de acesso ao Redis, utilizando a ferramenta marian/rebrow que está no Docker-Composse. </em>
+    <em>Apresentação da página de acesso ao Redis, utilizando a ferramenta marian/rebrow que está no Docker-Compose. </em>
 </p>
 <hr>
 <p align="center" width="100%">
