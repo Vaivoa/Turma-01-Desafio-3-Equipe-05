@@ -1,0 +1,31 @@
+name: Realizar_testes
+
+on: 
+  push:
+    branches:
+      - feat/img_cloud
+  pull_request:
+    branches:
+      - feat/img_cloud
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        dotnet-version: ['5.0.x']
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup .NET Core SDK ${{ matrix.dotnet-version }}
+        uses: actions/setup-dotnet@v1.7.2
+        with:
+          dotnet-version: ${{ matrix.dotnet-version }}
+      - name: Build the docker-compose stack
+        run: docker-compose -f Modalmais/docker-compose.yml up -d
+      - name: Check running containers
+        run: docker ps -a
+      - name: Test
+        run: dotnet test Modalmais/test/Modalmais.Test/Modalmais.Test.csproj
+        
