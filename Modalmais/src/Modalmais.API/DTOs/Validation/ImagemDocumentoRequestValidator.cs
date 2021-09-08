@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using Modalmais.API.DTOs;
 using Modalmais.API.Extensions;
-using Modalmais.Business.Utils;
+using Modalmais.Core.Utils;
 
 namespace Modalmais.Business.Models.Validation
 {

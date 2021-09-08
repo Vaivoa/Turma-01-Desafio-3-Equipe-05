@@ -1,4 +1,5 @@
-﻿using Modalmais.Business.Models.Enums;
+﻿using Modalmais.Core.Models;
+using Modalmais.Core.Models.Enums;
 using System;
 
 namespace Modalmais.Business.Models

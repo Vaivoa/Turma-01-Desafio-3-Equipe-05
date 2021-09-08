@@ -4,7 +4,7 @@ using Bogus.Extensions.Brazil;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Modalmais.API.MVC;
 using Modalmais.Business.Models;
-using Modalmais.Business.Models.Enums;
+using Modalmais.Core.Models.Enums;
 using Modalmais.Business.Models.ObjectValues;
 using Modalmais.Infra.Data;
 using MongoDB.Bson;

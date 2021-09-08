@@ -1,7 +1,7 @@
 ﻿using FluentValidation.Results;
 using Microsoft.AspNetCore.Http;
-using Modalmais.Business.Models.Enums;
 using Modalmais.Business.Models.Validation;
+using Modalmais.Core.Models.Enums;
 using MongoDB.Bson.Serialization.Attributes;
 using System;
 using System.Collections.Generic;
@@ -69,8 +69,6 @@ namespace Modalmais.Business.Models.ObjectValues
         [BsonIgnore]
         public List<ValidationFailure> ListaDeErros { get; private set; }
 
-
-        // Retorna True se tiverem erros
         public bool EstaInvalido()
         {
             ListaDeErros.Clear();

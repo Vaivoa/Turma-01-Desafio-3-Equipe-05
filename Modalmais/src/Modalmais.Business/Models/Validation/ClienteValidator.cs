@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 using FluentValidation.Validators;
-using Modalmais.Business.Utils;
+using Modalmais.Core.Utils;
 using System;
 
 namespace Modalmais.Business.Models.Validation
@@ -79,6 +79,16 @@ namespace Modalmais.Business.Models.Validation
             RuleFor(cliente => cliente.ContaCorrente.Status)
                 .IsInEnum().WithMessage(ClientePropriedadeValida)
                 .NotEmpty().WithMessage(ClientePropriedadeVazia);
+
+            RuleFor(cliente => cliente.DataAlteracao)
+                .NotEmpty().WithMessage(ClientePropriedadeVazia)
+                .Must(date => date != default(DateTime)).WithMessage(ClienteDataValida)
+                .GreaterThanOrEqualTo(p => p.DataCriacao).WithMessage(ClienteDataFutura);
+
+            RuleFor(cliente => cliente.DataCriacao)
+               .NotEmpty().WithMessage(ClientePropriedadeVazia)
+                .Must(date => date != default(DateTime)).WithMessage(ClienteDataValida)
+                .LessThanOrEqualTo(p => DateTime.Now).WithMessage(ClienteDataPresente);
 
             RuleFor(cliente => cliente.ContaCorrente.DataCriacao)
                 .NotEmpty().WithMessage(ClientePropriedadeVazia)

@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using FluentValidation.Validators;
-using Modalmais.Business.Models.Enums;
-using Modalmais.Business.Utils;
+using Modalmais.Core.Models.Enums;
+using Modalmais.Core.Utils;
 using System;
 
 namespace Modalmais.API.DTOs.Validation
@@ -24,13 +24,9 @@ namespace Modalmais.API.DTOs.Validation
 
         public ChavePixRequestValidator()
         {
-
-
             RuleFor(chavePixRequest => chavePixRequest.Tipo)
                 .IsInEnum().WithMessage("Não é um tipo válido de PIX.")
                 .NotNull().WithMessage("O tipo não pode ser branco ou nulo.");
-
-
 
             When(chavePixRequest => chavePixRequest.Tipo == TipoChavePix.CPF && chavePixRequest.Chave != null, () =>
             {

@@ -1,8 +1,9 @@
-﻿using Modalmais.Business.Interfaces.Notificador;
-using Modalmais.Business.Interfaces.Repository;
+﻿using Modalmais.Business.Interfaces.Repository;
 using Modalmais.Business.Interfaces.Services.Response;
 using Modalmais.Business.Models;
 using Modalmais.Business.Services.Response;
+using Modalmais.Core.Interfaces.Notificador;
+using Modalmais.Core.Models;
 using System.Threading.Tasks;
 
 namespace Modalmais.Business.Services.Request
@@ -33,6 +34,14 @@ namespace Modalmais.Business.Services.Request
             clienteAdicionarPix.ContaCorrente.ChavePix.AtivarChavePix();
 
             await _clienteRepository.Update(clienteAdicionarPix);
+        }
+
+        public async Task AtualizarDadosContaCliente(Cliente cliente)
+        {
+            if (ChecarPorEmailSeClienteExiste(cliente.Contato.Email, cliente.Id).Result)
+            { AdicionarNotificacao("Email Existente em nosso banco de dados."); return; }
+            cliente.ValidarDataAlteracao();
+            await _clienteRepository.Update(cliente);
         }
     }
 }

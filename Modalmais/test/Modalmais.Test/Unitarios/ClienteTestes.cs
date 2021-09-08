@@ -1,7 +1,8 @@
 ﻿using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Modalmais.Business.Models;
-using Modalmais.Business.Models.Enums;
 using Modalmais.Business.Models.ObjectValues;
+using Modalmais.Core.Models;
+using Modalmais.Core.Models.Enums;
 using Xunit;
 
 namespace Modalmais.Test.Unitarios
@@ -90,7 +91,7 @@ namespace Modalmais.Test.Unitarios
             Assert.True(cliente.EstaInvalido());
         }
 
-        //PIX
+
         [Trait("Categoria", "Testes Cliente")]
         [Theory(DisplayName = "Validar criação de uma chave pix válida")]
         [InlineData(null, TipoChavePix.Aleatoria)]

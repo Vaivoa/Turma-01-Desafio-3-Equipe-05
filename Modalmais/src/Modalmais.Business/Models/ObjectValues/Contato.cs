@@ -9,5 +9,10 @@
         }
         public Celular Celular { get; private set; }
         public string Email { get; private set; }
+
+        public void SetarEmail(string email)
+        {
+            Email = email;
+        }
     }
 }

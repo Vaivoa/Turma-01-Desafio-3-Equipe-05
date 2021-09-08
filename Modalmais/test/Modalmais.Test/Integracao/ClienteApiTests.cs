@@ -2,7 +2,7 @@
 using Modalmais.API.Extensions;
 using Modalmais.API.MVC;
 using Modalmais.Business.Models;
-using Modalmais.Business.Models.Enums;
+using Modalmais.Core.Models.Enums;
 using Modalmais.Test.Tests;
 using Modalmais.Test.Tests.Config;
 using Newtonsoft.Json;
@@ -130,7 +130,6 @@ namespace Modalmais.Test
             await using var stream = File.OpenRead(@"../../../imgs_para_teste/pequena.png");
             using var content = new MultipartFormDataContent
             {
-                // file
                 { new StreamContent(stream), "ImagemDocumento", "pequena.png" },
                 { new StringContent(cliente.Documento.CPF), "CPF"},
                 { new StringContent(cliente.ContaCorrente.Agencia), "Agencia"},
@@ -140,7 +139,7 @@ namespace Modalmais.Test
             request.Content = content;
 
 
-            //Act https://localhost:5001/api/v1/clientes/6122e1a46d1e0ab1e9798f6d/documentos
+            //Act
             var postResponse = await _testsFixture.Client.SendAsync(request);
             var response = JsonConvert.DeserializeObject
                     <ResponseBase<ClienteResponse>>(postResponse.Content.ReadAsStringAsync().Result);
@@ -426,8 +425,44 @@ namespace Modalmais.Test
             Assert.Equal(Status.Ativo, responseContaPix.Data.ContaCorrente.ChavePix.Ativo);
         }
 
+        [Trait("Categoria", "Testes Integracao Cliente")]
+        [Fact(DisplayName = "Atualizar cadastro de um cliente válido"), TestPriority(9)]
+        public async void AtualizarCliente_ClienteValido_DeveRetornaStatus203()
+        {
+            // Arrange
+            var getResponse = await _testsFixture.Client.GetAsync("api/v1/clientes");
+            var clientesResponse = JsonConvert.DeserializeObject
+                    <ResponseBase<List<ClienteResponse>>>(getResponse.Content.ReadAsStringAsync().Result);
+            var cliente = clientesResponse.Data[0];
 
+            var dadosAtualizados = _testsFixture.GerarClienteValido();
 
+            //Act
+            var putResponse = await _testsFixture.Client.PutAsJsonAsync($"api/v1/clientes/{cliente.Id}", dadosAtualizados);
 
+            // Assert
+            Assert.Equal(HttpStatusCode.NoContent, putResponse.StatusCode);
+            Assert.True(putResponse.IsSuccessStatusCode);
+        }
+
+        [Trait("Categoria", "Testes Integracao Cliente")]
+        [Fact(DisplayName = "Atualizar cadastro de um cliente Inválido"), TestPriority(10)]
+        public async void AtualizarCliente_ClienteInvalido_DeveRetornaStatus400()
+        {
+            // Arrange
+            var getResponse = await _testsFixture.Client.GetAsync("api/v1/clientes");
+            var clientesResponse = JsonConvert.DeserializeObject
+                    <ResponseBase<List<ClienteResponse>>>(getResponse.Content.ReadAsStringAsync().Result);
+            var cliente = clientesResponse.Data[0];
+
+            var dadosAtualizados = _testsFixture.GerarClienteIncorreto();
+
+            //Act
+            var putResponse = await _testsFixture.Client.PutAsJsonAsync($"api/v1/clientes/{cliente.Id}", dadosAtualizados);
+
+            // Assert
+            Assert.Equal(HttpStatusCode.BadRequest, putResponse.StatusCode);
+            Assert.False(putResponse.IsSuccessStatusCode);
+        }
     }
 }

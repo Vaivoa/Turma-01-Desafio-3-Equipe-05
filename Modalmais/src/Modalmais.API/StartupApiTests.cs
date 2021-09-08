@@ -2,16 +2,16 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Modalmais.Infra.Data;
-using Modalmais.Business.Interfaces.Notificador;
+using Microsoft.Extensions.Hosting;
 using Modalmais.Business.Interfaces.Repository;
 using Modalmais.Business.Interfaces.Services.Request;
 using Modalmais.Business.Interfaces.Services.Response;
 using Modalmais.Business.Services.Request;
 using Modalmais.Business.Services.Response;
+using Modalmais.Core.Interfaces.Notificador;
+using Modalmais.Core.Notificador;
+using Modalmais.Infra.Data;
 using Modalmais.Infra.Repository;
-using Modalmais.Business.Notificador;
-using Microsoft.Extensions.Hosting;
 
 namespace Modalmais.API.MVC
 {
@@ -30,7 +30,7 @@ namespace Modalmais.API.MVC
             Configuration = builder.Build();
         }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
+
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddScoped(p => new DbContext(
@@ -38,16 +38,15 @@ namespace Modalmais.API.MVC
                 Configuration.GetConnectionString("NomeApiDb").ToString()
                 ));
             services.AddScoped<INotificador, NotificadorHandler>();
-            //Repositorys
             services.AddScoped<IClienteRepository, ClienteRepository>();
-
-            //Services
             services.AddScoped<IClienteServiceResponse, ClienteServiceResponse>();
             services.AddScoped<IClienteServiceRequest, ClienteServiceRequest>();
 
+            services.AddScoped(p => new KafkaProducerHostedService(
+                Configuration.GetConnectionString("Api-StringBd-Kafka").ToString()));
+
             services.AddControllers();
             services.AddHttpContextAccessor();
-
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

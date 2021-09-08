@@ -3,17 +3,23 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Modalmais.API.DTOs;
 using Modalmais.API.DTOs.Validation;
-using Modalmais.API.Extensions;
-using Modalmais.Business.Interfaces.Notificador;
 using Modalmais.Business.Interfaces.Services.Request;
 using Modalmais.Business.Interfaces.Services.Response;
 using Modalmais.Business.Models;
-using Modalmais.Business.Models.Enums;
 using Modalmais.Business.Models.ObjectValues;
-using Modalmais.Business.Utils;
+using Modalmais.Core.Controller;
+using Modalmais.Core.Extensions;
+using Modalmais.Core.Interfaces.Notificador;
+using Modalmais.Core.Models;
+using Modalmais.Core.Models.Enums;
+using Modalmais.Core.Utils;
+using Modalmais.Core.WebResponses;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace Modalmais.API.Controllers
@@ -26,15 +32,18 @@ namespace Modalmais.API.Controllers
 
         protected readonly IClienteServiceRequest _clienteServiceRequest;
         protected readonly IClienteServiceResponse _clienteServiceResponse;
+        protected readonly KafkaProducerHostedService _kafkaProducerHostedService;
 
         public ClientesController(IMapper mapper,
                                        INotificador notificador,
                                        IClienteServiceRequest clienteServiceRequest,
-                                       IClienteServiceResponse clienteServiceResponse
+                                       IClienteServiceResponse clienteServiceResponse,
+                                       KafkaProducerHostedService kafkaProducerHostedService
                                        ) : base(mapper, notificador)
         {
             _clienteServiceRequest = clienteServiceRequest;
             _clienteServiceResponse = clienteServiceResponse;
+            _kafkaProducerHostedService = kafkaProducerHostedService;
         }
 
 
@@ -53,9 +62,9 @@ namespace Modalmais.API.Controllers
 
             if (NotificadorContemErros()) return ResponseBadRequest();
 
-            var clienteAdicionarResponse = _mapper.Map<ClienteResponse>(cliente);
+            var clienteResponse = _mapper.Map<ClienteResponse>(cliente);
 
-            return ResponseCreated(clienteAdicionarResponse);
+            return ResponseCreated(clienteResponse);
 
         }
 
@@ -76,7 +85,7 @@ namespace Modalmais.API.Controllers
             if (cliente.ContaCorrente.Numero != imagemDocumentoRequest.Numero ||
                 cliente.Documento.CPF != imagemDocumentoRequest.CPF) return ResponseForbidden();
 
-            if (!AtribuirDocumentoAoCliente(cliente, imagemDocumentoRequest.ImagemDocumento))
+            if (!await AtribuirDocumentoAoCliente(cliente, imagemDocumentoRequest.ImagemDocumento))
                 return ResponseBadRequest("A imagem do documento não é válida.");
 
             await _clienteServiceRequest.AdicionarImagemDocumentoCliente(cliente);
@@ -115,6 +124,30 @@ namespace Modalmais.API.Controllers
             if (NotificadorContemErros()) return ResponseBadRequest();
             var clienteResponse = _mapper.Map<ClienteResponse>(cliente);
             return ResponseCreated(clienteResponse);
+        }
+
+
+        [CustomResponse(StatusCodes.Status204NoContent)]
+        [CustomResponse(StatusCodes.Status400BadRequest)]
+        [CustomResponse(StatusCodes.Status404NotFound)]
+        [HttpPut("{id}")]
+        public async Task<IActionResult> AlterarCadastroCliente(ClienteAlteracaoRequest clienteAlteracaoRequest, [FromRoute] string id)
+        {
+
+            if (!ModelState.IsValid) return ResponseModelErro(ModelState);
+            if (!ObjectIdValidacao.Validar(id)) return ResponseBadRequest("Formato de dado inválido.");
+            var cliente = await _clienteServiceResponse.BuscarClientePorId(id);
+            if (cliente == null) return ResponseNotFound("O cliente não foi encontrado.");
+
+            cliente.AlterarCliente(clienteAlteracaoRequest.Nome, clienteAlteracaoRequest.Sobrenome, clienteAlteracaoRequest.Contato.Email, clienteAlteracaoRequest.Contato.Celular.DDD, clienteAlteracaoRequest.Contato.Celular.Numero);
+
+            await _clienteServiceRequest.AtualizarDadosContaCliente(cliente);
+
+            if (NotificadorContemErros()) return ResponseBadRequest();
+
+            _kafkaProducerHostedService.SendToKafka(cliente);
+
+            return ResponseNoContent();
         }
 
 
@@ -176,39 +209,34 @@ namespace Modalmais.API.Controllers
         }
 
 
-        [ApiExplorerSettings(IgnoreApi = true)]
-        [NonAction]
-        public string ArmazenarImagemDocumentoCloud(IFormFile documentorecebido)
-        {
-
-            ////armazena fake
-
-            var nomenclaturaPadrao = "_" + Guid.NewGuid().ToString();
-            var urlFake = $"https://i.ibb.co/{documentorecebido.FileName + nomenclaturaPadrao}.png";
-
-            return urlFake;
-        }
+        //[ApiExplorerSettings(IgnoreApi = true)]
+        //[NonAction]
+        //public string ArmazenarImagemDocumentoCloud(IFormFile documentorecebido)
+        //{
+        //    ////armazena fake
+        //    var nomenclaturaPadrao = "_" + Guid.NewGuid().ToString();
+        //    var urlFake = $"https://i.ibb.co/{documentorecebido.FileName + nomenclaturaPadrao}.png";
+        //    return urlFake;
+        //}
 
 
         [ApiExplorerSettings(IgnoreApi = true)]
         [NonAction]
-        public bool AtribuirDocumentoAoCliente(Cliente cliente, IFormFile documentoRecebido)
+        public async Task<bool> AtribuirDocumentoAoCliente(Cliente cliente, IFormFile documentoRecebido)
         {
 
             var imagemDocumento = new ImagemDocumento(documentoRecebido);
             if (imagemDocumento.Status == Status.Inativo) return false;
 
-            var urlImagemDocumento = ArmazenarImagemDocumentoCloud(documentoRecebido);
-            if (String.IsNullOrEmpty(urlImagemDocumento)) return false;
-
-            imagemDocumento.AtribuirUrl(urlImagemDocumento);
+            var urlImagemDocumento = await ArmazenarImagemDocumentoCloud(documentoRecebido);
+            if (urlImagemDocumento.success == false) return false;
+            imagemDocumento.AtribuirUrl(urlImagemDocumento.data.image.url);
 
             if (imagemDocumento.EstaInvalido())
             {
                 AdicionarNotificacaoErro(imagemDocumento.ListaDeErros);
                 return false;
             }
-
 
             if (cliente.Documento.Imagens.Any())
             {
@@ -226,6 +254,35 @@ namespace Modalmais.API.Controllers
             cliente.Documento.Imagens.Add(imagemDocumento);
 
             return true;
+        }
+
+
+
+        [ApiExplorerSettings(IgnoreApi = true)]
+        [NonAction]
+        public async Task<Root> ArmazenarImagemDocumentoCloud(IFormFile documentorecebido)
+        {
+            var image64 = "";
+            using (var ms = new MemoryStream())
+            {
+                documentorecebido.CopyTo(ms);
+                var fileBytes = ms.ToArray();
+                image64 = Convert.ToBase64String(fileBytes);
+            }
+
+            HttpClient httpClient = new HttpClient();
+            var multiForm = new MultipartFormDataContent();
+            multiForm.Add(new StringContent(image64), "image");
+            multiForm.Add(new StringContent(documentorecebido.FileName + "_" + Guid.NewGuid().ToString()), "name");
+            var url = "https://api.imgbb.com/1/upload?key=8da220510687693589617194b14c9d43";
+            var response = await httpClient.PostAsync(url, multiForm);
+
+            if (!response.IsSuccessStatusCode) return null;
+
+            var reponseString = await response.Content.ReadAsStringAsync();
+            var jsonResponse = JsonConvert.DeserializeObject<Root>(reponseString);
+
+            return jsonResponse;
         }
 
     }

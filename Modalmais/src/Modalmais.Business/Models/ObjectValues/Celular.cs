@@ -1,4 +1,4 @@
-﻿using Modalmais.Business.Models.Enums;
+﻿using Modalmais.Core.Models.Enums;
 
 namespace Modalmais.Business.Models.ObjectValues
 {
@@ -12,5 +12,11 @@ namespace Modalmais.Business.Models.ObjectValues
 
         public DDDBrasil DDD { get; private set; }
         public string Numero { get; private set; }
+
+        public void SetarCelular(DDDBrasil ddd, string numero)
+        {
+            DDD = ddd;
+            Numero = numero;
+        }
     }
 }
