@@ -3,12 +3,10 @@ name: dotnet package
 on: 
   push:
     branches:
-      - main
-      - dev
+      - feat/img_cloud
   pull_request:
     branches:
-      - main
-      - dev
+      - feat/img_cloud
 
 jobs:
   build:
