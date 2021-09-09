@@ -19,6 +19,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http.Json;
+using Modalmais.Test.Integracao;
 
 namespace Modalmais.Test
 {
@@ -470,48 +471,45 @@ namespace Modalmais.Test
         }
 
         [Trait("Categoria", "Testes Integracao Cliente")]
-        [Fact(DisplayName = "Chave Pix Valida"), TestPriority(11)]
-        public async void TransacaoPix_ChaveValida_DeveRetornaStatus200()
+        [ClassData(typeof(TransacaoValidaClassData))]
+        [Theory(DisplayName = "Chave Pix Valida"), TestPriority(11)]
+        public async void TransacaoPix_ChaveValida_DeveRetornaValidoOuInvalido(TransacaoRequest transacaoData, bool validador)
         {
+            ++_testsFixture.ContadorTransferencias;
             // Arrange
             var cliente = await _testsFixture.BuscarUsuario();
-            var valorTransferencia = (decimal)5000.00;
-            TransacaoRequest transacaoValida = new()
+            TransacaoRequest transacao = new()
             { Chave = cliente.ContaCorrente.ChavePix.Chave,
                 Tipo = cliente.ContaCorrente.ChavePix.Tipo,
-                Valor = valorTransferencia, Descricao = " " };
+                Valor = transacaoData.Valor, Descricao = transacaoData.Descricao };
             var conta = await _testsFixture.BuscarConta();
-            var FactoryTransacao = new WebApplicationFactory<StartupTransacaoApiTests>().WithWebHostBuilder(a =>
-            {
-
-                a.ConfigureServices(e => {
-
-                    e.AddHttpClient<IContaService, ObterContaMock>((d) => new ObterContaMock(conta));
-                });
-
-                a.ConfigureAppConfiguration((c, b) => {
-                    c.HostingEnvironment.EnvironmentName = "Testing";
-
-                });
-
-
-            });
-            var ClientTransacao = FactoryTransacao.CreateClient(_testsFixture.clientTransacaoOptions);
+           
             //Act
-            var postResponse = await ClientTransacao.PostAsJsonAsync($"api/v1/transacoes", transacaoValida);
+            var postResponse = await _testsFixture.ClientTransacao.PostAsJsonAsync($"api/v1/transacoes", transacao);
             var response = JsonConvert.DeserializeObject
                    <ResponseBase<TransacaoResponse>>(postResponse.Content.ReadAsStringAsync().Result);
             // Assert
-            Assert.Equal(HttpStatusCode.Created, postResponse.StatusCode);
-            Assert.True(response.Success);
-            Assert.Equal(StatusTransacao.Concluido, (StatusTransacao)response.Data.StatusTransacao);
-            Assert.Equal(valorTransferencia, response.Data.Valor);
-            Assert.Equal(response.Data.Conta.Numero, conta.data.contaCorrente.numero);
+            if (!validador)
+            {
+                Assert.Equal(HttpStatusCode.Created, postResponse.StatusCode);
+                Assert.True(response.Success);
+                Assert.Equal(StatusTransacao.Concluido, (StatusTransacao)response.Data.StatusTransacao);
+                Assert.Equal(transacaoData.Valor, response.Data.Valor);
+                Assert.Equal(response.Data.Conta.Numero, conta.data.contaCorrente.numero);
+            }
+            else
+            {
+                Assert.Equal(HttpStatusCode.BadRequest, postResponse.StatusCode);
+                Assert.True(response.Errors.Any());
+                if (_testsFixture.ContadorTransferencias == 21) {
+                    Assert.Contains("Limite diário de 100 mil atingido.", response.Errors);
+                }
+            }
         }
 
         [Trait("Categoria", "Testes Integracao Cliente")]
         [Fact(DisplayName = "Obter Extrato"), TestPriority(12)]
-        public async void ObterExtrato_ContaValida_DeveRetornaStatus200() 
+        public async void ObterExtrato_ContaValida_DeveRetornaStatus200()
         {
             //Arrange
             var cliente = await _testsFixture.BuscarUsuario();
@@ -527,7 +525,38 @@ namespace Modalmais.Test
             Assert.Equal(HttpStatusCode.OK, postResponse.StatusCode);
             Assert.True(response.Success);
             Assert.Equal(response.Data.Conta, cliente.ContaCorrente.Numero);
-        } 
-    }
-    
+        }
+
+        [Trait("Categoria", "Testes Integracao Cliente")]
+        [ClassData(typeof(ExtratoClassData))]
+        [Theory(DisplayName = "Falha ao Obter Extrato"), TestPriority(13)]
+        public async void ObterExtrato_ContaOuDataInvalida_DeveRetornaValidadorEsperado(DateTime dataInicial, DateTime dataFim, bool validador)
+        {
+            //Arrange
+            var cliente = await _testsFixture.BuscarUsuario();
+
+            //Act
+            var postResponse = await _testsFixture.ClientTransacao
+                .GetAsync($"api/v1/transacoes/extratos/{cliente.ContaCorrente.Agencia}/" +
+                $"{cliente.ContaCorrente.Numero}" +
+                $"?dataInicial={dataInicial:dd-MM-yyyy}&dataFinal={dataFim:dd-MM-yyyy}");
+            var response = JsonConvert.DeserializeObject
+                   <ResponseBase<ExtratoResponse>>(postResponse.Content.ReadAsStringAsync().Result);
+            //Assert
+            if (!validador)
+            {
+                Assert.Equal(HttpStatusCode.OK, postResponse.StatusCode);
+                Assert.True(response.Success);
+                Assert.Equal(response.Data.Conta, cliente.ContaCorrente.Numero);
+            }
+            else 
+            {
+                Assert.Equal(HttpStatusCode.BadRequest, postResponse.StatusCode);
+                Assert.False(response.Success);
+                Assert.NotEmpty(response.Errors);
+            }
+
+            }
+        }
+
 }

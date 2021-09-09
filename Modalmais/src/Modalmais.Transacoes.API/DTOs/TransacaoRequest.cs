@@ -5,6 +5,17 @@ namespace Modalmais.Transacoes.API.DTOs
 {
     public class TransacaoRequest
     {
+        public TransacaoRequest(TipoChavePix tipo, string chave, decimal valor, string descricao)
+        {
+            Tipo = tipo;
+            Chave = chave;
+            Valor = valor;
+            Descricao = descricao;
+        }
+
+        public TransacaoRequest()
+        {
+        }
 
         public TipoChavePix Tipo { get; set; }
         public string Chave { get; set; }

@@ -36,12 +36,8 @@ namespace Modalmais.Test.Tests.Config
 
         public readonly StartUpFactory<TStartup> Factory;
         public HttpClient Client;
-        public StartUpFactory<StartupTransacaoApiTests> FactoryTransacao;
+        public WebApplicationFactory<StartupTransacaoApiTests> FactoryTransacao;
         public HttpClient ClientTransacao;
-
-        public readonly MongoDbContext _context;
-
-        public readonly ApiDbContext _contextTransacao;
         public readonly WebApplicationFactoryClientOptions clientCadastroOptions = new ()
         {
             AllowAutoRedirect = false,
@@ -57,26 +53,50 @@ namespace Modalmais.Test.Tests.Config
                 HandleCookies = true,
                 MaxAutomaticRedirections = 7
             };
-    public IntegrationTestsFixture()
+        public int ContadorTransferencias { get; set; }
+        public IntegrationTestsFixture()
         {
             Factory = new StartUpFactory<TStartup>();
             Client = Factory.CreateClient(clientCadastroOptions);
-            FactoryTransacao = new();
+            FactoryTransacao = new WebApplicationFactory<StartupTransacaoApiTests>().WithWebHostBuilder(a =>
+            {
+
+                a.ConfigureServices(e => {
+
+                    e.AddHttpClient<IContaService, ObterContaMock>((d) => new ObterContaMock(BuscarConta()));
+                });
+
+                a.ConfigureAppConfiguration((c, b) => {
+                    c.HostingEnvironment.EnvironmentName = "Testing";
+
+                });
+
+
+            });
             ClientTransacao = FactoryTransacao.CreateClient(clientTransacaoOptions);
 
-            _context = new MongoDbContext("mongodb://localhost:27017", "Testes");
+            LimpandoDatabaseMongoTestes();
+            LimpandoDatabasePostgresTestes();
+
+        }
+
+        private void LimpandoDatabaseMongoTestes()
+        {
+            var _context = new MongoDbContext("mongodb://localhost:27017", "Testes");
             _context.Clientes.DeleteMany(new BsonDocument());
+        }
+
+        private void LimpandoDatabasePostgresTestes()
+        {
             var dbContextOptions = new
                 DbContextOptionsBuilder<ApiDbContext>()
                 .UseNpgsql("Host=localhost;Database=modalmaisTeste;Username=postgres;Password=rootvaivoa")
                 .UseAllCheckConstraints()
                 .Options;
-
-            _contextTransacao = new ApiDbContext(dbContextOptions);
+            var _contextTransacao = new ApiDbContext(dbContextOptions);
             _contextTransacao.Database.EnsureDeletedAsync().Wait();
             _contextTransacao.Database.MigrateAsync().Wait();
             _contextTransacao.Database.EnsureCreatedAsync().Wait();
-
         }
 
         public async Task<ClienteResponse> BuscarUsuario()

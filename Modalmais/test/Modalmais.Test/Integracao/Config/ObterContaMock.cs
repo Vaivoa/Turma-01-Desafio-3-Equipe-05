@@ -9,9 +9,9 @@ namespace Modalmais.Test.Tests.Config
     internal class ObterContaMock : IContaService
     {
 
-        private readonly RespostaConta _respostaConta;
+        private readonly Task<RespostaConta> _respostaConta;
 
-        public ObterContaMock(RespostaConta respostaConta)
+        public ObterContaMock(Task<RespostaConta> respostaConta)
         {
             _respostaConta = respostaConta;
         }
@@ -19,7 +19,7 @@ namespace Modalmais.Test.Tests.Config
         public async Task<RespostaConta> ObterConta([AliasAs("chave")] string chave, [AliasAs("tipo")] string tipo)
         {
 
-            return _respostaConta;
+            return await _respostaConta;
         }
     }
 }

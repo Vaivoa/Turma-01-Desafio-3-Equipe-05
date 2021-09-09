@@ -1,4 +1,3 @@
-using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -8,7 +7,16 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Modalmais.Core.Interfaces.Notificador;
 using Modalmais.Core.Notificador;
-using Modalmais.Transacoes.API.Configurations;
+using Modalmais.Transacoes.API.Data;
+using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Modalmais.Transacoes.API.Data;
 using Modalmais.Transacoes.API.Repository;
 using System;
@@ -49,13 +57,12 @@ namespace Modalmais.Transacoes.API
             services.AddScoped<INotificador, NotificadorHandler>();
             services.AddScoped<TransacaoRepository>();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-            services.Configure<ApiBehaviorOptions>(options =>
+           services.Configure<ApiBehaviorOptions>(options =>
             {
                 options.SuppressModelStateInvalidFilter = true;
             });
 
-            services.AddControllers()
-                .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<StartupTransacaoApiTests>());
+            services.AddControllers().AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<Startup>());
             services.AddHttpContextAccessor();
 
         }
