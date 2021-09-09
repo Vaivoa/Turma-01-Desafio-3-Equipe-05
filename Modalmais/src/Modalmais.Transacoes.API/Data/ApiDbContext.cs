@@ -15,6 +15,7 @@ namespace Modalmais.Transacoes.API.Data
 
         }
 
+
         public DbSet<Transacao> Transacoes { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

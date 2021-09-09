@@ -4,17 +4,16 @@ using System;
 
 namespace Modalmais.Infra.Data
 {
-    public class DbContext : IDisposable
+    public class MongoDbContext : IDisposable
     {
 
-        static DbContext instance;
         private static readonly IMongoClient _client;
         private readonly IMongoClient _clientTeste;
         private static IMongoDatabase _dataBase;
 
         public IMongoDatabase Database => _dataBase;
 
-        public DbContext(string connectionString = null, string db = null)
+        public MongoDbContext(string connectionString = null, string db = null)
         {
             if (connectionString == null || db == null) return;
             _clientTeste = new MongoClient(connectionString);

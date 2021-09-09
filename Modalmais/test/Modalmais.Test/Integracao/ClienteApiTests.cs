@@ -1,20 +1,24 @@
-﻿using Modalmais.API.DTOs;
-using Modalmais.API.Extensions;
-using Modalmais.API.MVC;
+﻿using Microsoft.AspNetCore.Mvc.Testing;
 using Modalmais.Business.Models;
 using Modalmais.Core.Models.Enums;
+using System;
+using System.Net.Http;
+using Xunit;
+using Modalmais.Transacoes.API;
+using Modalmais.API;
+using Modalmais.Transacoes.API.Refit;
+using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
+using System.Collections.Generic;
+using Modalmais.API.DTOs;
+using Modalmais.API.Extensions;
 using Modalmais.Test.Tests;
 using Modalmais.Test.Tests.Config;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
+using Modalmais.Transacoes.API.DTOs;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Net.Http.Json;
-using Xunit;
-
 
 namespace Modalmais.Test
 {
@@ -51,7 +55,7 @@ namespace Modalmais.Test
         {
             // Arrange
             var cliente = _testsFixture.GerarClienteValido();
-            while (cliente.Documento.CPF == "26283944051")
+            while (cliente.Documento.CPF == "61492511013")
             {
                 cliente = _testsFixture.GerarClienteValido();
             }
@@ -324,7 +328,7 @@ namespace Modalmais.Test
         [InlineData(TipoChavePix.Email, "")]
         [InlineData(TipoChavePix.Telefone, "")]
         [InlineData(TipoChavePix.Telefone, "4521518")]
-        [InlineData(TipoChavePix.CPF, "26283944051")]
+        [InlineData(TipoChavePix.CPF, "61492511013")]
         [InlineData((TipoChavePix)5, "asdasd")]
         [InlineData(TipoChavePix.Email, "@email.com")]
         [Trait("Categoria", "Testes Integracao Cliente")]
@@ -464,5 +468,66 @@ namespace Modalmais.Test
             Assert.Equal(HttpStatusCode.BadRequest, putResponse.StatusCode);
             Assert.False(putResponse.IsSuccessStatusCode);
         }
+
+        [Trait("Categoria", "Testes Integracao Cliente")]
+        [Fact(DisplayName = "Chave Pix Valida"), TestPriority(11)]
+        public async void TransacaoPix_ChaveValida_DeveRetornaStatus200()
+        {
+            // Arrange
+            var cliente = await _testsFixture.BuscarUsuario();
+            var valorTransferencia = (decimal)5000.00;
+            TransacaoRequest transacaoValida = new()
+            { Chave = cliente.ContaCorrente.ChavePix.Chave,
+                Tipo = cliente.ContaCorrente.ChavePix.Tipo,
+                Valor = valorTransferencia, Descricao = " " };
+            var conta = await _testsFixture.BuscarConta();
+            var FactoryTransacao = new WebApplicationFactory<StartupTransacaoApiTests>().WithWebHostBuilder(a =>
+            {
+
+                a.ConfigureServices(e => {
+
+                    e.AddHttpClient<IContaService, ObterContaMock>((d) => new ObterContaMock(conta));
+                });
+
+                a.ConfigureAppConfiguration((c, b) => {
+                    c.HostingEnvironment.EnvironmentName = "Testing";
+
+                });
+
+
+            });
+            var ClientTransacao = FactoryTransacao.CreateClient(_testsFixture.clientTransacaoOptions);
+            //Act
+            var postResponse = await ClientTransacao.PostAsJsonAsync($"api/v1/transacoes", transacaoValida);
+            var response = JsonConvert.DeserializeObject
+                   <ResponseBase<TransacaoResponse>>(postResponse.Content.ReadAsStringAsync().Result);
+            // Assert
+            Assert.Equal(HttpStatusCode.Created, postResponse.StatusCode);
+            Assert.True(response.Success);
+            Assert.Equal(StatusTransacao.Concluido, (StatusTransacao)response.Data.StatusTransacao);
+            Assert.Equal(valorTransferencia, response.Data.Valor);
+            Assert.Equal(response.Data.Conta.Numero, conta.data.contaCorrente.numero);
+        }
+
+        [Trait("Categoria", "Testes Integracao Cliente")]
+        [Fact(DisplayName = "Obter Extrato"), TestPriority(12)]
+        public async void ObterExtrato_ContaValida_DeveRetornaStatus200() 
+        {
+            //Arrange
+            var cliente = await _testsFixture.BuscarUsuario();
+
+            //Act/transacoes/extratos/0001/7291522182059200?dataInicial=2021-08-10&dataFinal=2021-09-03
+            var postResponse = await _testsFixture.ClientTransacao
+                .GetAsync($"api/v1/transacoes/extratos/{cliente.ContaCorrente.Agencia}/" +
+                $"{cliente.ContaCorrente.Numero}" /*+
+                $"?dataInicial=2021-08-10&dataFinal=2021-09-03"*/);
+            var response = JsonConvert.DeserializeObject
+                   <ResponseBase<ExtratoResponse>>(postResponse.Content.ReadAsStringAsync().Result);
+            //Assert
+            Assert.Equal(HttpStatusCode.OK, postResponse.StatusCode);
+            Assert.True(response.Success);
+            Assert.Equal(response.Data.Conta, cliente.ContaCorrente.Numero);
+        } 
     }
+    
 }
