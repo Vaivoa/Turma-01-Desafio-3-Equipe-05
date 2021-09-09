@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        dotnet-version: ['5.0.9']
+        dotnet-version: ['5.0.x']
 
     steps:
     
@@ -31,11 +31,10 @@ jobs:
         run: docker ps -a
         
       - name: Executar os testes de unidade e integração
-        run: dotnet test Modalmais/test/Modalmais.Test/Modalmais.Test.csproj --results-directory TestResults-${{ matrix.dotnet-version }}
+        run: dotnet test Modalmais/test/Modalmais.Test/Modalmais.Test.csproj --results-directory RelatorioTestes-${{ matrix.dotnet-version }}
         
       - name: Gerar relatório de testes
         uses: actions/upload-artifact@v2
         with:
-          name: dotnet-results-${{ matrix.dotnet-version }}
-          path: TestResults-${{ matrix.dotnet-version }}
-          if: ${{ always() }}
+          name: Resultados dos testes
+          path: RelatorioTestes-${{ matrix.dotnet-version }}
