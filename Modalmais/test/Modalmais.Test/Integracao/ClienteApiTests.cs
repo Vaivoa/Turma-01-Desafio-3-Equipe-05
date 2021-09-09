@@ -19,6 +19,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http.Json;
+using Modalmais.Test.Integracao;
 
 namespace Modalmais.Test
 {
@@ -470,16 +471,17 @@ namespace Modalmais.Test
         }
 
         [Trait("Categoria", "Testes Integracao Cliente")]
-        [Fact(DisplayName = "Chave Pix Valida"), TestPriority(11)]
-        public async void TransacaoPix_ChaveValida_DeveRetornaStatus200()
+        [ClassData(typeof(TransacaoValidaClassData))]
+        [Theory(DisplayName = "Chave Pix Valida"), TestPriority(11)]
+        public async void TransacaoPix_ChaveValida_DeveRetornaValidoOuInvalido(TransacaoRequest transacaoData, bool validador)
         {
+            ++_testsFixture.ContadorTransferencias;
             // Arrange
             var cliente = await _testsFixture.BuscarUsuario();
-            var valorTransferencia = (decimal)5000.00;
-            TransacaoRequest transacaoValida = new()
+            TransacaoRequest transacao = new()
             { Chave = cliente.ContaCorrente.ChavePix.Chave,
                 Tipo = cliente.ContaCorrente.ChavePix.Tipo,
-                Valor = valorTransferencia, Descricao = " " };
+                Valor = transacaoData.Valor, Descricao = transacaoData.Descricao };
             var conta = await _testsFixture.BuscarConta();
             var FactoryTransacao = new WebApplicationFactory<StartupTransacaoApiTests>().WithWebHostBuilder(a =>
             {
@@ -498,15 +500,26 @@ namespace Modalmais.Test
             });
             var ClientTransacao = FactoryTransacao.CreateClient(_testsFixture.clientTransacaoOptions);
             //Act
-            var postResponse = await ClientTransacao.PostAsJsonAsync($"api/v1/transacoes", transacaoValida);
+            var postResponse = await ClientTransacao.PostAsJsonAsync($"api/v1/transacoes", transacao);
             var response = JsonConvert.DeserializeObject
                    <ResponseBase<TransacaoResponse>>(postResponse.Content.ReadAsStringAsync().Result);
             // Assert
-            Assert.Equal(HttpStatusCode.Created, postResponse.StatusCode);
-            Assert.True(response.Success);
-            Assert.Equal(StatusTransacao.Concluido, (StatusTransacao)response.Data.StatusTransacao);
-            Assert.Equal(valorTransferencia, response.Data.Valor);
-            Assert.Equal(response.Data.Conta.Numero, conta.data.contaCorrente.numero);
+            if (!validador)
+            {
+                Assert.Equal(HttpStatusCode.Created, postResponse.StatusCode);
+                Assert.True(response.Success);
+                Assert.Equal(StatusTransacao.Concluido, (StatusTransacao)response.Data.StatusTransacao);
+                Assert.Equal(transacaoData.Valor, response.Data.Valor);
+                Assert.Equal(response.Data.Conta.Numero, conta.data.contaCorrente.numero);
+            }
+            else 
+            {
+                Assert.Equal(HttpStatusCode.BadRequest, postResponse.StatusCode);
+                Assert.True(response.Errors.Any());
+                if (_testsFixture.ContadorTransferencias == 21) {
+                    Assert.Contains("Limite diário de 100 mil atingido.", response.Errors);
+                }
+            }
         }
 
         [Trait("Categoria", "Testes Integracao Cliente")]

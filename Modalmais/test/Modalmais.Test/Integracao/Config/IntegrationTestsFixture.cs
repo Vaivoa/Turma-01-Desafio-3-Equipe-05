@@ -57,7 +57,8 @@ namespace Modalmais.Test.Tests.Config
                 HandleCookies = true,
                 MaxAutomaticRedirections = 7
             };
-    public IntegrationTestsFixture()
+        public int ContadorTransferencias { get; set; }
+        public IntegrationTestsFixture()
         {
             Factory = new StartUpFactory<TStartup>();
             Client = Factory.CreateClient(clientCadastroOptions);
