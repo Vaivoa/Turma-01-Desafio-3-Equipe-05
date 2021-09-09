@@ -37,3 +37,4 @@ jobs:
         
       - name: Executar os testes de unidade e integração
         run: dotnet test Modalmais/test/Modalmais.Test/Modalmais.Test.csproj
+        
