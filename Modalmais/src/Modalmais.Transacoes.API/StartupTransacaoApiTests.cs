@@ -57,10 +57,10 @@ namespace Modalmais.Transacoes.API
             services.AddScoped<INotificador, NotificadorHandler>();
             services.AddScoped<TransacaoRepository>();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-           /* services.Configure<ApiBehaviorOptions>(options =>
+           services.Configure<ApiBehaviorOptions>(options =>
             {
                 options.SuppressModelStateInvalidFilter = true;
-            });*/
+            });
 
             services.AddControllers().AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<Startup>());
             services.AddHttpContextAccessor();
