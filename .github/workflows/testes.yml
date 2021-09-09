@@ -36,4 +36,4 @@ jobs:
         run: docker ps -a
         
       - name: Executar os testes de unidade e integração
-        run: dotnet test Modalmais/test/Modalmais.Test/Modalmais.Test.csproj}}
+        run: dotnet test Modalmais/test/Modalmais.Test/Modalmais.Test.csproj
