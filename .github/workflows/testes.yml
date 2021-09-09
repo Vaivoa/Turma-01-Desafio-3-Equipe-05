@@ -3,7 +3,12 @@ name: Testes de Aceitação
 on: 
   push:
     branches:
-      - refact/git_actions
+      - main
+      - dev
+  pull_request:
+    branches:
+      - main
+      - dev
 
 jobs:
 
