@@ -8,7 +8,7 @@ using Modalmais.API.Configurations;
 using Modalmais.Core.Interfaces;
 using System;
 
-namespace Modalmais.API.MVC
+namespace Modalmais.API
 {
     public class StartupApiTests 
     {
@@ -34,26 +34,14 @@ namespace Modalmais.API.MVC
             {
                 options.SuppressModelStateInvalidFilter = true;
             });
-            services.AddCors(options =>
-            {
-                options.AddPolicy("Testing",
-                    builder =>
-                        builder
-                        .AllowAnyOrigin()
-                        .AllowAnyMethod()
-                        .AllowAnyHeader());
-            });
-
             services.AddControllers()
-                .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<Startup>());
+                .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<StartupApiTests>());
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            app.UseCors("Testing");
             app.UseRouting();
 
-            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {

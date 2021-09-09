@@ -49,6 +49,7 @@
     },
     "API - Self Host Test": {
       "commandName": "Project",
+      "anonymousAuthentication": true,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Testing"
       },

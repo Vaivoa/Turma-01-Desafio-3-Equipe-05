@@ -24,7 +24,7 @@ namespace Modalmais.API.Configurations
 
 
             services.AddControllers()
-                .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<Startup>());
+                .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<StartupApiTests>());
 
             services.AdicionarConfiguracaoSwagger();
 

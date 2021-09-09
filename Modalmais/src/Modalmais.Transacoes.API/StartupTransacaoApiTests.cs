@@ -5,11 +5,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Modalmais.Core.Interfaces;
+using Modalmais.Core.Interfaces.Notificador;
+using Modalmais.Core.Notificador;
 using Modalmais.Transacoes.API.Configurations;
 using Modalmais.Transacoes.API.Data;
+using Modalmais.Transacoes.API.Repository;
 using System;
 
 namespace Modalmais.Transacoes.API
@@ -44,21 +45,13 @@ namespace Modalmais.Transacoes.API
                 options.Configuration = $"{Configuration.GetConnectionString("Api-StringBd-Redis")}";
             });
 
-            services.InjecaoDependencias(Configuration);
+            services.AddScoped<ApiDbContext>();
+            services.AddScoped<INotificador, NotificadorHandler>();
+            services.AddScoped<TransacaoRepository>();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             services.Configure<ApiBehaviorOptions>(options =>
             {
                 options.SuppressModelStateInvalidFilter = true;
-            });
-
-            services.AddCors(options =>
-            {
-                options.AddPolicy("Testing",
-                    builder =>
-                        builder
-                        .AllowAnyOrigin()
-                        .AllowAnyMethod()
-                        .AllowAnyHeader());
             });
 
             services.AddControllers()
@@ -69,11 +62,9 @@ namespace Modalmais.Transacoes.API
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            app.UseCors("Testing");
 
             app.UseRouting();
 
-            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
