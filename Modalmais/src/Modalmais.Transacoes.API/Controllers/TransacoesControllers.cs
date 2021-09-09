@@ -55,12 +55,12 @@ namespace Modalmais.Transacoes.API.Controllers
             transacaoRequest.AtribuirConta(conta.data.contaCorrente.numero);
 
             var transacao = _mapper.Map<Transacao>(transacaoRequest);
-            transacao.ConcluirTransacao();
 
             var limiteAtingido = transacao.LimiteAtingido(transacaoRequest.Valor
                                  + await ObterTotalValorDoDiaPorNumeroConta(transacaoRequest.ObterNumeroConta()));
             if (limiteAtingido) return ResponseBadRequest("Limite diário de 100 mil atingido.");
             if (transacao.EstaInvalido()) return ResponseEntidadeErro(transacao.ListaDeErros);
+            transacao.ConcluirTransacao();
 
             _transacaoRepository.Add(transacao);
             if (!await _transacaoRepository.Salvar()) return ResponseInternalServerError("Erro na operação, tente mais tarde.");
@@ -130,9 +130,15 @@ namespace Modalmais.Transacoes.API.Controllers
             catch (ApiException ex)
             {
                 var statusCode = ex.StatusCode;
-                if (statusCode != HttpStatusCode.InternalServerError)
+                if (statusCode != HttpStatusCode.InternalServerError )
                     contaCorrente = ex.GetContentAsAsync<RespostaConta>().Result;
             }
+            catch (Exception ex)
+            {
+                var statusCode = ex;
+
+            }
+            
 
             return contaCorrente;
         }

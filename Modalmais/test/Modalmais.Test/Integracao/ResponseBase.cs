@@ -5,8 +5,9 @@ namespace Modalmais.Test.Tests
 {
     public class ResponseBase<T> 
     {
-        public ResponseBase(HttpStatusCode statusCode, bool success, T data, IEnumerable<string> errors)
+        public ResponseBase(HttpStatusCode statusCode, bool success, T data, IEnumerable<string> errors )
         {
+            Errors = new List<string>();
             StatusCode = statusCode;
             Success = success;
             Data = data;

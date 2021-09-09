@@ -9,10 +9,10 @@ namespace Modalmais.Infra.Repository
 {
     public abstract class Repository<TEntity> : IRepository<TEntity> where TEntity : Entidade
     {
-        protected readonly DbContext _context;
+        protected readonly MongoDbContext _context;
         protected readonly IMongoCollection<TEntity> DbSet;
 
-        protected Repository(DbContext context)
+        protected Repository(MongoDbContext context)
         {
             _context = context;
             DbSet = _context.Database.GetCollection<TEntity>(typeof(TEntity).Name + "s");

@@ -7,7 +7,7 @@ namespace Modalmais.Infra.Repository
     public class ClienteRepository : Repository<Cliente>, IClienteRepository
     {
 
-        public ClienteRepository(DbContext context) : base(context)
+        public ClienteRepository(MongoDbContext context) : base(context)
         {
 
         }

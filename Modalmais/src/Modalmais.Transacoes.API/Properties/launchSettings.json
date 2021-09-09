@@ -1,13 +1,17 @@
-﻿{
-  "$schema": "http://json.schemastore.org/launchsettings.json",
+{
   "iisSettings": {
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
+    "iis": {
+      "applicationUrl": "http://localhost/Modalmais.Transacoes.API",
+      "sslPort": 0
+    },
     "iisExpress": {
       "applicationUrl": "http://localhost:5832",
       "sslPort": 44307
     }
   },
+  "$schema": "http://json.schemastore.org/launchsettings.json",
   "profiles": {
     "IIS - DEV": {
       "commandName": "IISExpress",
@@ -35,21 +39,22 @@
     },
     "API - Self Host DEV": {
       "commandName": "Project",
-      "dotnetRunMessages": "true",
       "launchBrowser": true,
       "launchUrl": "swagger",
-      "applicationUrl": "https://localhost:5101;http://localhost:5100",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+      },
+      "dotnetRunMessages": "true",
+      "applicationUrl": "https://localhost:5101;http://localhost:5100"
     },
     "API - Self Host Test": {
       "commandName": "Project",
-      "dotnetRunMessages": "true",
-      "applicationUrl": "https://localhost:5101;http://localhost:5100",
+      "anonymousAuthentication": true,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Testing"
-      }
+      },
+      "dotnetRunMessages": "true",
+      "applicationUrl": "https://localhost:5101;http://localhost:5100"
     },
     "Docker": {
       "commandName": "Docker",
@@ -63,13 +68,13 @@
     },
     "API - Self Host Prod": {
       "commandName": "Project",
-      "dotnetRunMessages": "true",
       "launchBrowser": true,
       "launchUrl": "swagger",
-      "applicationUrl": "https://localhost:5101;http://localhost:5100",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Production"
-      }
+      },
+      "dotnetRunMessages": "true",
+      "applicationUrl": "https://localhost:5101;http://localhost:5100"
     }
   }
 }

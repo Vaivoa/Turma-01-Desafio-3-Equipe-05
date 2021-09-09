@@ -16,7 +16,7 @@ namespace Modalmais.Test.Unitarios
 
         public static ContaCorrente contaCorrente { get; set; }
 
-        private readonly List<object[]> _data = new List<object[]>
+        private readonly List<object[]> _data = new ()
     {
             new object[] { new Transacao(
                 TipoChavePix.Aleatoria,
