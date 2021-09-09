@@ -3,10 +3,12 @@ name: Realizar_testes
 on: 
   push:
     branches:
-      - feat/img_cloud
+      - main
+      - dev
   pull_request:
     branches:
-      - feat/img_cloud
+      - main
+      - dev
 
 jobs:
   build:
