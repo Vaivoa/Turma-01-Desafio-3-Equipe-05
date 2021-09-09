@@ -77,7 +77,7 @@ Para utilizar e testar o projeto acesse os endereços abaixo:
 ```bash
 http://localhost:5001         //colocar redis no primeiro campo.
 http://localhost:5101        // API de Transação
-http://localhost:5101       // API de Cadastro
+http://localhost:5201       // API de Cadastro
 ```
 Agora você será redirecionado para a página de OpenApi do Swagger onde poderá testar os endpoint, ou também pode utilizar outras ferramentas para isso.
 
