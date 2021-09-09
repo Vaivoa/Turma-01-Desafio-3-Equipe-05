@@ -1,33 +1,40 @@
-name: Realizar_testes
+name: Testes de Aceitação
 
 on: 
   push:
     branches:
-      - main
-      - dev
-  pull_request:
-    branches:
-      - main
-      - dev
+      - refact/git_actions
 
 jobs:
   build:
-
+    name: Ambiente de Testes
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        dotnet-version: ['5.0.x']
+        dotnet-version: ['5.0.9']
 
     steps:
-      - uses: actions/checkout@v2
-      - name: Setup .NET Core SDK ${{ matrix.dotnet-version }}
+    
+      - name: Enviar repositório e configurar o ambiente
+        uses: actions/checkout@v2
+        
+      - name: Instalar o .NET Core SDK ${{ matrix.dotnet-version }} (dotnet)
         uses: actions/setup-dotnet@v1.7.2
         with:
           dotnet-version: ${{ matrix.dotnet-version }}
-      - name: Build the docker-compose stack
+          
+      - name: Orquestrar e rodar os containers utilizando Docker Compose
         run: docker-compose -f Modalmais/docker-compose.yml up -d
-      - name: Check running containers
-        run: docker ps -a
-      - name: Test
-        run: dotnet test Modalmais/test/Modalmais.Test/Modalmais.Test.csproj
         
+      - name: Verificar os containers ativos
+        run: docker ps -a
+        
+      - name: Executar os testes de unidade e integração
+        run: dotnet test Modalmais/test/Modalmais.Test/Modalmais.Test.csproj --results-directory "TestResults-${{ matrix.dotnet-version }}"
+        
+      - name: Gerar relatório de testes
+        uses: actions/upload-artifact@v2
+        with:
+          name: dotnet-results-${{ matrix.dotnet-version }}
+          path: TestResults-${{ matrix.dotnet-version }}
+          if: ${{ always() }}
