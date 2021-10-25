@@ -127,7 +127,6 @@ Agora você será redirecionado para a página de OpenApi do Swagger onde poder�
 <br>
 <br>
 
-
 ## Contribuidores
 
 [![Linkedin Badge](	https://img.shields.io/badge/Lucas%20Paes-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/lucastmp/)
