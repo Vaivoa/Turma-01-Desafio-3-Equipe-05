@@ -1,25 +1,21 @@
-﻿using Microsoft.AspNetCore.Mvc.Testing;
-using Modalmais.Business.Models;
-using Modalmais.Core.Models.Enums;
-using System;
-using System.Net.Http;
-using Xunit;
-using Modalmais.Transacoes.API;
-using Modalmais.API;
-using Modalmais.Transacoes.API.Refit;
-using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json;
-using System.Collections.Generic;
+﻿using Modalmais.API;
 using Modalmais.API.DTOs;
 using Modalmais.API.Extensions;
+using Modalmais.Business.Models;
+using Modalmais.Core.Models.Enums;
+using Modalmais.Test.Integracao;
 using Modalmais.Test.Tests;
 using Modalmais.Test.Tests.Config;
 using Modalmais.Transacoes.API.DTOs;
+using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Net.Http.Json;
-using Modalmais.Test.Integracao;
+using Xunit;
 
 namespace Modalmais.Test
 {
@@ -479,11 +475,14 @@ namespace Modalmais.Test
             // Arrange
             var cliente = await _testsFixture.BuscarUsuario();
             TransacaoRequest transacao = new()
-            { Chave = cliente.ContaCorrente.ChavePix.Chave,
+            {
+                Chave = cliente.ContaCorrente.ChavePix.Chave,
                 Tipo = cliente.ContaCorrente.ChavePix.Tipo,
-                Valor = transacaoData.Valor, Descricao = transacaoData.Descricao };
+                Valor = transacaoData.Valor,
+                Descricao = transacaoData.Descricao
+            };
             var conta = await _testsFixture.BuscarConta();
-           
+
             //Act
             var postResponse = await _testsFixture.ClientTransacao.PostAsJsonAsync($"api/v1/transacoes", transacao);
             var response = JsonConvert.DeserializeObject
@@ -501,7 +500,8 @@ namespace Modalmais.Test
             {
                 Assert.Equal(HttpStatusCode.BadRequest, postResponse.StatusCode);
                 Assert.True(response.Errors.Any());
-                if (_testsFixture.ContadorTransferencias == 21) {
+                if (_testsFixture.ContadorTransferencias == 21)
+                {
                     Assert.Contains("Limite diário de 100 mil atingido.", response.Errors);
                 }
             }
@@ -549,14 +549,14 @@ namespace Modalmais.Test
                 Assert.True(response.Success);
                 Assert.Equal(response.Data.Conta, cliente.ContaCorrente.Numero);
             }
-            else 
+            else
             {
                 Assert.Equal(HttpStatusCode.BadRequest, postResponse.StatusCode);
                 Assert.False(response.Success);
                 Assert.NotEmpty(response.Errors);
             }
 
-            }
         }
+    }
 
 }
