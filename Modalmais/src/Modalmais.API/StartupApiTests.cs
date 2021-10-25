@@ -5,12 +5,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Modalmais.API.Configurations;
-using Modalmais.Core.Interfaces;
 using System;
 
 namespace Modalmais.API
 {
-    public class StartupApiTests 
+    public class StartupApiTests
     {
         public IConfiguration Configuration { get; }
 
