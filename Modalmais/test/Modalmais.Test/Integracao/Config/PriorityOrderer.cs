@@ -6,7 +6,6 @@ using Xunit.Sdk;
 
 namespace Modalmais.Test
 {
-
     [AttributeUsage(AttributeTargets.Method)]
     public class TestPriorityAttribute : Attribute
     {
@@ -52,6 +51,4 @@ namespace Modalmais.Test
             return result;
         }
     }
-
-
 }

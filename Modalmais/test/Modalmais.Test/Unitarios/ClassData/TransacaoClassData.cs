@@ -16,8 +16,8 @@ namespace Modalmais.Test.Unitarios
 
         public static ContaCorrente contaCorrente { get; set; }
 
-        private readonly List<object[]> _data = new ()
-    {
+        private readonly List<object[]> _data = new()
+        {
             new object[] { new Transacao(
                 TipoChavePix.Aleatoria,
                 chavePix.GerarChavePix(),
@@ -123,7 +123,7 @@ namespace Modalmais.Test.Unitarios
                 "",
                 5000,bogusFaker.Random.String2(50),
                 new Conta("746","0001", contaCorrente.GerarNumeroConta())), true},
-    };
+        };
 
         static TransacaoClassData()
         {

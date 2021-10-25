@@ -1,10 +1,10 @@
-﻿using System;
-using Modalmais.Business.Models;
-using Modalmais.Core.Models.Enums;
-using Modalmais.Business.Models.ObjectValues;
-using Bogus;
+﻿using Bogus;
 using Bogus.DataSets;
 using Bogus.Extensions.Brazil;
+using Modalmais.Business.Models;
+using Modalmais.Business.Models.ObjectValues;
+using Modalmais.Core.Models.Enums;
+using System;
 using Xunit;
 
 namespace Modalmais.Test.Unitarios
@@ -18,8 +18,8 @@ namespace Modalmais.Test.Unitarios
         public Cliente GerarClienteValido()
         {
             var faker = new Faker("pt_BR");
-            var genero =  faker.PickRandom<Name.Gender>();
-            var ddd =  faker.PickRandom<DDDBrasil>();
+            var genero = faker.PickRandom<Name.Gender>();
+            var ddd = faker.PickRandom<DDDBrasil>();
             var numero = faker.Random.Number(900000000, 999999999).ToString();
             var nome = faker.Name.FirstName(genero);
             var sobrenome = faker.Name.LastName(genero);
@@ -27,7 +27,7 @@ namespace Modalmais.Test.Unitarios
                 .CustomInstantiator(f => new Cliente(
                     nome,
                     sobrenome,
-                    new Contato(new Celular(ddd, numero), f.Internet.ExampleEmail(nome,sobrenome)),
+                    new Contato(new Celular(ddd, numero), f.Internet.ExampleEmail(nome, sobrenome)),
                     new Documento(f.Person.Cpf(false))
                 ));
 

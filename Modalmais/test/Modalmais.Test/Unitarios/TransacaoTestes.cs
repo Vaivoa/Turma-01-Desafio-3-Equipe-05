@@ -4,12 +4,10 @@ using Xunit;
 
 namespace Modalmais.Test.Unitarios
 {
-
     [Collection(nameof(ClienteCollection))]
     public class TransacaoTestes
     {
-
-        public TransacaoTestes( )
+        public TransacaoTestes()
         {
         }
 
@@ -28,7 +26,5 @@ namespace Modalmais.Test.Unitarios
             if (resultado)
                 Assert.NotEmpty(transacao.ListaDeErros);
         }
-
-
     }
 }

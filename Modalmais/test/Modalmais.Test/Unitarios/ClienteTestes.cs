@@ -7,7 +7,6 @@ using Xunit;
 
 namespace Modalmais.Test.Unitarios
 {
-
     [Collection(nameof(ClienteCollection))]
     public class ClienteTestes
     {
@@ -91,14 +90,12 @@ namespace Modalmais.Test.Unitarios
             Assert.True(cliente.EstaInvalido());
         }
 
-
         [Trait("Categoria", "Testes Cliente")]
         [Theory(DisplayName = "Validar criação de uma chave pix válida")]
         [InlineData(null, TipoChavePix.Aleatoria)]
         [InlineData("usuario@valido.com", TipoChavePix.Email)]
         [InlineData("99999999999", TipoChavePix.Telefone)]
         [InlineData("", TipoChavePix.CPF)]
-
         public void NovaChavePix_ChavePixValida_ValidadorDeveRetornarFalso(string chave, TipoChavePix tipo)
         {
             // Arrange
@@ -118,7 +115,6 @@ namespace Modalmais.Test.Unitarios
         [InlineData("usuariovalido.com", TipoChavePix.Email)]
         [InlineData("999999999910", TipoChavePix.Telefone)]
         [InlineData("675661360034", TipoChavePix.CPF)]
-
         public void NovaChavePix_ChavePixInvalida_ValidadorDeveRetornarVerdadeiro(string chave, TipoChavePix tipo)
         {
             // Arrange
@@ -129,6 +125,5 @@ namespace Modalmais.Test.Unitarios
             // Act & Assert
             Assert.True(cliente.ContaCorrente.ChavePix.EstaInvalido());
         }
-
     }
 }

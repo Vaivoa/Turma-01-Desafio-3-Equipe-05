@@ -26,11 +26,8 @@ namespace Modalmais.Test.Integracao
             new object[] { new TransacaoRequest(TipoChavePix.Email, bogusFaker.Internet.Email(), 5000, ""), false },
             new object[] { new TransacaoRequest(TipoChavePix.Email, bogusFaker.Internet.Email(), 5000, ""), false },
             new object[] { new TransacaoRequest(TipoChavePix.Email, bogusFaker.Internet.Email(), 5000, ""), false },
-            //
             new object[] { new TransacaoRequest(TipoChavePix.Email, bogusFaker.Internet.Email(), 5000, bogusFaker.Random.String2(31)), true },
             new object[] { new TransacaoRequest(TipoChavePix.Email, bogusFaker.Internet.Email(), 5001, bogusFaker.Random.String2(30)), true },
-            //new object[] { new TransacaoRequest((TipoChavePix)10,bogusFaker.Internet.Email(),5000,bogusFaker.Random.String2(30)), true},
-            //
             new object[] { new TransacaoRequest(TipoChavePix.Email, bogusFaker.Internet.Email(bogusFaker.Random.String2(30)), 5000, bogusFaker.Random.String2(30)), false },
             new object[] { new TransacaoRequest(TipoChavePix.Telefone, $"{(int)bogusFaker.PickRandom<DDDBrasil>()}{bogusFaker.Random.Number(900000000, 999999999)}", 5000, bogusFaker.Random.String2(30)), false },
             new object[] { new TransacaoRequest(TipoChavePix.Telefone, $"{(int)bogusFaker.PickRandom<DDDBrasil>()}{bogusFaker.Random.Number(90000000, 99999999)}", 5000, bogusFaker.Random.String2(30)), false },

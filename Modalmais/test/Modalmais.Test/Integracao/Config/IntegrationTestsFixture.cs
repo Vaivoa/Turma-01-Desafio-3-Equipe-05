@@ -2,82 +2,78 @@
 using Bogus.DataSets;
 using Bogus.Extensions.Brazil;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Modalmais.Business.Models;
-using Modalmais.Core.Models.Enums;
-using Modalmais.Business.Models.ObjectValues;
-using Modalmais.Infra.Data;
-using MongoDB.Bson;
-using System;
-using System.Net.Http;
-using Xunit;
-using Modalmais.Transacoes.API.Data;
 using Microsoft.EntityFrameworkCore;
-using Modalmais.Transacoes.API;
-using Modalmais.API;
-using Refit;
-using Modalmais.Transacoes.API.Refit;
 using Microsoft.Extensions.DependencyInjection;
-using Moq;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
-using System.Collections.Generic;
+using Modalmais.API;
 using Modalmais.API.DTOs;
-using NSubstitute;
+using Modalmais.Business.Models;
+using Modalmais.Business.Models.ObjectValues;
+using Modalmais.Core.Models.Enums;
+using Modalmais.Infra.Data;
+using Modalmais.Transacoes.API;
+using Modalmais.Transacoes.API.Data;
+using Modalmais.Transacoes.API.Refit;
+using MongoDB.Bson;
+using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Threading.Tasks;
+using Xunit;
 
 namespace Modalmais.Test.Tests.Config
 {
     [CollectionDefinition(nameof(IntegrationApiTestsFixtureCollection))]
-    public  class IntegrationApiTestsFixtureCollection : ICollectionFixture<IntegrationTestsFixture<StartupApiTests>> { }
+    public class IntegrationApiTestsFixtureCollection : ICollectionFixture<IntegrationTestsFixture<StartupApiTests>> { }
+
     public class IntegrationTestsFixture<TStartup> : IDisposable
         where TStartup : class
     {
-
         public static string UsuarioEmail;
 
         public readonly StartUpFactory<TStartup> Factory;
         public HttpClient Client;
         public WebApplicationFactory<StartupTransacaoApiTests> FactoryTransacao;
         public HttpClient ClientTransacao;
-        public readonly WebApplicationFactoryClientOptions clientCadastroOptions = new ()
+
+        public readonly WebApplicationFactoryClientOptions clientCadastroOptions = new()
         {
             AllowAutoRedirect = false,
             BaseAddress = new Uri("http://localhost:5000"),
             HandleCookies = true,
             MaxAutomaticRedirections = 7
-
         };
-        public readonly WebApplicationFactoryClientOptions clientTransacaoOptions = new ()
-            {
-                AllowAutoRedirect = false,
-                BaseAddress = new Uri("http://localhost:5100"),
-                HandleCookies = true,
-                MaxAutomaticRedirections = 7
-            };
+
+        public readonly WebApplicationFactoryClientOptions clientTransacaoOptions = new()
+        {
+            AllowAutoRedirect = false,
+            BaseAddress = new Uri("http://localhost:5100"),
+            HandleCookies = true,
+            MaxAutomaticRedirections = 7
+        };
+
         public int ContadorTransferencias { get; set; }
+
         public IntegrationTestsFixture()
         {
             Factory = new StartUpFactory<TStartup>();
             Client = Factory.CreateClient(clientCadastroOptions);
             FactoryTransacao = new WebApplicationFactory<StartupTransacaoApiTests>().WithWebHostBuilder(a =>
             {
-
-                a.ConfigureServices(e => {
-
+                a.ConfigureServices(e =>
+                {
                     e.AddHttpClient<IContaService, ObterContaMock>((d) => new ObterContaMock(BuscarConta()));
                 });
 
-                a.ConfigureAppConfiguration((c, b) => {
+                a.ConfigureAppConfiguration((c, b) =>
+                {
                     c.HostingEnvironment.EnvironmentName = "Testing";
-
                 });
-
-
             });
             ClientTransacao = FactoryTransacao.CreateClient(clientTransacaoOptions);
 
             LimpandoDatabaseMongoTestes();
             LimpandoDatabasePostgresTestes();
-
         }
 
         private void LimpandoDatabaseMongoTestes()
@@ -101,13 +97,13 @@ namespace Modalmais.Test.Tests.Config
 
         public async Task<ClienteResponse> BuscarUsuario()
         {
-
             var getResponse = await Client.GetAsync("api/v1/clientes");
             var clientesResponse = JsonConvert.DeserializeObject
                     <ResponseBase<List<ClienteResponse>>>(getResponse.Content.ReadAsStringAsync().Result);
             var cliente = clientesResponse.Data[0];
             return cliente;
         }
+
         public async Task<RespostaConta> BuscarConta()
         {
             var usuario = BuscarUsuario().Result;
@@ -120,6 +116,7 @@ namespace Modalmais.Test.Tests.Config
             var cliente = clientesResponse;
             return cliente;
         }
+
         public Cliente GerarClienteValido()
         {
             var faker = new Faker("pt_BR");
@@ -157,5 +154,4 @@ namespace Modalmais.Test.Tests.Config
             Factory?.Dispose();
         }
     }
-
 }

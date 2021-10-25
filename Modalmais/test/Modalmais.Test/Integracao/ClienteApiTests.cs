@@ -99,14 +99,11 @@ namespace Modalmais.Test
                     <ResponseBase<ClienteResponse>>(responseText);
             // Assert
 
-
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
             Assert.Contains("A requisição é inválida", response.Errors);
             Assert.Null(response.Data);
             Assert.True(response.Errors.Count() > 1);
         }
-
-
 
         [Theory(DisplayName = "Validar envio de documento com validação randomica."), TestPriority(5)]
         [InlineData(0)]
@@ -126,7 +123,6 @@ namespace Modalmais.Test
                     <ResponseBase<List<ClienteResponse>>>(getResponse.Content.ReadAsStringAsync().Result);
             var cliente = clientesResponse.Data[0];
 
-
             using var request = new HttpRequestMessage(HttpMethod.Post, $"api/v1/clientes/{cliente.Id}/documentos");
             await using var stream = File.OpenRead(@"../../../imgs_para_teste/pequena.png");
             using var content = new MultipartFormDataContent
@@ -139,13 +135,10 @@ namespace Modalmais.Test
             };
             request.Content = content;
 
-
             //Act
             var postResponse = await _testsFixture.Client.SendAsync(request);
             var response = JsonConvert.DeserializeObject
                     <ResponseBase<ClienteResponse>>(postResponse.Content.ReadAsStringAsync().Result);
-
-
 
             // Assert
 
@@ -169,8 +162,6 @@ namespace Modalmais.Test
             }
         }
 
-
-
         [Trait("Categoria", "Testes Integracao Cliente")]
         [Fact(DisplayName = "Validar envio de documento com imagem inválida."), TestPriority(4)]
         public async void NovoDocumentoImagem_ImagemInvalida_DeveRetornaStatus400ErroImagemInvalida()
@@ -180,7 +171,6 @@ namespace Modalmais.Test
             var clientesResponse = JsonConvert.DeserializeObject
                     <ResponseBase<List<ClienteResponse>>>(getResponse.Content.ReadAsStringAsync().Result);
             var cliente = clientesResponse.Data[0];
-
 
             using var request = new HttpRequestMessage(HttpMethod.Post, $"api/v1/clientes/{cliente.Id}/documentos");
             await using var stream = File.OpenRead(@"../../../imgs_para_teste/grande.jpg");
@@ -194,13 +184,10 @@ namespace Modalmais.Test
             };
             request.Content = content;
 
-
             //Act
             var postResponse = await _testsFixture.Client.SendAsync(request);
             var response = JsonConvert.DeserializeObject
                     <ResponseBase<ClienteResponse>>(postResponse.Content.ReadAsStringAsync().Result);
-
-
 
             // Assert
 
@@ -209,10 +196,7 @@ namespace Modalmais.Test
             Assert.Contains(MaxFileSizeAttribute.MsgErro, response.Errors);
             Assert.Contains(expected: AllowedExtensionsAttribute.MsgErro, response.Errors);
             Assert.Equal(3, response.Errors.Count());
-
         }
-
-
 
         [Trait("Categoria", "Testes Integracao Cliente")]
         [Fact(DisplayName = "Validar envio de documento sem permissão."), TestPriority(3)]
@@ -223,7 +207,6 @@ namespace Modalmais.Test
             var clientesResponse = JsonConvert.DeserializeObject
                     <ResponseBase<List<ClienteResponse>>>(getResponse.Content.ReadAsStringAsync().Result);
             var cliente = clientesResponse.Data[0];
-
 
             using var requestNumeroConta = new HttpRequestMessage(HttpMethod.Post, $"api/v1/clientes/{cliente.Id}/documentos");
             await using var stream = File.OpenRead(@"../../../imgs_para_teste/pequena.png");
@@ -237,7 +220,6 @@ namespace Modalmais.Test
             };
             requestNumeroConta.Content = content;
 
-
             using var requestCpf = new HttpRequestMessage(HttpMethod.Post, $"api/v1/clientes/{cliente.Id}/documentos");
             using var content2 = new MultipartFormDataContent
             {
@@ -249,18 +231,14 @@ namespace Modalmais.Test
             };
             requestCpf.Content = content2;
 
-
-
             //Act
             var postResponse = await _testsFixture.Client.SendAsync(requestNumeroConta);
             var responseNumeroConta = JsonConvert.DeserializeObject
                     <ResponseBase<ClienteResponse>>(postResponse.Content.ReadAsStringAsync().Result);
 
-
             postResponse = await _testsFixture.Client.SendAsync(requestCpf);
             var responseCpf = JsonConvert.DeserializeObject
                     <ResponseBase<ClienteResponse>>(postResponse.Content.ReadAsStringAsync().Result);
-
 
             // Assert
 
@@ -268,14 +246,10 @@ namespace Modalmais.Test
             Assert.Contains("Permissão negada", responseNumeroConta.Errors);
             Assert.Single(responseNumeroConta.Errors);
 
-
             Assert.Equal(HttpStatusCode.Forbidden, responseCpf.StatusCode);
             Assert.Contains("Permissão negada", responseCpf.Errors);
             Assert.Single(responseCpf.Errors);
-
         }
-
-
 
         [InlineData(TipoChavePix.Aleatoria, "")]
         [InlineData(TipoChavePix.Email, "asdasd@gmail.com")]
@@ -294,7 +268,6 @@ namespace Modalmais.Test
             {
                 Chave = chave,
                 Tipo = tipoPix,
-
             };
             if (tipoPix == TipoChavePix.CPF)
             {
@@ -341,7 +314,6 @@ namespace Modalmais.Test
             {
                 Chave = chave,
                 Tipo = tipoPix,
-
             };
             // Act
             var postResponse = await _testsFixture.Client.PostAsJsonAsync($"api/v1/clientes/{cliente.Id}/chavepix", chavePix);
@@ -350,11 +322,7 @@ namespace Modalmais.Test
             // Assert
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
             Assert.False(response.Success);
-
         }
-
-
-
 
         [InlineData(TipoChavePix.Aleatoria, "")]
         [InlineData(TipoChavePix.Email, "asdasd@gmail.com")]
@@ -378,7 +346,6 @@ namespace Modalmais.Test
             var response = JsonConvert.DeserializeObject
                     <ResponseBase<ClienteResponse>>(postResponse.Content.ReadAsStringAsync().Result);
 
-
             if (tipoPix == TipoChavePix.Aleatoria)
             {
                 getResponse = await _testsFixture.Client.GetAsync("api/v1/clientes");
@@ -387,21 +354,15 @@ namespace Modalmais.Test
                 cliente = clientesResponse.Data[0];
             }
 
-
             // Act
 
-
             if (tipoPix == TipoChavePix.Aleatoria) chavePix.Chave = cliente.ContaCorrente.ChavePix.Chave;
-
-
 
             var postResponseContaPix = await _testsFixture.Client.GetAsync($"api/v1/clientes/contas/chavepix?" +
                                                                                     $"chave={chavePix.Chave}&" +
                                                                                     $"tipo={(int)chavePix.Tipo}");
             var responseContaPix = JsonConvert.DeserializeObject
                     <ResponseBase<ContaPixResponse>>(postResponseContaPix.Content.ReadAsStringAsync().Result);
-
-
 
             // Assert
             Assert.Equal(HttpStatusCode.Created, response.StatusCode);
@@ -514,11 +475,10 @@ namespace Modalmais.Test
             //Arrange
             var cliente = await _testsFixture.BuscarUsuario();
 
-            //Act/transacoes/extratos/0001/7291522182059200?dataInicial=2021-08-10&dataFinal=2021-09-03
+            //Act
             var postResponse = await _testsFixture.ClientTransacao
                 .GetAsync($"api/v1/transacoes/extratos/{cliente.ContaCorrente.Agencia}/" +
-                $"{cliente.ContaCorrente.Numero}" /*+
-                $"?dataInicial=2021-08-10&dataFinal=2021-09-03"*/);
+                $"{cliente.ContaCorrente.Numero}");
             var response = JsonConvert.DeserializeObject
                    <ResponseBase<ExtratoResponse>>(postResponse.Content.ReadAsStringAsync().Result);
             //Assert
@@ -555,8 +515,6 @@ namespace Modalmais.Test
                 Assert.False(response.Success);
                 Assert.NotEmpty(response.Errors);
             }
-
         }
     }
-
 }
