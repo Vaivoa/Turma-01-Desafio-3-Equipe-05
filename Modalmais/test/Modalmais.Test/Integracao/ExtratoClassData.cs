@@ -13,21 +13,19 @@ namespace Modalmais.Test
         private readonly List<object[]> _data = new()
         {
             new object[] { null, DateTime.Now, true },
-            new object[] { DateTime.Now, null , true },
-            new object[] { null, null , true },
-            new object[] { new DateTime(), new DateTime() , true },
-            new object[] { DateTime.Now.AddDays(1) , DateTime.Now , true },
-            /*new object[] { DataInvalida(), DataInvalida(), true },*/
+            new object[] { DateTime.Now, null, true },
+            new object[] { null, null, true },
+            new object[] { new DateTime(), new DateTime(), true },
             new object[] { DateTime.Now, DateTime.Now.AddDays(1), false },
             new object[] { DateTime.Now.AddDays(1), DateTime.Now.AddDays(1), false },
-            new object[] { DateTime.Now, DateTime.Now , false },
+            new object[] { DateTime.Now, DateTime.Now, false },
         };
 
         private static DateTime DataInvalida()
         {
-            return new DateTime(year:DateTime.Now.Month <= 5 ? DateTime.Now.Year - 1 : DateTime.Now.Year,
+            return new DateTime(year: DateTime.Now.Month <= 5 ? DateTime.Now.Year - 1 : DateTime.Now.Year,
                     month: DateTime.Now.Month > 5 ? DateTime.Now.Month - 5 : DateTime.Now.Month,
-                    day:DateTime.Now.Day);
+                    day: DateTime.Now.Day);
         }
 
         public IEnumerator<object[]> GetEnumerator()
