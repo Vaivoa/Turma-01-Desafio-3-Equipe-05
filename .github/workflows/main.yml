@@ -19,5 +19,4 @@ jobs:
     - name: Running Horusec Security
       run: |
         curl -fsSL https://raw.githubusercontent.com/ZupIT/horusec/main/deployments/scripts/install.sh | bash -s latest
-        horusec start -p="./" --ignore="**/Dockerfile, **/README.md" --false-positive="d5650dfbc5ee71f14c24178e2910750ebf66cd37ded9dcfaff0f684b85fb4f54, cb51e4d7a5a3624e03924ef61bb1df7c41996e83cb8a88c55e6b319fd153bf4b, e94fff5b3f8f52f5133a3f2f9776b4edb455c69686db1ba3ea73ac9e99a9e964"
-        -e="true"
+        horusec start -p="./" --ignore="**/Dockerfile, **/README.md" --false-positive="d5650dfbc5ee71f14c24178e2910750ebf66cd37ded9dcfaff0f684b85fb4f54, cb51e4d7a5a3624e03924ef61bb1df7c41996e83cb8a88c55e6b319fd153bf4b, e94fff5b3f8f52f5133a3f2f9776b4edb455c69686db1ba3ea73ac9e99a9e964" -e="true"
